@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { ISong, IVerse } from '../../types/song.types.ts';
 import { Collapse, Fade, IconButton } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
@@ -46,7 +46,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
       onMouseLeave={() => dispatch(setHoverExpandVerses(false))}
     >
       <Fade in={hoverExpandVerses}>
-        <IconButton onClick={handleExpand} sx={{ padding: 0, mr: '0.3em' }}>
+        <IconButton onClick={handleExpand} sx={{ padding: 0, mr: '0.3em' }} color="inherit">
           <ExpandMore
             sx={{
               rotate: expandVerses ? '0deg' : '-90deg',
@@ -56,7 +56,12 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
           />
         </IconButton>
       </Fade>
-      <Collapse in={expandVerses} collapsedSize="24px" onEntered={() => setShowOriginal(false)} onExited={() => setShowOriginal(true)}>
+      <Collapse
+        in={expandVerses}
+        collapsedSize="24px"
+        onEntered={() => setShowOriginal(false)}
+        onExited={() => setShowOriginal(true)}
+      >
         <div>
           <VerseText verse={verse} />
         </div>

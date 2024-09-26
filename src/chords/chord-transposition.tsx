@@ -28,7 +28,7 @@ export const transposeNote = (note: INote, transposition: ITransposition): INote
   if (transposition.amount === 0) return note;
   let amount = transposition.amount % 12;
   if (amount < 0) amount += 12;
-  const noteIndex = getNoteIndex(note);
+  // const noteIndex = getNoteIndex(note);
 
 }
 

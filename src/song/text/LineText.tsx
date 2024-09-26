@@ -1,5 +1,6 @@
 import { CSSProperties, FC } from 'react';
 import { ILine, ITextRun } from '../../types/song.types.ts';
+import EmptyLine from './EmptyLine.tsx';
 
 interface ILineTextProps {
   line: ILine;
@@ -22,6 +23,7 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
           {run.text}
         </span>
       ))}
+      {!line.text && <EmptyLine />}
     </div>
   );
 };

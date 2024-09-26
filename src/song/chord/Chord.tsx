@@ -49,6 +49,7 @@ const Chord: FC<IChordProps> = ({ chord }) => {
         chordModification={chordModification}
         chordBase={chordBase?.[0]}
         chordAdditionals={chordAdditionals?.[0]}
+        noPrime={chord.noPrime}
       />
     );
   }
@@ -63,8 +64,9 @@ const Chord: FC<IChordProps> = ({ chord }) => {
             <SingleChord
               chordNote={chordNote}
               chordModification={chordModification}
-              chordBase={chordBase?.[Math.min(i, chordBase?.length)]}
-              chordAdditionals={chordAdditionals?.[Math.min(i, chordAdditionals?.length)]}
+              chordBase={chordBase?.[Math.min(i, chordBase?.length ?? 0)]}
+              chordAdditionals={chordAdditionals?.[Math.min(i, chordAdditionals?.length ?? 0)]}
+              noPrime={chord.noPrime}
             />
             {i < singleChordsLength - 1 && <>&nbsp;</>}
           </Fragment>

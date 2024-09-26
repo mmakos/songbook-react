@@ -30,8 +30,10 @@ export const chordBaseAsString = (chord: IChord, chordDifficulty?: IChordDifficu
 
 export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChordDifficulty): string[] | undefined => {
   if (chord.additionals && chord.additionals.length > 0) {
-    if (chordDifficulty?.singleAdditional) {
-      return additionalSeriesAsString(chord.additionals[chord.additionals.length - 1], chordDifficulty, 'triad');
+    if (chordDifficulty?.singleAdditional || chord.additionals.length == 1) {
+      const hide = chord.additionals[0].elements.length > 1 ? 'triad' : undefined;
+      const lastAdditionals = chord.additionals[chord.additionals.length - 1];
+      return additionalSeriesAsString(lastAdditionals, chordDifficulty, hide);
     }
     const additionalsStr: string[][] = chord.additionals.reduce((array, element) => {
       const add = additionalSeriesAsString(element, chordDifficulty, 'triad');
@@ -46,8 +48,8 @@ export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChord
       const maxSuspensions = additionalsStr.reduce((max, value) => Math.max(value.length, max), 0);
       const result: string[] = Array(maxSuspensions).fill('');
       for (let i = 0; i < maxSuspensions; ++i) {
-        for (let j = 0; j < additionalsStr.length; ++j) {
-          const add = additionalsStr[j];
+        for (const element of additionalsStr) {
+          const add = element;
           const interval = add[Math.min(i, add.length)];
           if (interval !== '1' && interval !== '3' && interval !== '5') {
             result[i] += add[Math.min(i, add.length - 1)];
@@ -58,7 +60,7 @@ export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChord
     } else {
       let result = additionalsStr[0][0];
       for (let i = 1; i < additionalsStr.length; ++i) {
-        if (result[i - 1].includes('-') || result[i].includes('-')) {
+        if (additionalsStr[i - 1][0].includes('-') || additionalsStr[i][0].includes('-')) {
           result += ' ';
         }
         result += additionalsStr[i][0];
@@ -76,7 +78,7 @@ export const chordModificationAsString = (
     case ChordModification.AUG:
       return chordDifficulty?.guitarDiminishedChords ? '+' : '<';
     case ChordModification.DIM:
-      return chordDifficulty?.guitarDiminishedChords ? <sup>'0'</sup> : '>';
+      return chordDifficulty?.guitarDiminishedChords ? <sup>0</sup> : '>';
     case ChordModification.CLUSTER:
       return '*';
   }
@@ -129,14 +131,11 @@ const elementAsString = (element: IElement, chordDifficulty?: IChordDifficulty):
   if (element.modification) {
     elString += intervalModificationAsString(element.modification, chordDifficulty);
   }
-  if (element.optional) {
-    elString = '(' + elString + ')';
-  }
 
   return elString;
 };
 
-const emptyIfThirdsInterval = (interval: string, hidableInterval: THidableInterval): string => {
+const emptyIfTriadsInterval = (interval: string, hidableInterval: THidableInterval): string => {
   if (interval === '1' || interval === '8' || (hidableInterval === 'triad' && (interval === '3' || interval === '5'))) {
     return '';
   }
@@ -155,9 +154,17 @@ const additionalSeriesAsString = (
         : undefined
     );
     if (seriesStrings.includes(undefined)) return undefined;
-    if (!chordDifficulty?.splitSuspensions) return [seriesStrings.join('-')];
-    if (hideInterval) return (seriesStrings as string[]).map((value) => emptyIfThirdsInterval(value, hideInterval));
 
-    return seriesStrings as string[];
+    let result = seriesStrings as string[];
+    if (!chordDifficulty?.splitSuspensions) {
+      result = [seriesStrings.join('-')];
+    } else if (hideInterval) {
+      result = result.map((value) => emptyIfTriadsInterval(value, hideInterval));
+    }
+    if (series.optional) {
+      result = result.map((s) => s !== '' ? '(' + s + ')' : s);
+    }
+
+    return result;
   }
 };

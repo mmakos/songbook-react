@@ -93,7 +93,9 @@ const initialSongbookState: ISongbookState = {
   globalSongSettings: initialSongSettings,
   songbookSettings: {},
   theme: 'dark',
-  songTheme: {},
+  songTheme: {
+    mode: 'light',
+  },
 };
 
 const songbookSlice = createSlice({

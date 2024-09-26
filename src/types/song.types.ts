@@ -21,7 +21,7 @@ export interface ISong {
   performers?: IAuthor[];
   performances?: IPerformance[];
 
-  key: ISongKey;
+  key?: ISongKey;
   verses: IVerse[];
 
   next?: ISongOverview;
@@ -198,9 +198,13 @@ export interface ISongKey {
    */
   original?: IKey;
   /**
-   * Tonacja komfortowa do śpiewania (lub zakres tonacji)
+   * Tonacja komfortowa do śpiewania (jeżeli jest maksymalna, to ta oznacza minimalną)
    */
-  comfort?: IKey[];
+  comfort?: IKey;
+  /**
+   * Maksymalna tonacja komfortowa do śpiewania
+   */
+  maxComfort?: IKey;
 }
 
 /**
@@ -230,6 +234,10 @@ export interface INote {
  */
 export interface IAdditionalSeries {
   elements: IElement[];
+  /**
+   * Opcjonalny element (w nawiasach)
+   */
+  optional?: boolean;
 }
 
 /**
@@ -244,10 +252,6 @@ export interface IElement {
    * Modyfikacja składnika (wielka/zwiększona, mała/zmniejszona)
    */
   modification?: IntervalModification;
-  /**
-   * Opcjonalny element (w nawiasach)
-   */
-  optional?: boolean;
 }
 
 export enum NoteBase {

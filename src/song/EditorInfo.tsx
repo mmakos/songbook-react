@@ -3,7 +3,6 @@ import { Typography } from '@mui/material';
 import { FC } from 'react';
 import { IEditorInfo } from '../types/song.types.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import { isBoss } from '../user/user.utils.ts';
 import VerifiedUser from '../user/VerifiedUser.tsx';
 
 interface IEditorInfoProps {

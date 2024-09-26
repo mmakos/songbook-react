@@ -25,6 +25,8 @@ const SongInfo: FC = () => {
     dispatch(setSongInfoOpen(false));
   };
 
+  console.log(song?.key)
+
   return (
     <Collapse in={open} collapsedSize={0}>
       {song ? (
@@ -61,7 +63,7 @@ const SongInfo: FC = () => {
               </Typography>
             </BasicTooltip>
           )}
-          {(!noChords && (song.key.original || song.key.comfort?.length > 0)) && (
+          {(!noChords && song.key && (song.key.original || song.key.comfort)) && (
             <div style={{ marginTop: '0.5em', display: 'flex', alignItems: 'center' }}>
               {song.key.original && (
                 <BasicTooltip title={'Tonacja oryginalna'}>
@@ -75,7 +77,7 @@ const SongInfo: FC = () => {
                   </Button>
                 </BasicTooltip>
               )}
-              {song.key.comfort?.length > 0 && (
+              {song.key.comfort && (
                 <>
                   {!song.key.original && <Piano fontSize="small" />}
                   <BasicTooltip title={'Tonacja wygodna do śpiewania'}>
@@ -85,7 +87,7 @@ const SongInfo: FC = () => {
                       sx={{ textTransform: 'none', padding: '0 4px', ml: '0.3em' }}
                       onClick={() => dispatch(transposeToComfort())}
                     >
-                      {keyAsString(song.key.comfort![0])}
+                      {keyAsString(song.key.comfort)}
                     </Button>
                   </BasicTooltip>
                 </>
