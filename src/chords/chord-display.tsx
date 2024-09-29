@@ -39,7 +39,7 @@ export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChord
       const add = additionalSeriesAsString(element, chordDifficulty, 'triad');
       add && array.push(add);
       return array;
-    }, []);
+    }, [] as string[][]);
 
     if (additionalsStr.length == 0) return;
     if (additionalsStr.length == 1) return additionalsStr[0];

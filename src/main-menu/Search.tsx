@@ -2,8 +2,8 @@ import SearchField from './SearchField.tsx';
 import SearchIcon from '@mui/icons-material/Search';
 import { Autocomplete, CircularProgress } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect, useRef, useState } from 'react';
-import { ISongOverview } from '../types/song.types.ts';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { ICategorizedSongOverview } from '../types/song.types.ts';
 import { useNavigate } from 'react-router-dom';
 import { getAutocomplete } from '../store/songbook.actions.ts';
 
@@ -15,9 +15,8 @@ const Search = () => {
   const inputRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
-        console.log('inputRef', inputRef.current)
         if (inputRef.current) {
           event.preventDefault();
           inputRef.current?.focus();
@@ -32,7 +31,7 @@ const Search = () => {
     };
   }, []);
 
-  const handleSelection = (_, selectedSong: ISongOverview | string) => {
+  const handleSelection = (_: SyntheticEvent, selectedSong: ICategorizedSongOverview | string | null) => {
     if (!selectedSong) return;
     if (typeof selectedSong === 'string') {
       navigate(`/search?key=${selectedSong}`);
@@ -53,8 +52,8 @@ const Search = () => {
       inputValue={query}
       ref={inputRef}
       options={query?.length >= 3 ? (autocomplete ?? []) : []}
-      groupBy={(option) => option.category.name}
-      getOptionLabel={(song) => song.title ?? song}
+      groupBy={(option) => (option as ICategorizedSongOverview).category.name}
+      getOptionLabel={(option: ICategorizedSongOverview | string) => (option as ICategorizedSongOverview).title ?? option}
       onChange={handleSelection}
       onInputChange={(_, value) => {
         setQuery(value);

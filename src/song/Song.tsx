@@ -15,17 +15,19 @@ import SongContent from './SongContent.tsx';
 
 const Song: FC = () => {
   const song = useAppSelector((state) => state.song);
-  const noChords = useAppSelector((state) => state.songbookSettings.noChords);
+  const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();
   const { songId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getSong(songId));
+    songId && dispatch(getSong(songId));
   }, [songId]);
 
   useEffect(() => {
-    return () => dispatch(clearSong());
+    return () => {
+      dispatch(clearSong());
+    };
   }, []);
 
   const previousSong = () => {

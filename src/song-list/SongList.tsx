@@ -3,12 +3,11 @@ import RouteLink from '../components/RouteLink.tsx';
 import { useEffect } from 'react';
 import { fetchSongList } from '../store/songbook.actions.ts';
 import Grid from '@mui/material/Grid2';
-import { Paper, useTheme } from '@mui/material';
+import FullscreenPaper from '../components/FullscreenPaper.tsx';
 
 const SongList = () => {
   const songs = useAppSelector((state) => state.songs);
   const dispatch = useAppDispatch();
-  const theme = useTheme();
 
   useEffect(() => {
     if (!songs) {
@@ -19,19 +18,7 @@ const SongList = () => {
   if (!songs) return;
 
   return (
-    <Paper
-      sx={{
-        my: '1em',
-        mx: '10em',
-        [theme.breakpoints.down('lg')]: {
-          mx: '5em',
-        },
-        [theme.breakpoints.down('md')]: {
-          mx: '1em',
-        },
-        padding: '1em 2em',
-      }}
-    >
+    <FullscreenPaper>
       <Grid container spacing={1}>
         {songs.map((song) => (
           <Grid key={song.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }}>
@@ -41,7 +28,7 @@ const SongList = () => {
           </Grid>
         ))}
       </Grid>
-    </Paper>
+    </FullscreenPaper>
   );
 };
 

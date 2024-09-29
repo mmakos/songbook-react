@@ -8,7 +8,7 @@ import { SettingsIcon } from '../components/SettingsIcon.tsx';
 
 const SongTitle: FC = () => {
   const song = useAppSelector((state) => state.song);
-  const noChords = useAppSelector((state) => state.songbookSettings.noChords);
+  const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const [hover, setHover] = useState(false);
   const dispatch = useAppDispatch();
 

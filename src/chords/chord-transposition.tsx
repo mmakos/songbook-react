@@ -24,13 +24,13 @@ export const transposeKey = (key: IKey, transposition: ITransposition): IKey => 
   };
 };
 
-export const transposeNote = (note: INote, transposition: ITransposition): INote => {
-  if (transposition.amount === 0) return note;
-  let amount = transposition.amount % 12;
-  if (amount < 0) amount += 12;
-  // const noteIndex = getNoteIndex(note);
-
-}
+// export const transposeNote = (note: INote, transposition: ITransposition): INote => {
+//   if (transposition.amount === 0) return note;
+//   let amount = transposition.amount % 12;
+//   if (amount < 0) amount += 12;
+//   const noteIndex = getNoteIndex(note);
+//
+// }
 
 export const getNoteIndex = (note: INote): number => {
   const baseNoteIndex = noteIndexes[note.base];

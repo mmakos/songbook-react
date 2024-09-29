@@ -1,22 +1,20 @@
 import { IChordDifficulty } from '../store/songbook.reducer.ts';
 
-export const getDifficultyPreset = (difficulty: IChordDifficulty): 1 | 2 | 3 | null => {
+export const getDifficultyPreset = (difficulty: IChordDifficulty): 1 | 2 | 3 | 4 | null => {
   const difficultyMask = getDifficultyMask(difficulty);
-  if (difficultyMask === hardMask) {
-    return 3;
-  } else if (difficultyMask === semiMask) {
-    return 2;
-  } else if (difficultyMask === easyMask) {
-    return 1;
-  }
+  if (difficultyMask === expertMask) return 4;
+  if (difficultyMask === hardMask) return 3;
+  if (difficultyMask === semiMask) return 2;
+  if (difficultyMask === easyMask) return 1;
   return null;
 };
 
 export const getDifficultyFromPreset = (difficulty: number): IChordDifficulty => {
   if (difficulty === 1) return easy;
   if (difficulty === 2) return semi;
-  return hard;
-}
+  if (difficulty === 3) return hard;
+  return expert;
+};
 
 export const easy: IChordDifficulty = {
   hideUncommonAdditionals: true,
@@ -32,6 +30,19 @@ export const easy: IChordDifficulty = {
 };
 
 export const semi: IChordDifficulty = {
+  hideUncommonAdditionals: true,
+  guitarIntervalModifications: true,
+  splitSuspensions: true,
+  hideUnisonAndFifth: true,
+  singleAdditional: true,
+  guitarDiminishedChords: true,
+  hideBase: true,
+  hideBaseAdditional: true,
+  hideAlternatives: true,
+  signAccidentals: false,
+};
+
+export const hard: IChordDifficulty = {
   hideUncommonAdditionals: false,
   guitarIntervalModifications: true,
   splitSuspensions: true,
@@ -44,7 +55,7 @@ export const semi: IChordDifficulty = {
   signAccidentals: false,
 };
 
-export const hard: IChordDifficulty = {
+export const expert: IChordDifficulty = {
   hideUncommonAdditionals: false,
   guitarIntervalModifications: false,
   splitSuspensions: false,
@@ -75,3 +86,4 @@ const getDifficultyMask = (difficulty: IChordDifficulty): number => {
 const easyMask = getDifficultyMask(easy);
 const semiMask = getDifficultyMask(semi);
 const hardMask = getDifficultyMask(hard);
+const expertMask = getDifficultyMask(expert);

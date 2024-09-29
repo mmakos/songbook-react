@@ -1,12 +1,9 @@
-import { useTheme } from '@mui/material';
-import { useAppSelector } from '../../store/songbook.store.ts';
+import useLineHeight from '../../store/useLineHeight.hook.ts';
 
 const EmptyLine = () => {
-  const theme = useTheme();
-  const songLineHeight = useAppSelector(state => state.songTheme.font?.lineHeight);
-  const lineHeight = songLineHeight ?? theme.typography.body1.lineHeight;
+  const lineHeight = useLineHeight();
 
-  return <div style={{ height: `calc(1em * ${lineHeight})` }} />;
+  return <div style={{ height: `${lineHeight}em` }} />;
 };
 
 export default EmptyLine;

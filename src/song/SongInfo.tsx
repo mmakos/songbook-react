@@ -18,14 +18,12 @@ const authorAsString = (author: IAuthor): string => {
 const SongInfo: FC = () => {
   const song = useAppSelector((state) => state.song);
   const open = useAppSelector((state) => state.songDisplayState.infoOpen);
-  const noChords = useAppSelector((state) => state.songbookSettings.noChords);
+  const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();
 
   const close = () => {
     dispatch(setSongInfoOpen(false));
   };
-
-  console.log(song?.key)
 
   return (
     <Collapse in={open} collapsedSize={0}>

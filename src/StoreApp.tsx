@@ -7,6 +7,7 @@ import SongList from './song-list/SongList.tsx';
 import Song from './song/Song.tsx';
 import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
+import Settings from './settings/Settings.tsx';
 
 const StoreApp = () => {
   const theme = useAppSelector((state) => state.theme);
@@ -21,6 +22,7 @@ const StoreApp = () => {
           <Routes>
             <Route path="/songs" element={<SongList />} />
             <Route path="/songs/:songId" element={<Song />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
         <Divider sx={{ mt: '0.5em' }} />

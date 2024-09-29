@@ -1,28 +1,44 @@
 import { FC, ReactElement, ReactNode, useState } from 'react';
-import { Fade, FormControlLabel, Switch } from '@mui/material';
+import { Fade, FormControlLabel, Switch, SxProps, Typography } from '@mui/material';
 
 interface IExpandableSwitchProps {
   label: ReactNode;
-  expansion: ReactElement;
+  expansion?: ReactElement;
+  description?: ReactElement;
   checked?: boolean;
   onChange: (value: boolean) => void;
+  sx?: SxProps;
 }
 
-const ExpandableSwitch: FC<IExpandableSwitchProps> = ({ label, expansion, checked, onChange }) => {
+const ExpandableSwitch: FC<IExpandableSwitchProps> = ({ label, expansion, description, checked, onChange, sx }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <FormControlLabel
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
-      control={<Switch checked={checked} onChange={(_, value) => onChange(value)} />}
-      label={
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          {label}
-          <Fade in={expanded}><div style={{marginLeft: '0.5em'}}>{expansion}</div></Fade>
-        </div>
-      }
-    />
+    <>
+      <FormControlLabel
+        sx={sx}
+        onMouseEnter={() => expansion && setExpanded(true)}
+        onMouseLeave={() => expansion && setExpanded(false)}
+        control={<Switch checked={checked} onChange={(_, value) => onChange(value)} />}
+        label={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {label}
+            {expansion ? (
+              <Fade in={expanded}>
+                <div style={{ marginLeft: '0.5em' }}>{expansion}</div>
+              </Fade>
+            ) : (
+              <div style={{ marginLeft: '0.5em' }}>{expansion}</div>
+            )}
+          </div>
+        }
+      />
+      {description && (
+        <Typography variant="caption" fontStyle="italic">
+          {description}
+        </Typography>
+      )}
+    </>
   );
 };
 
