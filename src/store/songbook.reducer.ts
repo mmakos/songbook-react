@@ -1,4 +1,4 @@
-import { Accidental, ICategorizedSongOverview, ISong, ISongOverview } from '../types/song.types.ts';
+import { Accidental, ISongOverview, ISong, ISongOverview } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchSongList, getAutocomplete, getSong } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
@@ -49,7 +49,7 @@ export interface ISongDisplayState {
 }
 
 export interface ISearchState {
-  autocomplete?: ICategorizedSongOverview[];
+  autocomplete?: ISongOverview[];
   autocompleteLoad?: boolean;
 }
 
@@ -293,7 +293,7 @@ const songbookSlice = createSlice({
       state.song = action.payload as ISong;
     });
     builder.addCase(getAutocomplete.fulfilled, (state: ISongbookState, action) => {
-      state.searchState.autocomplete = action.payload as ICategorizedSongOverview[];
+      state.searchState.autocomplete = action.payload as ISongOverview[];
       state.searchState.autocompleteLoad = false;
     });
   },

@@ -10,13 +10,6 @@ export const SearchField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
     borderRadius: theme.shape.borderRadius,
   },
-  // transition: theme.transitions.create('width'),
-  // width: '12ch',
-  // '&:focus': {
-  //   width: '20ch',
-  // },
-  // [theme.breakpoints.up('sm')]: {
-  // },
   '& .MuiInputBase-root::after': {
     border: 'none',
   },

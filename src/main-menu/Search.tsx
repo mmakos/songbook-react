@@ -3,7 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Autocomplete, CircularProgress } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { ICategorizedSongOverview } from '../types/song.types.ts';
+import { ISongOverview } from '../types/song.types.ts';
 import { useNavigate } from 'react-router-dom';
 import { getAutocomplete } from '../store/songbook.actions.ts';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
@@ -32,12 +32,12 @@ const Search = () => {
     };
   }, []);
 
-  const handleSelection = (_: SyntheticEvent, selectedSong: ICategorizedSongOverview | string | null) => {
+  const handleSelection = (_: SyntheticEvent, selectedSong: ISongOverview | string | null) => {
     if (!selectedSong) return;
     if (typeof selectedSong === 'string') {
       navigate(`/search?key=${selectedSong}`);
     } else {
-      navigate(`/songs/${selectedSong.slug}`);
+      navigate(`/song/${selectedSong.slug}`);
     }
   };
 
@@ -53,8 +53,8 @@ const Search = () => {
       inputValue={query}
       ref={inputRef}
       options={query?.length >= 3 ? (autocomplete ?? []) : []}
-      groupBy={(option) => getCategoryDisplayName((option as ICategorizedSongOverview).category)}
-      getOptionLabel={(option: ICategorizedSongOverview | string) => (option as ICategorizedSongOverview).title ?? option}
+      groupBy={(option) => getCategoryDisplayName((option as ISongOverview).category)}
+      getOptionLabel={(option: ISongOverview | string) => (option as ISongOverview).title ?? option}
       onChange={handleSelection}
       onInputChange={(_, value) => {
         setQuery(value);

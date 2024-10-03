@@ -16,9 +16,6 @@ export enum UserType {
 export interface ISongOverview {
   slug: string;
   title: string;
-}
-
-export interface ICategorizedSongOverview extends ISongOverview {
   category: Category;
 }
 
@@ -28,10 +25,10 @@ export interface ISong {
   category: Category;
   created: IEditorInfo;
   edited?: IEditorInfo;
-  lyrics?: IAuthor[];
-  composer?: IAuthor[];
-  translation?: IAuthor[];
-  performer?: IAuthor[];
+  lyrics?: IPerson[];
+  composer?: IPerson[];
+  translation?: IPerson[];
+  performer?: IPerson[];
   band?: IBand;
   performances?: IPerformance[];
 
@@ -42,10 +39,15 @@ export interface ISong {
   previous?: ISongOverview;
 }
 
-export interface IAuthor {
+export interface IPerson {
   slug: string;
   name: string;
-  lastName?: string;
+  secondName?: string;
+  lastName: string;
+  nickname?: string;
+  url?: string;
+  forceNickname?: boolean;
+  forceSecondName?: boolean;
 }
 
 export interface IBand {

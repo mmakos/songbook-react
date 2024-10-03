@@ -4,6 +4,8 @@ import { Divider } from '@mui/material';
 import MainMenuButton from '../components/MainMenuButton.tsx';
 import { MusicNote } from '@mui/icons-material';
 import CategoryIcon from '../category/CategoryIcon.tsx';
+import { Category } from '../types/song.types.ts';
+import { getCategoryDisplayName } from '../category/category.utils.ts';
 
 const SongsMenu = () => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -16,11 +18,15 @@ const SongsMenu = () => {
     <MainMenuButton name="Piosenki" routeTo="/songs" anchor={anchor} setAnchor={setAnchor} icon={<MusicNote />}>
       <MainMenuItem name="Wszystkie" routeTo="/songs" close={onClose} />
       <Divider />
-      <MainMenuItem name="Kaczmarski" routeTo="/songs/kaczmarski" close={onClose} icon={<CategoryIcon category='kaczmarski'/>} />
-      <MainMenuItem name="Obozowe" routeTo="/songs/common" close={onClose} icon={<CategoryIcon category='common'/>} />
-      <MainMenuItem name="Religijne" routeTo="/songs/religious" close={onClose} icon={<CategoryIcon category='religious'/>} />
-      <MainMenuItem name="Patriotyczne" routeTo="/songs/patriotic" close={onClose} icon={<CategoryIcon category='patriotic'/>} />
-      <MainMenuItem name="Kolędy" routeTo="/songs/carols" close={onClose} icon={<CategoryIcon category='carols'/>} />
+      {Object.values(Category).map((category: Category) => (
+        <MainMenuItem
+          key={category}
+          name={getCategoryDisplayName(category)}
+          routeTo={`/songs/${category}`}
+          close={onClose}
+          icon={<CategoryIcon category={category} />}
+        />
+      ))}
     </MainMenuButton>
   );
 };

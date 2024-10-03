@@ -12,15 +12,15 @@ import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 
 const chordDifficultyIcons: Record<number, { icon: ReactNode, label: string }> = {
   1: {
-    icon: <SentimentVeryDissatisfied color="error" fontSize="inherit" />,
+    icon: <SentimentVeryDissatisfied sx={{color: '#f23591'}} fontSize="inherit" />,
     label: 'Początkujący',
   },
   2: {
-    icon: <SentimentNeutral color="warning" fontSize="inherit" />,
+    icon: <SentimentNeutral color="error" fontSize="inherit" />,
     label: 'Średnio zaawansowany',
   },
   3: {
-    icon: <SentimentSatisfiedSharp color="success" fontSize="inherit" />,
+    icon: <SentimentSatisfiedSharp color="warning" fontSize="inherit" />,
     label: 'Zaawansowany',
   },
   4: {

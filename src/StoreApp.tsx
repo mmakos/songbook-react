@@ -17,16 +17,22 @@ const StoreApp = () => {
       <CssBaseline />
       <Notification />
       <BrowserRouter>
-        <MainMenu />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Routes>
-            <Route path="/songs" element={<SongList />} />
-            <Route path="/songs/:songId" element={<Song />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <MainMenu />
+          <div style={{ flexGrow: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Routes>
+                <Route path="/songs/:category?" element={<SongList />} />
+                <Route path="/song/:songId" element={<Song />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </div>
+          </div>
+          <footer>
+            <Divider sx={{ mt: '0.5em' }} />
+            <CopyrightInfo />
+          </footer>
         </div>
-        <Divider sx={{ mt: '0.5em' }} />
-        <CopyrightInfo />
       </BrowserRouter>
     </ThemeProvider>
   );
