@@ -1,24 +1,38 @@
-export type TCategory = 'kaczmarski' | 'common' | 'patriotic' | 'religious' | 'carols' | string;
+export enum Category {
+  KACZMARSKI = 'kaczmarski',
+  OTHER = 'other',
+  PATRIOTIC = 'patriotic',
+  RELIGIOUS = 'religious',
+  CAROLS = 'carols',
+}
+
+export enum UserType {
+  OWNER = 'owner',
+  BOT = 'bot',
+  VERIFIED = 'verified',
+  NORMAL = 'user',
+}
 
 export interface ISongOverview {
-  id: string;
+  slug: string;
   title: string;
 }
 
 export interface ICategorizedSongOverview extends ISongOverview {
-  category: ICategory;
+  category: Category;
 }
 
 export interface ISong {
-  id: number;
+  slug: string;
   title: string;
-  category: ICategory;
+  category: Category;
   created: IEditorInfo;
   edited?: IEditorInfo;
   lyrics?: IAuthor[];
   composer?: IAuthor[];
   translation?: IAuthor[];
-  performers?: IAuthor[];
+  performer?: IAuthor[];
+  band?: IBand;
   performances?: IPerformance[];
 
   key?: ISongKey;
@@ -29,23 +43,24 @@ export interface ISong {
 }
 
 export interface IAuthor {
-  id: string;
+  slug: string;
   name: string;
   lastName?: string;
+}
+
+export interface IBand {
+  slug: string;
+  name: string;
+  url: string;
 }
 
 export interface IPerformance {
   url: string;
 }
 
-export interface ICategory {
-  id: TCategory;
-  name: string;
-}
-
 export interface IEditorInfo {
   name: string;
-  userVerified?: boolean;
+  type: UserType;
   verified?: boolean;
   time: number;
 }

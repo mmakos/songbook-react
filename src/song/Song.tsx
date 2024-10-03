@@ -33,14 +33,14 @@ const Song: FC = () => {
   const previousSong = () => {
     if (song?.previous) {
       dispatch(clearSong());
-      navigate(`/songs/${song.previous.id}`);
+      navigate(`/songs/${song.previous.slug}`);
     }
   };
 
   const nextSong = () => {
     if (song?.next) {
       dispatch(clearSong());
-      navigate(`/songs/${song.next.id}`);
+      navigate(`/songs/${song.next.slug}`);
     }
   };
 

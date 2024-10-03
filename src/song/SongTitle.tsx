@@ -22,7 +22,7 @@ const SongTitle: FC = () => {
 
   const copyUrlToString = () => {
     if (!song) return;
-    navigator.clipboard.writeText(window.location.protocol + '//' + window.location.host + '/songs/' + song.id);
+    navigator.clipboard.writeText(window.location.protocol + '//' + window.location.host + '/songs/' + song.slug);
     dispatch(notifySuccess('Skopiowano link do piosenki do schowka'));
   };
 

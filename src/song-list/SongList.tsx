@@ -21,8 +21,8 @@ const SongList = () => {
     <FullscreenPaper>
       <Grid container spacing={1}>
         {songs.map((song) => (
-          <Grid key={song.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }}>
-            <RouteLink color={'textPrimary'} to={`/songs/${song.id}`}>
+          <Grid key={song.slug} size={{ xs: 12, md: 6, lg: 4, xl: 3 }}>
+            <RouteLink color={'textPrimary'} to={`/songs/${song.slug}`}>
               {song.title}
             </RouteLink>
           </Grid>

@@ -6,6 +6,7 @@ import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ICategorizedSongOverview } from '../types/song.types.ts';
 import { useNavigate } from 'react-router-dom';
 import { getAutocomplete } from '../store/songbook.actions.ts';
+import { getCategoryDisplayName } from '../category/category.utils.ts';
 
 const Search = () => {
   const { autocomplete, autocompleteLoad } = useAppSelector((state) => state.searchState);
@@ -36,7 +37,7 @@ const Search = () => {
     if (typeof selectedSong === 'string') {
       navigate(`/search?key=${selectedSong}`);
     } else {
-      navigate(`/songs/${selectedSong.id}`);
+      navigate(`/songs/${selectedSong.slug}`);
     }
   };
 
@@ -52,7 +53,7 @@ const Search = () => {
       inputValue={query}
       ref={inputRef}
       options={query?.length >= 3 ? (autocomplete ?? []) : []}
-      groupBy={(option) => (option as ICategorizedSongOverview).category.name}
+      groupBy={(option) => getCategoryDisplayName((option as ICategorizedSongOverview).category)}
       getOptionLabel={(option: ICategorizedSongOverview | string) => (option as ICategorizedSongOverview).title ?? option}
       onChange={handleSelection}
       onInputChange={(_, value) => {

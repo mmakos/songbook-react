@@ -1,4 +1,4 @@
-import { TCategory } from '../types/song.types.ts';
+import { Category } from '../types/song.types.ts';
 import { FC } from 'react';
 import { Church, HistoryEdu } from '@mui/icons-material';
 import { SvgIconProps } from '@mui/material';
@@ -7,20 +7,20 @@ import FirePlace from '../components/icon/FirePlace.tsx';
 import ChristmasCandle from '../components/icon/ChristmasCandle.tsx';
 
 interface ICategoryIconProps {
-  category: TCategory;
+  category: Category;
 }
 
 const CategoryIcon: FC<ICategoryIconProps & SvgIconProps> = ({ category, ...props }) => {
   switch (category) {
-    case 'common':
+    case Category.OTHER:
       return <FirePlace {...props} />;
-    case 'kaczmarski':
+    case Category.KACZMARSKI:
       return <HistoryEdu {...props} />;
-    case 'religious':
+    case Category.RELIGIOUS:
       return <Church {...props} />;
-    case 'patriotic':
+    case Category.PATRIOTIC:
       return <PolandFighting {...props} />;
-    case 'carols':
+    case Category.CAROLS:
       return <ChristmasCandle {...props} />;
   }
 };

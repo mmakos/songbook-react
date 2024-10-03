@@ -3,7 +3,7 @@ import { Tooltip, TooltipProps } from '@mui/material';
 
 const BasicTooltip: FC<TooltipProps> = ({ children, ...props }) => {
   return (
-    <Tooltip enterDelay={500} {...props}>
+    <Tooltip enterDelay={500} {...props} arrow>
       {children}
     </Tooltip>
   );

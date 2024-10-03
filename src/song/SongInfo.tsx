@@ -1,7 +1,16 @@
 import { IAuthor } from '../types/song.types.ts';
 import { FC } from 'react';
 import { Button, Collapse, IconButton, Paper, Skeleton, Typography } from '@mui/material';
-import { Close, Lyrics, MusicNote, Piano, RecordVoiceOver, ThumbUpOutlined, Translate } from '@mui/icons-material';
+import {
+  Close,
+  Groups,
+  Lyrics,
+  MusicNote,
+  Piano,
+  RecordVoiceOver,
+  ThumbUpOutlined,
+  Translate,
+} from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
@@ -29,11 +38,27 @@ const SongInfo: FC = () => {
     <Collapse in={open} collapsedSize={0}>
       {song ? (
         <Paper sx={{ position: 'relative', mb: '0.5em', padding: '0.5em 1em' }}>
-          {song.performers && (
+          {song.band && (
+            <BasicTooltip title={'Zespół'} placement="bottom-start">
+              <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+                <Groups fontSize="inherit" sx={{ mr: '0.5em' }} />
+                {song.band.name}
+              </Typography>
+            </BasicTooltip>
+          )}
+          {song.performer && (
             <BasicTooltip title={'Wykonanie'} placement="bottom-start">
               <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                 <RecordVoiceOver fontSize="inherit" sx={{ mr: '0.5em' }} />
-                {song.performers.map(authorAsString).join(', ')}
+                {song.performer.map(authorAsString).join(', ')}
+              </Typography>
+            </BasicTooltip>
+          )}
+          {song.composer && (
+            <BasicTooltip title={'Muzyka'} placement="bottom-start">
+              <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+                <MusicNote fontSize="inherit" sx={{ mr: '0.5em' }} />
+                {song.composer.map(authorAsString).join(', ')}
               </Typography>
             </BasicTooltip>
           )}
@@ -50,14 +75,6 @@ const SongInfo: FC = () => {
               <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                 <Translate fontSize="inherit" sx={{ mr: '0.5em' }} />
                 {song.translation.map(authorAsString).join(', ')}
-              </Typography>
-            </BasicTooltip>
-          )}
-          {song.composer && (
-            <BasicTooltip title={'Muzyka'} placement="bottom-start">
-              <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                <MusicNote fontSize="inherit" sx={{ mr: '0.5em' }} />
-                {song.composer.map(authorAsString).join(', ')}
               </Typography>
             </BasicTooltip>
           )}
