@@ -1,9 +1,10 @@
 import useLineHeight from '../../store/useLineHeight.hook.ts';
+import { FC, HTMLAttributes } from 'react';
 
-const EmptyLine = () => {
+const EmptyLine: FC<HTMLAttributes<HTMLDivElement>> = ({ style }) => {
   const lineHeight = useLineHeight();
 
-  return <div style={{ height: `${lineHeight}em` }} />;
+  return <div style={{ ...style, height: `${lineHeight}em` }} />;
 };
 
 export default EmptyLine;

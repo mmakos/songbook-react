@@ -3,7 +3,7 @@ import { Collapse, Skeleton, Stack, useTheme } from '@mui/material';
 import SongChords from './chord/SongChords.tsx';
 import { useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
-import SongRepetition from './repetition/SongRepetition.tsx';
+import SongRepetition from './repetition/new/SongRepetition.tsx';
 
 const SongContent = () => {
   const song = useAppSelector((state) => state.song);
@@ -41,7 +41,7 @@ const SongContent = () => {
       {song ? (
         <>
           <SongText song={song} />
-          <SongRepetition verses={song.verses} />
+          <SongRepetition song={song} />
           {!noChords && (
             <Collapse in={showChords} orientation="horizontal">
               <SongChords song={song} />
