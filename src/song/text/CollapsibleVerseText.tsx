@@ -25,6 +25,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
 
   const lineHeight = useLineHeight();
 
+  const indent = verse.indent;
   const verseRefValid = verse.verseRef !== undefined && verse.verseRef < song.verses.length;
 
   if ((!showOriginal || expandVerses) && verseRefValid) {
@@ -48,7 +49,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
       style={{
         display: 'flex',
         marginBottom: spacing?.verseSpacing ? `${spacing.verseSpacing}em` : '0.7em',
-        marginLeft: `calc(${verse.indent * (spacing?.verseIndent ?? 3)}ch - ${lineHeight}em - 0.3em)`,
+        marginLeft: `calc(${indent * (spacing?.verseIndent ?? 3)}ch - ${lineHeight + 0.3}em)`,
         alignItems: 'start',
       }}
       onMouseEnter={() => dispatch(setHoverExpandVerses(true))}

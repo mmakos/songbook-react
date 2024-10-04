@@ -11,7 +11,7 @@ const SingleRepetition: FC<IRepetitionSize> = ({ lines, verses, repetition, repe
     return (
       <div
         style={{
-          height: `${(lineHeight * lines) + (verseSpacing * verses)}em`,
+          height: `${lineHeight * lines + verseSpacing * verses}em`,
         }}
       />
     );
@@ -22,14 +22,16 @@ const SingleRepetition: FC<IRepetitionSize> = ({ lines, verses, repetition, repe
       <div style={{ height: `${(lineHeight - 1) / 2}em` }} />
       <div
         style={{
-          position: 'relative',
+          display: 'flex',
           borderLeft: repetition ? 'solid' : undefined,
           height: `${lineHeight * lines + verseSpacing * verses - lineHeight + 1}em`,
           fontWeight: 'bold',
           paddingLeft: '0.1em',
+          alignItems: 'flex-end',
+          lineHeight: 1,
         }}
       >
-        <div style={{ position: 'absolute', bottom: '-0.3em' }}>x{repetitionEnd ?? 0 > 0 ? repetitionEnd : '∞'}</div>
+        x{(repetitionEnd ?? 0) > 0 ? repetitionEnd : '∞'}
       </div>
       <div style={{ height: `${(lineHeight - 1) / 2}em` }} />
     </>

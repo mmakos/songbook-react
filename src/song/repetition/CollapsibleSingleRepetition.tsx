@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useState } from 'react';
 import { Collapse } from '@mui/material';
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { IRepetitionSize } from '../../repetition/repetition.ts';
@@ -14,6 +14,7 @@ const CollapsibleSingleRepetition: FC<IRepetitionSize> = ({
   repetitionEnd,
 }) => {
   const expanded = useAppSelector((state) => state.songDisplayState.expandVerses);
+  const [showOriginal, setShowOriginal] = useState(!expanded);
   const lineHeight = useLineHeight();
   const verseSpacing = useVerseSpacing();
 
@@ -22,16 +23,21 @@ const CollapsibleSingleRepetition: FC<IRepetitionSize> = ({
   }
 
   return (
-    <Collapse in={expanded} collapsedSize={`${lineHeight + verseSpacing}em`}>
+    <Collapse
+      in={expanded}
+      collapsedSize={`${lineHeight * lines + verseSpacing * verses}em`}
+      onEntered={() => setShowOriginal(false)}
+      onExited={() => setShowOriginal(true)}
+    >
       <>
-        {expanded ? (
+        {(!showOriginal || expanded) ? (
           originalRepetitions.map((repetition, i) => (
             <Fragment key={'r' + i}>
               <SingleRepetition {...repetition} />
             </Fragment>
           ))
         ) : (
-         <SingleRepetition lines={lines} verses={verses} repetition={repetition} repetitionEnd={repetitionEnd} />
+          <SingleRepetition lines={lines} verses={verses} repetition={repetition} repetitionEnd={repetitionEnd} />
         )}
       </>
     </Collapse>

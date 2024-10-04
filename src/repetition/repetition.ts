@@ -2,51 +2,78 @@ import { IVerse } from '../types/song.types.ts';
 
 export interface IRepetitionSize {
   lines: number;
-  originalRepetitions?: IRepetitionSize[];
   verses: number;
   repetition?: boolean;
   repetitionEnd?: number;
+  /**
+   * If row has verse ref, then this is number of repetitions of whole verse.
+   * If whole verse has no repetition, then this number is 0.
+   */
+  collapsedRepetition?: number;
 }
 
+/**
+ * Działa? Działa - to na ch* drążyć temat
+ * @param verses
+ */
 export const calculateRepetitions = (verses: IVerse[]): IRepetitionSize[] => {
-  const sizes: IRepetitionSize[][] = [];
+  const sizes: IRepetitionSize[] = [{ lines: 0, verses: 0 }];
 
-  for (const verse of verses) {
-    const verseSizes: IRepetitionSize[] = [];
+  for (let i = 0; i < verses.length; ++i) {
+    let verse = verses[i];
+    let lines = verse.lines;
+    let collapsed: number | undefined;
 
-    for (const line of verse.lines) {
-      const last = verseSizes[verseSizes.length - 1]
-      if (!last || last.repetition !== !!line.repetition || last.repetitionEnd) {
-        verseSizes.push({ lines: 1, verses: 0, repetition: line.repetition });
+    if (verse.verseRef !== undefined && verse.verseRef < verses.length) {
+      verse = verses[verse.verseRef];
+      if (lines.length === 1 && lines[0].repetitionEnd) {
+        collapsed = lines[0].repetitionEnd;
       } else {
-        last.lines += 1;
+        collapsed = 0;
       }
-      verseSizes[verseSizes.length - 1].repetitionEnd = line.repetitionEnd;
+      lines = verse.lines;
     }
 
-    if (verse.verseRef !== undefined && verse.verseRef < sizes.length) {
-      verseSizes[0].originalRepetitions = sizes[verse.verseRef];
-    }
+    for (let j = 0; j < lines.length; ++j) {
+      const line = lines[j];
 
-    sizes.push(verseSizes);
+      let lastSize = sizes[sizes.length - 1];
+
+      if (i > 0 && j === 0) {
+        if ((line.repetition && !lastSize.repetitionEnd) || !lastSize.repetition) {
+          ++lastSize.verses;
+        } else {
+          lastSize = { lines: 0, verses: 1 };
+          sizes.push(lastSize);
+        }
+        if (collapsed !== undefined) {
+          sizes.push({lines: 0, verses: 0, collapsedRepetition: })
+        }
+      }
+
+      if (line.repetition) {
+        if (lastSize.repetition && !lastSize.repetitionEnd) {
+          ++lastSize.lines;
+        } else {
+          lastSize = { lines: 1, verses: 0, repetition: true };
+          sizes.push(lastSize);
+        }
+        if (line.repetitionEnd) {
+          lastSize.repetitionEnd = line.repetitionEnd;
+        }
+      } else if (lastSize.repetition) {
+        sizes.push({ lines: 1, verses: 0 });
+      } else {
+        ++lastSize.lines;
+      }
+    }
   }
 
-  const result: IRepetitionSize[] = [];
-
-  for (const i of sizes) {
-    if (result.length > 0) {
-      result[result.length - 1].verses += 1;
-    }
-    for (const j of i) {
-      const last = result[result.length - 1];
-      if (!last || j.originalRepetitions || last?.originalRepetitions || (j.repetition !== last.repetition) || last.repetitionEnd !== undefined) {
-        result.push(j);
-      } else {
-        last.lines += j.lines;
-        last.repetitionEnd = j.repetitionEnd;
-      }
-    }
+  if (!sizes[sizes.length - 1].repetition) {
+    sizes.pop();
   }
 
-  return result;
+  console.log(sizes);
+
+  return sizes;
 };

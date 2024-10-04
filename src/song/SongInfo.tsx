@@ -1,5 +1,5 @@
 import { IPerson } from '../types/song.types.ts';
-import { FC } from 'react';
+import { FC, Fragment } from 'react';
 import { Button, Collapse, IconButton, Paper, Skeleton, Typography } from '@mui/material';
 import {
   Close,
@@ -66,12 +66,12 @@ const SongInfo: FC = () => {
           <Typography sx={{ display: 'flex', alignItems: 'center' }}>
             <RecordVoiceOver fontSize="inherit" sx={{ mr: '0.5em' }} />
             {song.performer.map((person, i) => (
-              <>
+              <Fragment key={person.slug}>
                 <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
                   {personAsString(person)}
                 </RouteLink>
                 {i < song.performer!.length - 1 && <>,&nbsp;</>}
-              </>
+              </Fragment>
             ))}
           </Typography>
         </BasicTooltip>
@@ -82,12 +82,12 @@ const SongInfo: FC = () => {
           <Typography sx={{ display: 'flex', alignItems: 'center' }}>
             <MusicNote fontSize="inherit" sx={{ mr: '0.5em' }} />
             {song.composer.map((person, i) => (
-              <>
+              <Fragment key={person.slug}>
                 <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
                   {personAsString(person)}
                 </RouteLink>
                 {i < song.composer!.length - 1 && <>,&nbsp;</>}
-              </>
+              </Fragment>
             ))}
           </Typography>
         </BasicTooltip>
@@ -98,12 +98,12 @@ const SongInfo: FC = () => {
           <Typography sx={{ display: 'flex', alignItems: 'center' }}>
             <Lyrics fontSize="inherit" sx={{ mr: '0.5em' }} />
             {song.lyrics.map((person, i) => (
-              <>
+              <Fragment key={person.slug}>
                 <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
                   {personAsString(person)}
                 </RouteLink>
                 {i < song.lyrics!.length - 1 && <>,&nbsp;</>}
-              </>
+              </Fragment>
             ))}
           </Typography>
         </BasicTooltip>
@@ -114,12 +114,12 @@ const SongInfo: FC = () => {
           <Typography sx={{ display: 'flex', alignItems: 'center' }}>
             <Translate fontSize="inherit" sx={{ mr: '0.5em' }} />
             {song.translation.map((person, i) => (
-              <>
+              <Fragment key={person.slug}>
                 <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
                   {personAsString(person)}
                 </RouteLink>
                 {i < song.translation!.length - 1 && <>,&nbsp;</>}
-              </>
+              </Fragment>
             ))}
           </Typography>
         </BasicTooltip>
