@@ -12,6 +12,7 @@ import BasicTooltip from '../components/BasicTooltip.tsx';
 import SongSettings from './SongSettings.tsx';
 import SongRoute from './SongRoute.tsx';
 import SongContent from './SongContent.tsx';
+import SongVideo from './SongVideo.tsx';
 
 const Song: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -57,10 +58,11 @@ const Song: FC = () => {
         <SongTitle />
         <SongRoute />
         <SongInfo />
+        <SongVideo />
         {!noChords && <SongSettings />}
         <Paper>
           <SongContent />
-          <Divider variant='middle'/>
+          <Divider variant="middle" />
           <div style={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
             {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}

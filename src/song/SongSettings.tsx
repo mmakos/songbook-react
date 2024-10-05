@@ -1,4 +1,4 @@
-import { ClickAwayListener, Collapse, FormControlLabel, IconButton, Paper, Skeleton, Switch } from '@mui/material';
+import { ClickAwayListener, Collapse, FormControlLabel, IconButton, Paper, Switch } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { Close, ExpandMore, SaveOutlined } from '@mui/icons-material';
 import { FC, useState } from 'react';
@@ -29,8 +29,8 @@ const SongSettings: FC = () => {
 
   return (
     <ClickAwayListener onClickAway={() => setMoreSettings(false)}>
-      <Collapse in={open} collapsedSize={0}>
-        {song ? (
+      <Collapse in={open && !!song} collapsedSize={0}>
+        {song && (
           <Paper
             sx={{ position: 'relative', mb: '0.5em', padding: '0.5em 1em', display: 'flex', flexDirection: 'column' }}
           >
@@ -80,8 +80,6 @@ const SongSettings: FC = () => {
               </IconButton>
             </div>
           </Paper>
-        ) : (
-          <Skeleton height="5em" />
         )}
       </Collapse>
     </ClickAwayListener>

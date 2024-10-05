@@ -1,8 +1,8 @@
 import { Fade, IconButton, Skeleton, Typography } from '@mui/material';
-import { InfoOutlined, Link } from '@mui/icons-material';
+import { InfoOutlined, Link, YouTube } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { FC, useState } from 'react';
-import { notifySuccess, setSongInfoOpen, setSongSettingsOpen } from '../store/songbook.reducer.ts';
+import { notifySuccess, setSongInfoOpen, setSongSettingsOpen, setSongVideoOpen } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 
@@ -18,6 +18,10 @@ const SongTitle: FC = () => {
 
   const openInfo = () => {
     dispatch(setSongInfoOpen(true));
+  };
+
+  const openVideo = () => {
+    dispatch(setSongVideoOpen(true));
   };
 
   const copyUrlToString = () => {
@@ -43,6 +47,13 @@ const SongTitle: FC = () => {
         </Fade>
       </BasicTooltip>
       <div style={{ marginLeft: 'auto' }}>
+        {song.ytVideo && (
+          <BasicTooltip title="Nagranie piosenki">
+            <IconButton onClick={openVideo}>
+              <YouTube />
+            </IconButton>
+          </BasicTooltip>
+        )}
         {!noChords && (
           <BasicTooltip title="Ustawienia wyświetlania piosenki">
             <IconButton onClick={openSettings}>

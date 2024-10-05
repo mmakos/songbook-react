@@ -44,6 +44,7 @@ export interface ISongbookSettings {
 export interface ISongDisplayState {
   settingsOpen?: boolean;
   infoOpen?: boolean;
+  videoOpen?: boolean;
   expandVerses?: boolean;
   hoverExpandVerses?: boolean;
 }
@@ -191,6 +192,9 @@ const songbookSlice = createSlice({
     setSongInfoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.infoOpen = action.payload;
     },
+    setSongVideoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
+      state.songDisplayState.videoOpen = action.payload;
+    },
     notifySuccess: (state: ISongbookState, action: PayloadAction<string>) => {
       state.notification = {
         open: true,
@@ -323,6 +327,7 @@ export const {
   clearPerson,
   setSongSettingsOpen,
   setSongInfoOpen,
+  setSongVideoOpen,
   closeNotification,
   notifySuccess,
   transposeUp,

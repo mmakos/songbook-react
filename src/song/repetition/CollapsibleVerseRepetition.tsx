@@ -50,7 +50,7 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
       onEntered={() => setShowOriginal(false)}
       onExited={() => setShowOriginal(true)}
     >
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         <VerseRepetition verse={verse} previousVerse={previousVerse} />
       </div>
     </Collapse>

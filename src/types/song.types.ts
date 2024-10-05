@@ -31,6 +31,7 @@ export interface ISong {
   performer?: IPerson[];
   band?: IBand;
   performances?: IPerformance[];
+  ytVideo?: string[];
 
   key?: ISongKey;
   verses: IVerse[];

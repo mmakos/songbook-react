@@ -1,6 +1,5 @@
-import { IPerson } from '../types/song.types.ts';
 import { FC, Fragment } from 'react';
-import { Button, Collapse, IconButton, Paper, Skeleton, Typography } from '@mui/material';
+import { Button, Collapse, IconButton, Paper, Typography } from '@mui/material';
 import {
   Close,
   Groups,
@@ -17,8 +16,6 @@ import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../sto
 import { keyAsString } from '../chords/chord-display.tsx';
 import RouteLink from '../components/RouteLink.tsx';
 import { personAsString } from '../person/person.utils.ts';
-
-
 
 const SongInfo: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -145,16 +142,14 @@ const SongInfo: FC = () => {
   }
 
   return (
-    <Collapse in={open} collapsedSize={0}>
-      {song ? (
+    <Collapse in={open && !!song} collapsedSize={0}>
+      {song && (
         <Paper sx={{ position: 'relative', mb: '0.5em', padding: '0.5em 1em' }}>
           {children.length > 0 ? children : 'Brak informacji'}
           <IconButton sx={{ position: 'absolute', top: '0.2em', right: '0.2em' }} size="small" onClick={close}>
             <Close />
           </IconButton>
         </Paper>
-      ) : (
-        <Skeleton height="5em" />
       )}
     </Collapse>
   );
