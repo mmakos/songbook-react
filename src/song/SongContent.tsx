@@ -3,7 +3,7 @@ import { Collapse, Skeleton, Stack, useTheme } from '@mui/material';
 import SongChords from './chord/SongChords.tsx';
 import { useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
-import SongRepetition from './repetition/new/SongRepetition.tsx';
+import SongRepetition from './repetition/SongRepetition.tsx';
 
 const SongContent = () => {
   const song = useAppSelector((state) => state.song);

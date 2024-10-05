@@ -7,16 +7,6 @@ export const api = axios.create({
 });
 
 export const HttpService = {
-  get: (url: string) => api.request({ url, method: 'GET' }),
-  post: (url: string, body: unknown, headers?: object) =>
-    api.request({
-      url,
-      method: 'POST',
-      data: body,
-      headers: headers ?? {
-        'Content-Type': 'application/json',
-      },
-    }),
-  put: (url: string, body: unknown) => api.request({ url, method: 'PUT', data: body }),
-  delete: (url: string) => api.request({ url, method: 'DELETE' }),
+  get: (url: string) => api.get(url),
+  getExternal: (url: string) => axios.get(url),
 };

@@ -16,25 +16,9 @@ import BasicTooltip from '../components/BasicTooltip.tsx';
 import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
 import { keyAsString } from '../chords/chord-display.tsx';
 import RouteLink from '../components/RouteLink.tsx';
+import { personAsString } from '../person/person.utils.ts';
 
-const personAsString = (author: IPerson): string => {
-  if (author.nickname && (author.forceNickname || author.nickname.includes(' '))) {
-    return author.nickname;
-  }
-  let name = author.name + ' ';
-  if (author.forceSecondName && author.secondName) {
-    const split = author.secondName.split(' ');
-    if (split.length == 1) {
-      name += split[0];
-    } else {
-      name += split.map((s) => s[0] + '.').join('');
-    }
-  }
-  if (author.nickname) {
-    name += ` "${author.nickname}"`;
-  }
-  return name + ' ' + author.lastName;
-};
+
 
 const SongInfo: FC = () => {
   const song = useAppSelector((state) => state.song);

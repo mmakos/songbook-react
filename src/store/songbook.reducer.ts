@@ -1,6 +1,6 @@
-import { Accidental, ISongOverview, ISong, ISongOverview } from '../types/song.types.ts';
+import { Accidental, IPerson, ISong, ISongOverview } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchSongList, getAutocomplete, getSong } from './songbook.actions.ts';
+import { fetchSongList, getAutocomplete, getPerson, getPersonImageUrl, getSong } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { hard } from '../chords/chord-difficulty.tsx';
@@ -48,6 +48,12 @@ export interface ISongDisplayState {
   hoverExpandVerses?: boolean;
 }
 
+export interface IPersonState {
+  person?: IPerson;
+  songs?: ISongOverview[];
+  imageUrl?: string;
+}
+
 export interface ISearchState {
   autocomplete?: ISongOverview[];
   autocompleteLoad?: boolean;
@@ -84,6 +90,10 @@ export interface ISongbookState {
    * Obecnie wyświetlana piosenka
    */
   song?: ISong;
+  /**
+   * Obecnie wyświetlana osoba (z piosenkami)
+   */
+  person: IPersonState;
   /**
    * Powiadomienia dla użytkownika
    */
@@ -128,6 +138,7 @@ export const initialSongbookState: ISongbookState = {
     message: '',
     severity: 'success',
   },
+  person: {},
   searchState: {},
   songDisplayState: {},
   songSettings: initialSongSettings,
@@ -164,12 +175,15 @@ const songbookSlice = createSlice({
   initialState: initialSongbookState,
   reducers: {
     clearSong: (state: ISongbookState) => {
-      state.song = undefined;
+      delete state.song;
       state.songSettings = {
         showChords: !state.songbookSettings.noChords,
         chordDifficulty: state.songbookSettings.chordDifficulty,
         transposition: { amount: 0 },
       };
+    },
+    clearPerson: (state: ISongbookState) => {
+      state.person = {};
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.settingsOpen = action.payload;
@@ -296,10 +310,17 @@ const songbookSlice = createSlice({
       state.searchState.autocomplete = action.payload as ISongOverview[];
       state.searchState.autocompleteLoad = false;
     });
+    builder.addCase(getPerson.fulfilled, (state: ISongbookState, action) => {
+      state.person = {...state.person, ...(action.payload as IPersonState)};
+    });
+    builder.addCase(getPersonImageUrl.fulfilled, (state: ISongbookState, action) => {
+      state.person = {...state.person, imageUrl: action.payload as string};
+    });
   },
 });
 export const {
   clearSong,
+  clearPerson,
   setSongSettingsOpen,
   setSongInfoOpen,
   closeNotification,

@@ -2,11 +2,11 @@ import SearchField from './SearchField.tsx';
 import SearchIcon from '@mui/icons-material/Search';
 import { Autocomplete, CircularProgress } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ISongOverview } from '../types/song.types.ts';
 import { useNavigate } from 'react-router-dom';
 import { getAutocomplete } from '../store/songbook.actions.ts';
-import { getCategoryDisplayName } from '../category/category.utils.ts';
+import { compareCategory, getCategoryDisplayName } from '../category/category.utils.ts';
 
 const Search = () => {
   const { autocomplete, autocompleteLoad } = useAppSelector((state) => state.searchState);
@@ -32,6 +32,12 @@ const Search = () => {
     };
   }, []);
 
+  const sortedAutocomplete = useMemo(() => {
+    const a = autocomplete ? [...autocomplete] : [];
+    a.sort((a, b) => compareCategory(a.category, b.category));
+    return a;
+  }, [autocomplete])
+
   const handleSelection = (_: SyntheticEvent, selectedSong: ISongOverview | string | null) => {
     if (!selectedSong) return;
     if (typeof selectedSong === 'string') {
@@ -51,8 +57,7 @@ const Search = () => {
       clearOnEscape
       value={''}
       inputValue={query}
-      ref={inputRef}
-      options={query?.length >= 3 ? (autocomplete ?? []) : []}
+      options={query?.length >= 3 ? sortedAutocomplete : []}
       groupBy={(option) => getCategoryDisplayName((option as ISongOverview).category)}
       getOptionLabel={(option: ISongOverview | string) => (option as ISongOverview).title ?? option}
       onChange={handleSelection}

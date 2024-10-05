@@ -17,12 +17,12 @@ const Song: FC = () => {
   const song = useAppSelector((state) => state.song);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();
-  const { songId } = useParams();
+  const { songSlug } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    songId && dispatch(getSong(songId));
-  }, [songId]);
+    songSlug && dispatch(getSong(songSlug));
+  }, [songSlug]);
 
   useEffect(() => {
     return () => {
@@ -60,7 +60,7 @@ const Song: FC = () => {
         {!noChords && <SongSettings />}
         <Paper>
           <SongContent />
-          <Divider />
+          <Divider variant='middle'/>
           <div style={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
             {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
