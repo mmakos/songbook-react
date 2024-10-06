@@ -8,20 +8,21 @@ import { SettingsIcon } from '../components/SettingsIcon.tsx';
 
 const SongTitle: FC = () => {
   const song = useAppSelector((state) => state.song);
+  const { videoOpen, settingsOpen, infoOpen } = useAppSelector((state) => state.songDisplayState);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const [hover, setHover] = useState(false);
   const dispatch = useAppDispatch();
 
-  const openSettings = () => {
-    dispatch(setSongSettingsOpen(true));
+  const toggleSettingsOpen = () => {
+    dispatch(setSongSettingsOpen(!settingsOpen));
   };
 
-  const openInfo = () => {
-    dispatch(setSongInfoOpen(true));
+  const toggleInfoOpen = () => {
+    dispatch(setSongInfoOpen(!infoOpen));
   };
 
-  const openVideo = () => {
-    dispatch(setSongVideoOpen(true));
+  const toggleVideoOpen = () => {
+    dispatch(setSongVideoOpen(!videoOpen));
   };
 
   const copyUrlToString = () => {
@@ -49,20 +50,20 @@ const SongTitle: FC = () => {
       <div style={{ marginLeft: 'auto' }}>
         {song.ytVideo && (
           <BasicTooltip title="Nagranie piosenki">
-            <IconButton onClick={openVideo}>
+            <IconButton onClick={toggleVideoOpen}>
               <YouTube />
             </IconButton>
           </BasicTooltip>
         )}
         {!noChords && (
           <BasicTooltip title="Ustawienia wyświetlania piosenki">
-            <IconButton onClick={openSettings}>
+            <IconButton onClick={toggleSettingsOpen}>
               <SettingsIcon />
             </IconButton>
           </BasicTooltip>
         )}
         <BasicTooltip title="Informacje o piosence">
-          <IconButton onClick={openInfo}>
+          <IconButton onClick={toggleInfoOpen}>
             <InfoOutlined />
           </IconButton>
         </BasicTooltip>

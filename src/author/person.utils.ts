@@ -21,9 +21,9 @@ export const personAsString = (person: IPerson): string => {
 
 const regex = /https:\/\/([a-z]{2})\.wikipedia\.org\/wiki\/(.*)/;
 
-export const generateWikiImageUrl = (person: IPerson): string | undefined => {
-  if (person.url && regex.test(person.url)) {
-    return person.url.replace(
+export const generateWikiImageUrl = (url?: string): string | undefined => {
+  if (url && regex.test(url)) {
+    return url.replace(
       regex,
       'https://$1.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&origin=*&titles=$2'
     );

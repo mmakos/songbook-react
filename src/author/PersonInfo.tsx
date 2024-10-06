@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Divider, Link, Paper, Typography, useTheme } from '@mui/material';
 import { IPerson } from '../types/song.types.ts';
 import Grid from '@mui/material/Grid2';
-import PersonUrlIcon from './PersonUrlIcon.tsx';
+import InfoUrlIcon from './InfoUrlIcon.tsx';
 import { personAsString } from './person.utils.ts';
 
 interface IPersonInfoProps {
@@ -44,7 +44,7 @@ const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
           </Grid>
         </Grid>
         {imageUrl && (
-          <a href={imageUrl} style={{marginLeft: 'auto'}}><img
+          <a href={imageUrl} style={{marginLeft: 'auto'}} target="_blank" rel="noopener"><img
             src={imageUrl}
             style={{
               height: '240px',
@@ -60,7 +60,7 @@ const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
         <>
           <Divider sx={{ my: '0.5em' }} />
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <PersonUrlIcon url={person.url} sx={{ mr: '0.3em' }} />
+            <InfoUrlIcon url={person.url} sx={{ mr: '0.3em' }} />
             <Link href={person.url} color="inherit" underline="hover" target="_blank" rel="noopener">
               Więcej informacje o osobie
             </Link>

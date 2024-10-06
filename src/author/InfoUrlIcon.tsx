@@ -3,7 +3,7 @@ import { Instagram } from '@mui/icons-material';
 import Wikipedia from '../components/icon/Wikipedia.tsx';
 import { SvgIconProps } from '@mui/material';
 
-const PersonUrlIcon: FC<SvgIconProps & { url: string }> = ({ url, ...props }) => {
+const InfoUrlIcon: FC<SvgIconProps & { url: string }> = ({ url, ...props }) => {
   if (url.includes('wikipedia.org')) {
     return <Wikipedia {...props} />;
   } else if (url.includes('instagram.com')) {
@@ -11,4 +11,4 @@ const PersonUrlIcon: FC<SvgIconProps & { url: string }> = ({ url, ...props }) =>
   }
 };
 
-export default PersonUrlIcon;
+export default InfoUrlIcon;

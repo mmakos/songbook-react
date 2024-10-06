@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { Children, FC, Fragment } from 'react';
 import { Button, Collapse, IconButton, Paper, Typography } from '@mui/material';
 import {
   Close,
@@ -15,7 +15,9 @@ import BasicTooltip from '../components/BasicTooltip.tsx';
 import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
 import { keyAsString } from '../chords/chord-display.tsx';
 import RouteLink from '../components/RouteLink.tsx';
-import { personAsString } from '../person/person.utils.ts';
+import { personAsString } from '../author/person.utils.ts';
+import { sourceTypeGenitive } from '../author/source.utils.ts';
+import SourceTypeIcon from '../author/SourceTypeIcon.tsx';
 
 const SongInfo: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -30,80 +32,92 @@ const SongInfo: FC = () => {
   const children = [];
 
   if (song) {
+    song.source?.forEach((source) => {
+      children.push(
+        <Typography key={source.slug} sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title={`Piosenka pochodzi ${sourceTypeGenitive(source.type)}`}>
+            <SourceTypeIcon fontSize="inherit" sx={{ mr: '0.5em' }} type={source.type} />
+          </BasicTooltip>
+          <RouteLink to={`/source/${source.slug}`} underline="hover" color="textPrimary">
+            {source.name}
+          </RouteLink>
+        </Typography>
+      );
+    });
     song.band &&
       children.push(
-        <BasicTooltip key="band" title="Zespół" placement="bottom-start">
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="band" sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title="Zespół">
             <Groups fontSize="inherit" sx={{ mr: '0.5em' }} />
-            <RouteLink to={`/band/${song.band.slug}`} underline="hover" color="textPrimary">
-              {song.band.name}
-            </RouteLink>
-          </Typography>
-        </BasicTooltip>
+          </BasicTooltip>
+          <RouteLink to={`/band/${song.band.slug}`} underline="hover" color="textPrimary">
+            {song.band.name}
+          </RouteLink>
+        </Typography>
       );
     song.performer &&
       children.push(
-        <BasicTooltip key="performer" title="Wykonanie" placement="bottom-start">
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="performer" sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title="Wykonanie">
             <RecordVoiceOver fontSize="inherit" sx={{ mr: '0.5em' }} />
-            {song.performer.map((person, i) => (
-              <Fragment key={person.slug}>
-                <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
-                  {personAsString(person)}
-                </RouteLink>
-                {i < song.performer!.length - 1 && <>,&nbsp;</>}
-              </Fragment>
-            ))}
-          </Typography>
-        </BasicTooltip>
+          </BasicTooltip>
+          {song.performer.map((person, i) => (
+            <Fragment key={person.slug}>
+              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+                {personAsString(person)}
+              </RouteLink>
+              {i < song.performer!.length - 1 && <>,&nbsp;</>}
+            </Fragment>
+          ))}
+        </Typography>
       );
     song.composer &&
       children.push(
-        <BasicTooltip key="composer" title="Muzyka" placement="bottom-start">
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="composer" sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title="Muzyka">
             <MusicNote fontSize="inherit" sx={{ mr: '0.5em' }} />
-            {song.composer.map((person, i) => (
-              <Fragment key={person.slug}>
-                <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
-                  {personAsString(person)}
-                </RouteLink>
-                {i < song.composer!.length - 1 && <>,&nbsp;</>}
-              </Fragment>
-            ))}
-          </Typography>
-        </BasicTooltip>
+          </BasicTooltip>
+          {song.composer.map((person, i) => (
+            <Fragment key={person.slug}>
+              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+                {personAsString(person)}
+              </RouteLink>
+              {i < song.composer!.length - 1 && <>,&nbsp;</>}
+            </Fragment>
+          ))}
+        </Typography>
       );
     song.lyrics &&
       children.push(
-        <BasicTooltip key="lyrics" title="Słowa" placement="bottom-start">
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="lyrics" sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title="Słowa">
             <Lyrics fontSize="inherit" sx={{ mr: '0.5em' }} />
-            {song.lyrics.map((person, i) => (
-              <Fragment key={person.slug}>
-                <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
-                  {personAsString(person)}
-                </RouteLink>
-                {i < song.lyrics!.length - 1 && <>,&nbsp;</>}
-              </Fragment>
-            ))}
-          </Typography>
-        </BasicTooltip>
+          </BasicTooltip>
+          {song.lyrics.map((person, i) => (
+            <Fragment key={person.slug}>
+              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+                {personAsString(person)}
+              </RouteLink>
+              {i < song.lyrics!.length - 1 && <>,&nbsp;</>}
+            </Fragment>
+          ))}
+        </Typography>
       );
     song.translation &&
       children.push(
-        <BasicTooltip key="translation" title="Tłumaczenie" placement="bottom-start">
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="translation" sx={{ display: 'flex', alignItems: 'center' }}>
+          <BasicTooltip title="Tłumaczenie">
             <Translate fontSize="inherit" sx={{ mr: '0.5em' }} />
-            {song.translation.map((person, i) => (
-              <Fragment key={person.slug}>
-                <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
-                  {personAsString(person)}
-                </RouteLink>
-                {i < song.translation!.length - 1 && <>,&nbsp;</>}
-              </Fragment>
-            ))}
-          </Typography>
-        </BasicTooltip>
+          </BasicTooltip>
+          {song.translation.map((person, i) => (
+            <Fragment key={person.slug}>
+              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+                {personAsString(person)}
+              </RouteLink>
+              {i < song.translation!.length - 1 && <>,&nbsp;</>}
+            </Fragment>
+          ))}
+        </Typography>
       );
     !noChords &&
       song.key &&

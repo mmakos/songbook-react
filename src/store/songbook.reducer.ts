@@ -1,6 +1,14 @@
-import { Accidental, IPerson, ISong, ISongOverview } from '../types/song.types.ts';
+import { Accidental, IBand, IPerson, ISong, ISongOverview, ISource } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchSongList, getAutocomplete, getPerson, getPersonImageUrl, getSong } from './songbook.actions.ts';
+import {
+  fetchSongList,
+  getAutocomplete,
+  getBand,
+  getBandImageUrl,
+  getPerson,
+  getPersonImageUrl,
+  getSong, getSource, getSourceImageUrl,
+} from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { hard } from '../chords/chord-difficulty.tsx';
@@ -55,6 +63,18 @@ export interface IPersonState {
   imageUrl?: string;
 }
 
+export interface IBandState {
+  band?: IBand;
+  songs?: ISongOverview[];
+  imageUrl?: string;
+}
+
+export interface ISourceState {
+  source?: ISource;
+  songs?: ISongOverview[];
+  imageUrl?: string;
+}
+
 export interface ISearchState {
   autocomplete?: ISongOverview[];
   autocompleteLoad?: boolean;
@@ -95,6 +115,14 @@ export interface ISongbookState {
    * Obecnie wyświetlana osoba (z piosenkami)
    */
   person: IPersonState;
+  /**
+   * Obecnie wyświetlany zespół (z piosenkami)
+   */
+  band: IBandState;
+  /**
+   * Obecnie wyświetlane źródło (z piosenkami)
+   */
+  source: ISourceState;
   /**
    * Powiadomienia dla użytkownika
    */
@@ -140,6 +168,8 @@ export const initialSongbookState: ISongbookState = {
     severity: 'success',
   },
   person: {},
+  band: {},
+  source: {},
   searchState: {},
   songDisplayState: {},
   songSettings: initialSongSettings,
@@ -185,6 +215,12 @@ const songbookSlice = createSlice({
     },
     clearPerson: (state: ISongbookState) => {
       state.person = {};
+    },
+    clearBand: (state: ISongbookState) => {
+      state.band = {};
+    },
+    clearSource: (state: ISongbookState) => {
+      state.source = {};
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.settingsOpen = action.payload;
@@ -320,11 +356,25 @@ const songbookSlice = createSlice({
     builder.addCase(getPersonImageUrl.fulfilled, (state: ISongbookState, action) => {
       state.person = {...state.person, imageUrl: action.payload as string};
     });
+    builder.addCase(getBand.fulfilled, (state: ISongbookState, action) => {
+      state.band = {...state.band, ...(action.payload as IBandState)};
+    });
+    builder.addCase(getBandImageUrl.fulfilled, (state: ISongbookState, action) => {
+      state.band = {...state.band, imageUrl: action.payload as string};
+    });
+    builder.addCase(getSource.fulfilled, (state: ISongbookState, action) => {
+      state.source = {...state.source, ...(action.payload as ISourceState)};
+    });
+    builder.addCase(getSourceImageUrl.fulfilled, (state: ISongbookState, action) => {
+      state.source = {...state.source, imageUrl: action.payload as string};
+    });
   },
 });
 export const {
   clearSong,
   clearPerson,
+  clearBand,
+  clearSource,
   setSongSettingsOpen,
   setSongInfoOpen,
   setSongVideoOpen,

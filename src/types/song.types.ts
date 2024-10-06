@@ -13,6 +13,14 @@ export enum UserType {
   NORMAL = 'user',
 }
 
+export enum SourceType {
+  MOVIE = 'movie',
+  MUSICAL = 'musical',
+  SOUNDTRACK = 'soundtrack',
+  PLAY = 'play',
+  GAME = 'game',
+}
+
 export interface ISongOverview {
   slug: string;
   title: string;
@@ -29,8 +37,8 @@ export interface ISong {
   composer?: IPerson[];
   translation?: IPerson[];
   performer?: IPerson[];
+  source?: ISource[];
   band?: IBand;
-  performances?: IPerformance[];
   ytVideo?: string[];
 
   key?: ISongKey;
@@ -57,8 +65,13 @@ export interface IBand {
   url: string;
 }
 
-export interface IPerformance {
-  url: string;
+export interface ISource {
+  slug: string;
+  name: string;
+  url?: string;
+  year?: number;
+  type: SourceType;
+
 }
 
 export interface IEditorInfo {

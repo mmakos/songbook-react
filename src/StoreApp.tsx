@@ -8,7 +8,9 @@ import Song from './song/Song.tsx';
 import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
 import Settings from './settings/Settings.tsx';
-import Person from './person/Person.tsx';
+import Person from './author/Person.tsx';
+import Band from './author/Band.tsx';
+import Source from './author/Source.tsx';
 
 const StoreApp = () => {
   const theme = useAppSelector((state) => state.theme);
@@ -27,6 +29,8 @@ const StoreApp = () => {
                 <Route path="/song/:songSlug" element={<Song />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/person/:personSlug" element={<Person />} />
+                <Route path="/band/:bandSlug" element={<Band />} />
+                <Route path="/source/:sourceSlug" element={<Source />} />
               </Routes>
             </div>
           </div>
