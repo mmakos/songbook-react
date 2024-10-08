@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import NumberField from '../NumberField.tsx';
+import { InputAdornment } from '@mui/material';
 
 export interface ISpacing {
   lineHeight: number; // em
@@ -46,7 +47,10 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Interlinia"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ htmlInput: { min: 1, max: 3, step: 0.1 } }}
+        slotProps={{
+          htmlInput: { min: 1, max: 3, step: 0.1 },
+          input: { endAdornment: <InputAdornment position="end">em</InputAdornment> },
+        }}
       />
       <NumberField
         disabled={disabled}
@@ -55,7 +59,11 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Odstęp między zwrotkami"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, max: 3, step: 0.1 } }}
+        slotProps={{
+          inputLabel: { shrink: true },
+          htmlInput: { min: 0, max: 3, step: 0.1 },
+          input: { endAdornment: <InputAdornment position="end">em</InputAdornment> },
+        }}
       />
       <NumberField
         disabled={disabled}
@@ -64,7 +72,8 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Wcięcie refrenów"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 } }}
+        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
       />
       <NumberField
         disabled={disabled}
@@ -73,7 +82,8 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Odległość repetycji"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 } }}
+        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
       />
       <NumberField
         disabled={disabled}
@@ -81,7 +91,8 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         onChange={(event) => chordsSpacingChanged(+event.target.value)}
         label="Odległość akordów"
         type="number"
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 } }}
+        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
       />
     </div>
   );

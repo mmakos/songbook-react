@@ -36,12 +36,11 @@ const ChordSettings = () => {
         Trudność akordów
       </Typography>
       <Divider variant="fullWidth" sx={{ mt: '0.5em', mb: '1em' }} />
-      <div style={{ display: 'flex' }}>
-        <ChordDifficultyPreset
-          chordDifficulty={chordDifficulty}
-          changeDifficulty={(difficulty) => dispatch(setGlobalChordsDifficulty(difficulty))}
-        />
-      </div>
+      <ChordDifficultyPreset
+        chordDifficulty={chordDifficulty}
+        changeDifficulty={(difficulty) => dispatch(setGlobalChordsDifficulty(difficulty))}
+        showDescription
+      />
       <Typography variant="h6" sx={{ mt: '0.8rem', mb: '0.5rem' }}>
         Szczegółowe ustawienia trudności
       </Typography>

@@ -47,7 +47,7 @@ const SongSettings: FC = () => {
                 onReset={() => dispatch(resetTransposition())}
               />
             )}
-            <div style={{ display: 'flex', alignItems: 'center', margin: '0.5em 0' }}>
+            <div style={{ display: 'flex', margin: '0.5em 0' }}>
               <ChordDifficultyPreset
                 chordDifficulty={chordDifficulty}
                 changeDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}

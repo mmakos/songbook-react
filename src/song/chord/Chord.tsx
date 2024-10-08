@@ -4,17 +4,18 @@ import {
   chordAdditionalsAsString,
   chordBaseAsString,
   chordModificationAsString,
-  chordNoteAsString,
+  noteAsString,
 } from '../../chords/chord-display.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
 import SingleChord from './SingleChord.tsx';
+import { transposeNote } from '../../chords/chord-transposition.tsx';
 
 interface IChordProps {
   chord: IChord;
 }
 
 const Chord: FC<IChordProps> = ({ chord }) => {
-  const chordDifficulty = useAppSelector((state) => state.songSettings.chordDifficulty);
+  const { chordDifficulty, transposition } = useAppSelector((state) => state.songSettings);
 
   const chordBase = useMemo(() => {
     if (!chordDifficulty.hideBase) return chordBaseAsString(chord, chordDifficulty);
@@ -23,15 +24,16 @@ const Chord: FC<IChordProps> = ({ chord }) => {
     chordDifficulty.guitarIntervalModifications,
     chordDifficulty.hideUncommonAdditionals,
     chordDifficulty.splitSuspensions,
+    chord,
   ]);
 
   const chordNote = useMemo(() => {
-    return chordNoteAsString(chord, chordDifficulty);
-  }, [chordDifficulty.signAccidentals]);
+    return noteAsString(transposeNote(chord.note, transposition), chord.minor, chordDifficulty);
+  }, [chordDifficulty.signAccidentals, transposition, chord]);
 
   const chordModification = useMemo(() => {
     if (chord.modification) return chordModificationAsString(chord.modification, chordDifficulty);
-  }, [chordDifficulty.guitarDiminishedChords]);
+  }, [chordDifficulty.guitarDiminishedChords, chord]);
 
   const chordAdditionals = useMemo(() => {
     return chordAdditionalsAsString(chord, chordDifficulty);
@@ -39,7 +41,10 @@ const Chord: FC<IChordProps> = ({ chord }) => {
     chordDifficulty.guitarIntervalModifications,
     chordDifficulty.hideUncommonAdditionals,
     chordDifficulty.splitSuspensions,
-    chordDifficulty.singleAdditional
+    chordDifficulty.singleAdditional,
+    chordDifficulty.hideAdditionals269,
+    chordDifficulty.hideFourths,
+    chord,
   ]);
 
   if ((!chordBase || chordBase.length <= 1) && (!chordAdditionals || chordAdditionals.length <= 1)) {

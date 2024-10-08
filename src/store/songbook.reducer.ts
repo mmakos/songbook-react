@@ -34,6 +34,8 @@ export interface IChordDifficulty {
   hideBaseAdditional?: boolean;
   hideAlternatives?: boolean;
   signAccidentals?: boolean;
+  hideAdditionals269?: boolean;
+  hideFourths?: boolean;
 }
 
 export interface ISongSettings {

@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { FormControl, InputAdornment, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { FC } from 'react';
 import NumberField from '../NumberField.tsx';
 
@@ -62,8 +62,11 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
         type="number"
         onChange={(event) => fontSizeChanged(+event.target.value)}
         value={font.fontSize}
-        sx={{ ml: '0.5em', minWidth: '10ch' }}
-        slotProps={{ htmlInput: { min: 1, max: 100 } }}
+        sx={{ ml: '0.5em', minWidth: '12ch' }}
+        slotProps={{
+          htmlInput: { min: 1, max: 100 },
+          input: { endAdornment: <InputAdornment position="end">px</InputAdornment> },
+        }}
       />
     </div>
   );

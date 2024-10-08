@@ -13,7 +13,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
   return (
     <FormGroup sx={{ ml: '0.3em' }}>
       <ExpandableSwitch
-        label={'Ukryj niestandardowe składniki'}
+        label={'Ukryj zmniejszone i zwiększone składniki'}
         expansion={
           <>
             <b>
@@ -26,7 +26,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         description={
           showDescription ? (
             <>
-              Niestandardowe składniki to składniki zwiększone i zmniejszone. Np.{' '}
+              Składniki zwiększone i zmniejszone to składniki dodatkowo podwyższone/obniżone o pół tonu. Np.{' '}
               <b>
                 E<sup>4</sup>
               </b>{' '}
@@ -44,7 +44,56 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ hideUncommonAdditionals: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Ukryj trudniejsze składniki'}
+        expansion={
+          <>
+            <b>
+              a<sup>2</sup> d<sup>6</sup> E<sup>9</sup>
+            </b>
+            &nbsp;→&nbsp;
+            <b>a d E</b>
+          </>
+        }
+        description={
+          showDescription ? (
+            <>
+              Trudniejsze składniki to sekundy (2), seksty (6) i nony (9). Występują one rzadziej niż septymy (7) i
+              kwarty (4) i wymagają większej sprawności oraz znajomości akorordów, przez co mogą być nadmiarowe dla
+              początkujących instrumentalistów.
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.hideAdditionals269}
+        onChange={(value) => changeDifficulty({ hideAdditionals269: value })}
+      />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Ukryj kwarty'}
+        expansion={
+          <>
+            <b>
+              E<sup>4</sup>
+            </b>
+            &nbsp;→&nbsp;
+            <b>E</b>
+          </>
+        }
+        description={
+          showDescription ? (
+            <>
+              Kwarta jest dodatkowym składnikiem - 4 dźwiękiem licząc od podstawy akordu, np. dla akordu A-dur będzie to
+              dźwięk <b>D</b>. Przeważnie występuje jako opóźnienie tercji (czyli dźwięk <b>D</b> zamienia się na dźwięk{' '}
+              <b>Cis</b>). W przeciwieństwie do pozostałych trudniejszych składników (2, 6, 9), kwarta jest często
+              prosta do zagrania i jednocześnie nierzadko bywa istotną modyfikacją akordu.
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.hideFourths}
+        onChange={(value) => changeDifficulty({ hideFourths: value })}
+      />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Augmentacje i diminucje w notacji gitarowej'}
         expansion={
           <>
@@ -75,7 +124,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ guitarIntervalModifications: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Rozdziel opóźnienia na osobne akordy'}
         expansion={
           <>
@@ -104,7 +153,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ splitSuspensions: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Ukryj puste kwinty i unison'}
         expansion={
           <>
@@ -136,8 +185,8 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ hideUnisonAndFifth: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
-        label={'Wyświetl max. 1 dodany składnik'}
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Wyświetl maksymalnie 1 dodany składnik'}
         expansion={
           <>
             <b>
@@ -169,7 +218,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ singleAdditional: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Akordy zmniejszone i zwiększone w notacji gitarowej'}
         expansion={
           <>
@@ -197,7 +246,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ guitarDiminishedChords: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Ukryj składniki w basie'}
         expansion={
           <>
@@ -225,7 +274,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ hideBase: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Ukryj dodany składnik zduplikowany w basie'}
         expansion={
           <>
@@ -255,7 +304,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ hideBaseAdditional: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Ukryj alternatywne akordy'}
         expansion={
           <>
@@ -283,7 +332,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         onChange={(value) => changeDifficulty({ hideAlternatives: value })}
       />
       <ExpandableSwitch
-        sx={{mt: showDescription ? '1em' : undefined}}
+        sx={{ mt: showDescription ? '1em' : undefined }}
         label={'Bemole i krzyżyki jako znaki'}
         expansion={
           <>

@@ -27,6 +27,8 @@ export const easy: IChordDifficulty = {
   hideBaseAdditional: true,
   hideAlternatives: true,
   signAccidentals: false,
+  hideAdditionals269: true,
+  hideFourths: true,
 };
 
 export const semi: IChordDifficulty = {
@@ -40,6 +42,8 @@ export const semi: IChordDifficulty = {
   hideBaseAdditional: true,
   hideAlternatives: true,
   signAccidentals: false,
+  hideAdditionals269: false,
+  hideFourths: false,
 };
 
 export const hard: IChordDifficulty = {
@@ -53,6 +57,8 @@ export const hard: IChordDifficulty = {
   hideBaseAdditional: true,
   hideAlternatives: false,
   signAccidentals: false,
+  hideAdditionals269: false,
+  hideFourths: false,
 };
 
 export const expert: IChordDifficulty = {
@@ -66,6 +72,8 @@ export const expert: IChordDifficulty = {
   hideBaseAdditional: true,
   hideAlternatives: false,
   signAccidentals: false,
+  hideAdditionals269: false,
+  hideFourths: false,
 };
 
 const getDifficultyMask = (difficulty: IChordDifficulty): number => {
@@ -79,7 +87,9 @@ const getDifficultyMask = (difficulty: IChordDifficulty): number => {
     ((difficulty.hideBase ? 1 : 0) << 6) |
     ((difficulty.hideBaseAdditional ? 1 : 0) << 7) |
     ((difficulty.hideAlternatives ? 1 : 0) << 8) |
-    ((difficulty.signAccidentals ? 1 : 0) << 9)
+    ((difficulty.signAccidentals ? 1 : 0) << 9) |
+    ((difficulty.hideAdditionals269 ? 1 : 0) << 10) |
+    ((difficulty.hideFourths ? 1 : 0) << 11)
   );
 };
 

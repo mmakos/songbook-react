@@ -18,10 +18,6 @@ export const keyAsString = (key: IKey): string => {
   return noteAsString(key.note, key.minor) + (key.minor ? '-moll' : '-dur');
 };
 
-export const chordNoteAsString = (chord: IChord, chordDifficulty?: IChordDifficulty): string => {
-  return noteAsString(chord.note, chord.minor, chordDifficulty);
-};
-
 export const chordBaseAsString = (chord: IChord, chordDifficulty?: IChordDifficulty): string[] | undefined => {
   if (chord.base) {
     return additionalSeriesAsString(chord.base, chordDifficulty, 'prime');
@@ -31,6 +27,13 @@ export const chordBaseAsString = (chord: IChord, chordDifficulty?: IChordDifficu
 export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChordDifficulty): string[] | undefined => {
   if (chord.additionals && chord.additionals.length > 0) {
     if (chordDifficulty?.singleAdditional || chord.additionals.length == 1) {
+      if (
+        chordDifficulty?.singleAdditional &&
+        chordDifficulty?.guitarDiminishedChords &&
+        chord.modification == ChordModification.DIM
+      ) {
+        return;
+      }
       const hide = chord.additionals[0].elements.length > 1 ? 'triad' : undefined;
       const lastAdditionals = chord.additionals[chord.additionals.length - 1];
       return additionalSeriesAsString(lastAdditionals, chordDifficulty, hide);
@@ -95,7 +98,7 @@ const accidentalAsString = (accidental: Accidental, noteBase: NoteBase, chordDif
   return '';
 };
 
-const noteAsString = (note: INote, minor?: boolean, chordDifficulty?: IChordDifficulty): string => {
+export const noteAsString = (note: INote, minor?: boolean, chordDifficulty?: IChordDifficulty): string => {
   const noteBase: NoteBase = note.base;
   const accidental = note.accidental;
   let chordNote: string;
@@ -142,6 +145,16 @@ const emptyIfTriadsInterval = (interval: string, hidableInterval: THidableInterv
   return interval;
 };
 
+const mapAdditionalElement = (element: IElement, difficulty?: IChordDifficulty): string | undefined => {
+  if (difficulty?.hideAdditionals269 && (element.interval === 2 || element.interval === 6 || element.interval === 9)) {
+    return;
+  }
+  if (difficulty?.hideFourths && element.interval === 4) return;
+  if (difficulty?.hideUncommonAdditionals && element.modification) return;
+
+  return elementAsString(element, difficulty);
+};
+
 const additionalSeriesAsString = (
   series: IAdditionalSeries,
   chordDifficulty?: IChordDifficulty,
@@ -149,9 +162,7 @@ const additionalSeriesAsString = (
 ): string[] | undefined => {
   if (series.elements.length > 0) {
     const seriesStrings: Array<string | undefined> = series.elements.map((element) =>
-      !element.modification || !chordDifficulty?.hideUncommonAdditionals
-        ? elementAsString(element, chordDifficulty)
-        : undefined
+      mapAdditionalElement(element, chordDifficulty)
     );
     if (seriesStrings.includes(undefined)) return undefined;
 
@@ -162,7 +173,7 @@ const additionalSeriesAsString = (
       result = result.map((value) => emptyIfTriadsInterval(value, hideInterval));
     }
     if (series.optional) {
-      result = result.map((s) => s !== '' ? '(' + s + ')' : s);
+      result = result.map((s) => (s !== '' ? '(' + s + ')' : s));
     }
 
     return result;
