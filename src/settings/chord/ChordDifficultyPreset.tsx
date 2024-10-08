@@ -1,6 +1,6 @@
 import StyledRating from '../../components/StyledRating.tsx';
 import { IChordDifficulty } from '../../store/songbook.reducer.ts';
-import { getDifficultyFromPreset, getDifficultyPreset } from '../../chords/chord-difficulty.tsx';
+import { getDifficultyFromPreset, getDifficultyPreset, TDifficultyPreset } from '../../chords/chord-difficulty.tsx';
 import { Typography } from '@mui/material';
 import {
   SentimentNeutral,
@@ -30,11 +30,12 @@ const chordDifficultyIcons: Record<number, { icon: ReactNode; label: string; des
     icon: <SentimentVerySatisfied color="success" fontSize="inherit" />,
     label: 'Muzyk zawodowy',
     description:
-      'Jego pojmowanie muzyki nie polega na znajomości wszystkich akordów, za to dogłębnie rozumie świat harmonii i jest zainteresowany jej wszystkimi elementami',
+      'Jego pojmowanie muzyki nie polega na znajomości wszystkich akordów, za to dogłębnie rozumie świat harmonii i jest zainteresowany wszystkimi jej elementami',
   },
 };
 
-const getPresetDescription = (preset?: number) => {
+const getPresetDescription = (setPreset: TDifficultyPreset, hoveredPreset: TDifficultyPreset) => {
+  const preset = hoveredPreset > 0 ? hoveredPreset : setPreset;
   return (
     chordDifficultyIcons[preset]?.description ??
     'Jego umiejętności są tajemnicą, jednak jest na tyle świadomym muzykiem, by samodzielne określić swoje możliwości'
@@ -56,10 +57,10 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
     return getDifficultyPreset(chordDifficulty);
   }, [chordDifficulty]);
 
-  const [hoverPreset, setHoverPreset] = useState(difficultyPreset as number | undefined);
+  const [hoverPreset, setHoverPreset] = useState(difficultyPreset);
 
   useEffect(() => {
-    setHoverPreset(difficultyPreset ?? undefined);
+    setHoverPreset(difficultyPreset);
   }, [difficultyPreset]);
 
   return (
@@ -70,7 +71,7 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
           max={4}
           highlightSelectedOnly
           value={difficultyPreset}
-          onChangeActive={(_, value) => setHoverPreset(value)}
+          onChangeActive={(_, value) => setHoverPreset(value as TDifficultyPreset)}
           onChange={(_, value) => value && changeDifficulty(getDifficultyFromPreset(value))}
           IconContainerComponent={(props) => (
             <span style={{ marginLeft: props.value > 1 ? '0.2em' : 0 }} {...props}>
@@ -84,7 +85,7 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
       </div>
       {showDescription && (
         <Typography variant="caption" fontStyle="italic" mt="0.5em">
-          {getPresetDescription(hoverPreset ?? difficultyPreset ?? undefined)}
+          {getPresetDescription(difficultyPreset, hoverPreset)}
         </Typography>
       )}
     </>

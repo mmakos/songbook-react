@@ -34,8 +34,16 @@ export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChord
       ) {
         return;
       }
-      const hide = chord.additionals[0].elements.length > 1 ? 'triad' : undefined;
       const lastAdditionals = chord.additionals[chord.additionals.length - 1];
+      if (
+        chordDifficulty?.hideUnisonAndFifth &&
+        lastAdditionals.elements.length === 1 &&
+        !lastAdditionals.elements[0].modification &&
+        (lastAdditionals.elements[0].interval === 1 || lastAdditionals.elements[0].interval === 5)
+      ) {
+        return;
+      }
+      const hide = chord.additionals[0].elements.length > 1 ? 'triad' : undefined;
       return additionalSeriesAsString(lastAdditionals, chordDifficulty, hide);
     }
     const additionalsStr: string[][] = chord.additionals.reduce((array, element) => {

@@ -1,12 +1,14 @@
 import { IChordDifficulty } from '../store/songbook.reducer.ts';
 
-export const getDifficultyPreset = (difficulty: IChordDifficulty): 1 | 2 | 3 | 4 | null => {
+export type TDifficultyPreset = -1 | 1 | 2 | 3 | 4;
+
+export const getDifficultyPreset = (difficulty: IChordDifficulty): TDifficultyPreset => {
   const difficultyMask = getDifficultyMask(difficulty);
   if (difficultyMask === expertMask) return 4;
   if (difficultyMask === hardMask) return 3;
   if (difficultyMask === semiMask) return 2;
   if (difficultyMask === easyMask) return 1;
-  return null;
+  return -1;
 };
 
 export const getDifficultyFromPreset = (difficulty: number): IChordDifficulty => {

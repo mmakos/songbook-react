@@ -44,6 +44,7 @@ const Chord: FC<IChordProps> = ({ chord }) => {
     chordDifficulty.singleAdditional,
     chordDifficulty.hideAdditionals269,
     chordDifficulty.hideFourths,
+    chordDifficulty.hideUnisonAndFifth,
     chord,
   ]);
 

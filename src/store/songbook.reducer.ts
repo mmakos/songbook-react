@@ -338,7 +338,7 @@ const songbookSlice = createSlice({
       state.songbookSettings.noChords = action.payload;
     },
     setGlobalChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
-      state.songbookSettings.chordDifficulty = action.payload;
+      state.songbookSettings.chordDifficulty = { ...state.songbookSettings.chordDifficulty, ...action.payload };
     },
   },
   extraReducers: (builder) => {
