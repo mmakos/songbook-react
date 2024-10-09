@@ -1,4 +1,4 @@
-import { Children, FC, Fragment } from 'react';
+import { FC, Fragment } from 'react';
 import { Button, Collapse, IconButton, Paper, Typography } from '@mui/material';
 import {
   Close,

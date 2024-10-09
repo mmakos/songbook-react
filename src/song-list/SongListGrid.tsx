@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Grid from '@mui/material/Grid2';
 import RouteLink from '../components/RouteLink.tsx';
 import { ISongOverview } from '../types/song.types.ts';

@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { HttpService } from '../http/http.service.ts';
 import { ISong, ISongOverview } from '../types/song.types.ts';

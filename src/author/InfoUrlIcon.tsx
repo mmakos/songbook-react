@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Instagram } from '@mui/icons-material';
 import Wikipedia from '../components/icon/Wikipedia.tsx';
 import { SvgIconProps } from '@mui/material';

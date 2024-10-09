@@ -4,15 +4,10 @@ import SongsMenu from './SongsMenu.tsx';
 import ExtrasMenu from './ExtrasMenu.tsx';
 import { Call, Home } from '@mui/icons-material';
 import Search from './Search.tsx';
-import ThemeSwitch from '../components/ThemeSwitch.tsx';
-import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { changeTheme } from '../store/songbook.reducer.ts';
 import { useNavigate } from 'react-router-dom';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 
 const MainMenu = () => {
-  const theme = useAppSelector((state) => state.theme);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   return (
@@ -26,10 +21,6 @@ const MainMenu = () => {
             <MainMenuButton name={'Kontakt'} icon={<Call />} />
           </Box>
           <Search />
-          <ThemeSwitch
-            checked={theme === 'dark'}
-            onChange={(_, value) => dispatch(changeTheme(value ? 'dark' : 'light'))}
-          />
           <IconButton onClick={() => navigate('settings/')} color="inherit">
             <SettingsIcon />
           </IconButton>

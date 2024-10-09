@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { getBand } from '../store/songbook.actions.ts';
 import { useParams } from 'react-router-dom';
 import { clearBand } from '../store/songbook.reducer.ts';

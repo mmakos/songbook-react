@@ -32,7 +32,7 @@ export const transposeNote = (note: INote, transposition: ITransposition): INote
   let transposedNoteIndex = (noteIndex + amount) % 12;
   if (transposedNoteIndex < 0) transposedNoteIndex += 12;
   let noteBase = notesByIndex[transposedNoteIndex];
-  let accidental: Accidental;
+  let accidental: Accidental | undefined;
   if (noteBase === undefined) {
     if (transposition.type === Accidental.FLAT) {
       noteBase = notesByIndex[(transposedNoteIndex + 1) % 12];

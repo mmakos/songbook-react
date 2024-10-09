@@ -1,4 +1,12 @@
-import { Divider, FormControlLabel, Switch, Typography } from '@mui/material';
+import {
+  Divider,
+  FormControlLabel,
+  PaletteMode,
+  Switch,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import FontChooser from '../../components/font/FontChooser.tsx';
 import FontStyle from '../../components/font/FontStyle.tsx';
 import FontSpacing from '../../components/font/FontSpacing.tsx';
@@ -7,6 +15,7 @@ import {
   setSongThemeCustomFont,
   setSongThemeCustomSpacing,
   setSongThemeFont,
+  setSongThemeMode,
   setSongThemeRepetitionFontStyle,
   setSongThemeSpacing,
   setSongThemeText1FontStyle,
@@ -14,6 +23,7 @@ import {
   setSongThemeText3FontStyle,
   setSongThemeTextFontStyle,
 } from '../../store/songbook.reducer.ts';
+import { DarkModeOutlined, LightMode, SettingsBrightness } from '@mui/icons-material';
 
 const SongTheme = () => {
   const {
@@ -22,18 +32,47 @@ const SongTheme = () => {
     fontStyles: { text, text1, text2, text3, repetition },
     spacing,
     customSpacing,
+    mode,
   } = useAppSelector((state) => state.songbookSettings.songTheme);
   const dispatch = useAppDispatch();
+
+  const changeSongThemeMode = (value: string) => {
+    let palette: PaletteMode | undefined;
+    if (value === 'dark') palette = 'dark';
+    if (value === 'light') palette = 'light';
+    dispatch(setSongThemeMode(palette));
+  };
 
   return (
     <div style={{ marginBottom: '2em' }}>
       <Typography variant="h4">Wyświetlanie piosenki</Typography>
       <Divider variant="fullWidth" sx={{ mt: '0.5em', mb: '1em' }} />
+      <Typography mb="0.5em">Motyw piosenki</Typography>
+      <ToggleButtonGroup
+        exclusive
+        fullWidth
+        sx={{ maxWidth: '40ch' }}
+        value={mode ?? 'app'}
+        onChange={(_, value) => changeSongThemeMode(value)}
+      >
+        <ToggleButton value="light">
+          <DarkModeOutlined sx={{ mr: '0.3em' }} />
+          Jasny
+        </ToggleButton>
+        <ToggleButton value="app">
+          <SettingsBrightness sx={{ mr: '0.3em' }} />
+          Aplikacji
+        </ToggleButton>
+        <ToggleButton value="dark">
+          <LightMode sx={{ mr: '0.3em' }} />
+          Ciemny
+        </ToggleButton>
+      </ToggleButtonGroup>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <FormControlLabel
           control={<Switch checked={!!customFont} onChange={(_, value) => dispatch(setSongThemeCustomFont(value))} />}
           label={'Własna czcionka'}
-          sx={{ mb: '0.5em' }}
+          sx={{ mb: '0.5em', mt: '1em' }}
         />
         <FontChooser
           value={font}

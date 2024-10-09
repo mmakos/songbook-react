@@ -7,7 +7,9 @@ import {
   getBandImageUrl,
   getPerson,
   getPersonImageUrl,
-  getSong, getSource, getSourceImageUrl,
+  getSong,
+  getSource,
+  getSourceImageUrl,
 } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
@@ -145,7 +147,7 @@ export interface ISongbookState {
    * Ustawienia śpiewnika (wszystko co jest w oknie ustawień)
    */
   songbookSettings: ISongbookSettings;
-  theme: PaletteMode;
+  theme?: PaletteMode;
 }
 
 let initialSongSettings: ISongSettings = {
@@ -200,7 +202,6 @@ export const initialSongbookState: ISongbookState = {
       },
     },
   },
-  theme: 'dark',
 };
 
 const songbookSlice = createSlice({
@@ -291,13 +292,16 @@ const songbookSlice = createSlice({
       localStorage.setItem('songSettings', JSON.stringify(state.songbookSettings));
       state.notification = { open: true, message: 'Zaktualizowano globalne ustawienia', severity: 'success' };
     },
-    changeTheme: (state: ISongbookState, action: PayloadAction<PaletteMode>) => {
+    changeTheme: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
       state.theme = action.payload;
     },
     setAutocompleteLoad: (state: ISongbookState) => {
       state.searchState.autocompleteLoad = true;
     },
 
+    setSongThemeMode: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
+      state.songbookSettings.songTheme.mode = action.payload;
+    },
     setSongThemeFont: (state: ISongbookState, action: PayloadAction<IFont>) => {
       state.songbookSettings.songTheme.font = action.payload;
     },
@@ -353,22 +357,22 @@ const songbookSlice = createSlice({
       state.searchState.autocompleteLoad = false;
     });
     builder.addCase(getPerson.fulfilled, (state: ISongbookState, action) => {
-      state.person = {...state.person, ...(action.payload as IPersonState)};
+      state.person = { ...state.person, ...(action.payload as IPersonState) };
     });
     builder.addCase(getPersonImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.person = {...state.person, imageUrl: action.payload as string};
+      state.person = { ...state.person, imageUrl: action.payload as string };
     });
     builder.addCase(getBand.fulfilled, (state: ISongbookState, action) => {
-      state.band = {...state.band, ...(action.payload as IBandState)};
+      state.band = { ...state.band, ...(action.payload as IBandState) };
     });
     builder.addCase(getBandImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.band = {...state.band, imageUrl: action.payload as string};
+      state.band = { ...state.band, imageUrl: action.payload as string };
     });
     builder.addCase(getSource.fulfilled, (state: ISongbookState, action) => {
-      state.source = {...state.source, ...(action.payload as ISourceState)};
+      state.source = { ...state.source, ...(action.payload as ISourceState) };
     });
     builder.addCase(getSourceImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.source = {...state.source, imageUrl: action.payload as string};
+      state.source = { ...state.source, imageUrl: action.payload as string };
     });
   },
 });
@@ -394,6 +398,7 @@ export const {
   updateGlobalSettingsWithSongSettings,
   changeTheme,
   setAutocompleteLoad,
+  setSongThemeMode,
   setSongThemeFont,
   setSongThemeCustomFont,
   setSongThemeSpacing,

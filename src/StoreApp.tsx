@@ -1,22 +1,41 @@
-import { CssBaseline, Divider, ThemeProvider } from '@mui/material';
+import { CssBaseline, Divider, Theme, ThemeProvider, useMediaQuery } from '@mui/material';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainMenu from './main-menu/MainMenu.tsx';
-import SongList from './song-list/SongList.tsx';
-import Song from './song/Song.tsx';
 import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
+import { lazy, useMemo } from 'react';
+import NotFound from './subsites/NotFound.tsx';
+
+import SongList from './song-list/SongList.tsx';
+import Song from './song/Song.tsx';
 import Settings from './settings/Settings.tsx';
 import Person from './author/Person.tsx';
 import Band from './author/Band.tsx';
 import Source from './author/Source.tsx';
 
+// const SongList = lazy(() => import('./song-list/SongList.tsx'));
+// const Song = lazy(() => import('./song/Song.tsx'));
+// const Settings = lazy(() => import('./settings/Settings.tsx'));
+// const Person = lazy(() => import('./author/Person.tsx'));
+// const Band = lazy(() => import('./author/Band.tsx'));
+// const Source = lazy(() => import('./author/Source.tsx'));
+
 const StoreApp = () => {
-  const theme = useAppSelector((state) => state.theme);
+  const preferredTheme = useAppSelector((state) => state.theme);
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme: Theme = useMemo(() => {
+    if (preferredTheme) {
+      return preferredTheme === 'dark' ? darkTheme : lightTheme;
+    } else {
+      return prefersDarkMode ? darkTheme : lightTheme;
+    }
+  }, [preferredTheme, prefersDarkMode]);
 
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <Notification />
       <BrowserRouter>
@@ -31,6 +50,7 @@ const StoreApp = () => {
                 <Route path="/person/:personSlug" element={<Person />} />
                 <Route path="/band/:bandSlug" element={<Band />} />
                 <Route path="/source/:sourceSlug" element={<Source />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </div>

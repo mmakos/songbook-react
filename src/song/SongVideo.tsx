@@ -40,7 +40,7 @@ const SongVideo: FC = () => {
                 src={`https://www.youtube.com/embed/${ytId}`}
                 title={'Nagranie piosenki ' + song.title}
                 allowFullScreen
-                style={{ marginBottom: i < song.ytVideo?.length - 1 ? '1em' : undefined, border: 0 }}
+                style={{ marginBottom: song.ytVideo && i < song.ytVideo.length - 1 ? '1em' : undefined, border: 0 }}
               />
             ))}
           </div>
