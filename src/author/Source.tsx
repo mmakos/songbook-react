@@ -55,6 +55,8 @@ const Source = () => {
               </Link>
             </div>
             {source.imageUrl && (
+              <>
+              <Divider sx={{my: '0.5em'}}/>
               <a href={source.imageUrl} target="_blank" rel="noopener">
                 <img
                   src={source.imageUrl}
@@ -63,11 +65,11 @@ const Source = () => {
                     borderRadius: theme.shape.borderRadius,
                     border: 'solid',
                     borderColor: theme.palette.divider,
-                    marginTop: '0.5em',
                   }}
                   alt={source.source.name}
                 />
               </a>
+              </>
             )}
           </Paper>
         )}

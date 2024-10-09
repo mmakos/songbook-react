@@ -46,7 +46,7 @@ const Song: FC = () => {
   };
 
   return (
-    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+    <div style={{ position: 'relative', alignItems: 'center', maxWidth: '100%', padding: '0 1em' }}>
       {song?.previous && (
         <BasicTooltip title={`Poprzednia piosenka: ${song.previous.title}`}>
           <IconButton sx={{ position: 'fixed', top: '50%', left: '0.5em' }} onClick={previousSong}>

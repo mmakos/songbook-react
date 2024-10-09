@@ -42,26 +42,28 @@ const Band = () => {
         </Typography>
         {band.band.url && (
           <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
-            <div style={{display: 'flex'}}>
-            <InfoUrlIcon url={band.band.url} sx={{ mr: '0.3em' }} />
-            <Link href={band.band.url} color="inherit" underline="hover" target="_blank" rel="noopener">
-              Więcej informacje o zespole
-            </Link>
+            <div style={{ display: 'flex' }}>
+              <InfoUrlIcon url={band.band.url} sx={{ mr: '0.3em' }} />
+              <Link href={band.band.url} color="inherit" underline="hover" target="_blank" rel="noopener">
+                Więcej informacje o zespole
+              </Link>
             </div>
             {band.imageUrl && (
-              <a href={band.imageUrl} target="_blank" rel="noopener">
-                <img
-                  src={band.imageUrl}
-                  style={{
-                    height: '240px',
-                    borderRadius: theme.shape.borderRadius,
-                    border: 'solid',
-                    borderColor: theme.palette.divider,
-                    marginTop: '0.5em'
-                  }}
-                  alt={band.band.name}
-                />
-              </a>
+              <>
+                <Divider sx={{ my: '0.5em' }} />
+                <a href={band.imageUrl} target="_blank" rel="noopener">
+                  <img
+                    src={band.imageUrl}
+                    style={{
+                      height: '240px',
+                      borderRadius: theme.shape.borderRadius,
+                      border: 'solid',
+                      borderColor: theme.palette.divider,
+                    }}
+                    alt={band.band.name}
+                  />
+                </a>
+              </>
             )}
           </Paper>
         )}

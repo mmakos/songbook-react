@@ -1,9 +1,10 @@
 import SongText from './text/SongText.tsx';
-import { Collapse, Skeleton, Stack, useTheme } from '@mui/material';
+import { Box, Collapse, Skeleton, Stack, useTheme } from '@mui/material';
 import SongChords from './chord/SongChords.tsx';
 import { useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
 import SongRepetition from './repetition/SongRepetition.tsx';
+import ScalableBox from '../components/ScalableBox.tsx';
 
 const SongContent = () => {
   const song = useAppSelector((state) => state.song);
@@ -22,24 +23,25 @@ const SongContent = () => {
   const songTheme = mode && (mode === appThemeMode ? undefined : mode === 'light' ? lightTheme : darkTheme);
 
   return (
-    <div
-      style={{
-        padding: '1.5em 2em 1em 2em',
-        display: 'flex',
-        whiteSpace: 'nowrap',
-        color: songTheme?.palette.text.primary,
+    <Box
+      color={songTheme?.palette.text.primary}
+      lineHeight={customSpacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string)}
+      fontFamily={customFont ? font.fontFamily : theme.typography.fontFamily}
+      fontSize={customFont ? `${font.fontSize}px` : (theme.typography.body1.fontSize as string)}
+      fontWeight={text.bold ? 'bold' : 'normal'}
+      fontStyle={text.italic ? 'italic' : 'normal'}
+      borderRadius="4px 4px 0 0"
+      mx={{ xs: '1em', md: '2em' }}
+      pt={{ xs: '1em', md: '1.5em' }}
+      pb="0.5em"
+      sx={{
         background: songTheme?.palette.background.default,
-        lineHeight: customSpacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string),
-        fontFamily: customFont ? font.fontFamily : theme.typography.fontFamily,
-        fontSize: customFont ? `${font.fontSize}px` : (theme.typography.body1.fontSize as string),
-        fontWeight: text.bold ? 'bold' : 'normal',
-        fontStyle: text.italic ? 'italic' : 'normal',
         textDecoration: text.underline ? 'underline' : 'none',
-        borderRadius: '4px 4px 0 0',
       }}
+      overflow="auto hidden"
     >
       {song ? (
-        <>
+        <ScalableBox display="flex" whiteSpace="nowrap">
           <SongText song={song} />
           <SongRepetition song={song} />
           {!noChords && (
@@ -47,7 +49,7 @@ const SongContent = () => {
               <SongChords song={song} />
             </Collapse>
           )}
-        </>
+        </ScalableBox>
       ) : (
         <Stack spacing={1}>
           <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
@@ -58,7 +60,7 @@ const SongContent = () => {
           <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
         </Stack>
       )}
-    </div>
+    </Box>
   );
 };
 

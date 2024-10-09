@@ -1,25 +1,20 @@
-import { AppBar, Box, Container, IconButton, Toolbar } from '@mui/material';
-import MainMenuButton from '../components/MainMenuButton.tsx';
-import SongsMenu from './SongsMenu.tsx';
-import ExtrasMenu from './ExtrasMenu.tsx';
-import { Call, Home } from '@mui/icons-material';
+import { AppBar, Container, IconButton, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import Search from './Search.tsx';
 import { useNavigate } from 'react-router-dom';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
+import AppBarMenu from './AppBarMenu.tsx';
+import DrawerMenu from './DrawerMenu.tsx';
 
 const MainMenu = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const downMd = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <MainMenuButton name={'Strona główna'} icon={<Home />} routeTo="/" />
-            <SongsMenu />
-            <ExtrasMenu />
-            <MainMenuButton name={'Kontakt'} icon={<Call />} />
-          </Box>
+          {downMd ? <DrawerMenu /> : <AppBarMenu />}
           <Search />
           <IconButton onClick={() => navigate('settings/')} color="inherit">
             <SettingsIcon />

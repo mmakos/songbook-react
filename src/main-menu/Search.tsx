@@ -36,7 +36,7 @@ const Search = () => {
     const a = autocomplete ? [...autocomplete] : [];
     a.sort((a, b) => compareCategory(a.category, b.category));
     return a;
-  }, [autocomplete])
+  }, [autocomplete]);
 
   const handleSelection = (_: SyntheticEvent, selectedSong: ISongOverview | string | null) => {
     if (!selectedSong) return;
@@ -55,6 +55,7 @@ const Search = () => {
       blurOnSelect
       autoHighlight
       clearOnEscape
+      sx={{ width: { xs: '100%', md: 'auto' }, mr: { xs: '2em', sm: '0' } }}
       value={''}
       inputValue={query}
       options={query?.length >= 3 ? sortedAutocomplete : []}

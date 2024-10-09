@@ -22,31 +22,34 @@ const SongVideo: FC = () => {
 
   const handleCollapse = () => {
     setCollapsed(true);
-  }
+  };
 
   return (
     <Collapse in={open && !!song?.ytVideo} collapsedSize={0} onExited={handleCollapse}>
       {(open || !collapsed) && song?.ytVideo && (
         <Paper sx={{ position: 'relative', mb: '0.5em', padding: '1em 1em' }}>
-          <div data-video={song.ytVideo[0]} data-autoplay="0" data-loop="1" id="youtube-audio"></div>
-          <script src="https://www.youtube.com/iframe_api"></script>
-          <script src="https://cdn.rawgit.com/labnol/files/master/yt.js"></script>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '1.5em' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {song.ytVideo.map((ytId, i) => (
               <iframe
                 key={ytId}
-                width={560}
-                height={315}
+                width="100%"
                 src={`https://www.youtube.com/embed/${ytId}`}
                 title={'Nagranie piosenki ' + song.title}
                 allowFullScreen
-                style={{ marginBottom: song.ytVideo && i < song.ytVideo.length - 1 ? '1em' : undefined, border: 0 }}
+                style={{
+                  marginBottom: song.ytVideo && i < song.ytVideo.length - 1 ? '1em' : undefined,
+                  border: 0,
+                  maxWidth: '500px',
+                  aspectRatio: '16 / 9',
+                }}
               />
             ))}
           </div>
-          <IconButton sx={{ position: 'absolute', top: '0.2em', right: '0.2em' }} size="small" onClick={close}>
-            <Close />
-          </IconButton>
+          <div style={{ position: 'absolute', top: 0, right: 0, padding: '0.2em', background: 'inherit', borderRadius: '50%' }}>
+            <IconButton size="small" onClick={close}>
+              <Close />
+            </IconButton>
+          </div>
         </Paper>
       )}
     </Collapse>

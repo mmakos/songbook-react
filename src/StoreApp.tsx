@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainMenu from './main-menu/MainMenu.tsx';
 import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
-import { lazy, useMemo } from 'react';
+import { useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
 
 import SongList from './song-list/SongList.tsx';

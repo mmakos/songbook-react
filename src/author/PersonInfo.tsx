@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { Divider, Link, Paper, Typography, useTheme } from '@mui/material';
+import { Divider, Link, Paper, useTheme } from '@mui/material';
 import { IPerson } from '../types/song.types.ts';
-import Grid from '@mui/material/Grid2';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import { personAsString } from './person.utils.ts';
+import PersonNames from './PersonNames.tsx';
 
 interface IPersonInfoProps {
   person: IPerson;
@@ -12,39 +12,13 @@ interface IPersonInfoProps {
 
 const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
   const theme = useTheme();
-  const stageName = person.nickname && (person.forceNickname || person.nickname.includes(' '));
 
   return (
     <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em' }}>
-      <div style={{ display: 'flex' }}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 6 }}>
-            <Typography lineHeight={1.75} fontWeight="bold">
-              Imię
-            </Typography>
-            {person.secondName && (
-              <Typography lineHeight={1.75} fontWeight="bold">
-                Drugie imię
-              </Typography>
-            )}
-            <Typography lineHeight={1.75} fontWeight="bold">
-              Nazwisko
-            </Typography>
-            {!stageName && person.nickname && (
-              <Typography lineHeight={1.75} fontWeight="bold">
-                Pseudonim
-              </Typography>
-            )}
-          </Grid>
-          <Grid size={{ xs: 6 }}>
-            <Typography lineHeight={1.75}>{person.name}</Typography>
-            {person.secondName && <Typography lineHeight={1.75}>{person.secondName}</Typography>}
-            <Typography lineHeight={1.75}>{person.lastName}</Typography>
-            {!stageName && person.nickname && <Typography lineHeight={1.75}>{person.nickname}</Typography>}
-          </Grid>
-        </Grid>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: "wrap", gap: "1em" }}>
+        <PersonNames person={person} />
         {imageUrl && (
-          <a href={imageUrl} style={{ marginLeft: 'auto' }} target="_blank" rel="noopener">
+          <a href={imageUrl} target="_blank" rel="noopener">
             <img
               src={imageUrl}
               style={{
