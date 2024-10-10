@@ -1,43 +1,62 @@
-import { FC, Touch, TouchEvent, TouchList, useState } from 'react';
-import { Box, BoxProps } from '@mui/material';
+import { FC, RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { Box, BoxProps, useTheme } from '@mui/material';
+import { ISong } from '../types/song.types.ts';
 
-const ScalableBox: FC<Omit<BoxProps, 'style'>> = (props) => {
-  const [scale, setScale] = useState(1);
-  const [initialDistance, setInitialDistance] = useState(0);
+const ScalableBox: FC<Omit<BoxProps, 'style'> & { outerBoxRef: RefObject<HTMLDivElement | null>; song: ISong }> = ({
+  outerBoxRef,
+  song,
+  ...props
+}) => {
+  const theme = useTheme();
+  const [scaled, setScaled] = useState(false);
+  const innerBoxRef = useRef<HTMLDivElement | null>(null);
+  const tapTimeoutRef = useRef<number | null>(null);
 
-  const getPinchDistance = (touches: TouchList) => {
-    const [touch1, touch2] = touches as unknown as Touch[];
-    const dx = touch2.pageX - touch1.pageX;
-    const dy = touch2.pageY - touch1.pageY;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
+  useEffect(() => {
+    setScaled(false);
+  }, [song]);
 
-  const handleTouchStart = (e: TouchEvent) => {
-    if (e.touches.length === 2) {
-      const distance = getPinchDistance(e.touches);
-      setInitialDistance(distance);
+  const [scale, height] = useMemo(() => {
+    if (!innerBoxRef.current || !outerBoxRef.current) return [1, undefined];
+
+    const outerBox = outerBoxRef.current!;
+    const innerBox = innerBoxRef.current!;
+
+    if (scaled) {
+      const scale = outerBox.clientWidth / innerBox.scrollWidth;
+      if (scale === 1) return [1, undefined];
+      return [scale, outerBox.clientHeight * scale];
     }
-  };
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (e.touches.length === 2) {
-      const newDistance = getPinchDistance(e.touches);
-      const newScale = newDistance / initialDistance;
-      setScale(Math.max(0.5, Math.min(newScale, 3)));
-      e.preventDefault();
+    return [1, undefined];
+  }, [scaled, outerBoxRef, outerBoxRef.current?.clientWidth]);
+
+  const handleTouchStart = () => {
+    const current = tapTimeoutRef.current;
+    if (current) {
+      clearTimeout(current);
+      tapTimeoutRef.current = null;
+      setScaled(true);
+    } else {
+      tapTimeoutRef.current = setTimeout(() => {
+        tapTimeoutRef.current = null;
+      }, 300);
     }
   };
 
   return (
     <Box
       {...props}
+      ref={innerBoxRef}
       style={{
+        height: height,
         transform: `scale(${scale})`,
-        transformOrigin: '0 0',
+        transition: theme.transitions.create(['height', 'transform']),
+        transformOrigin: 'top left',
         WebkitOverflowScrolling: 'touch',
       }}
+      onDoubleClick={() => setScaled(!scaled)}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
     />
   );
 };

@@ -5,6 +5,7 @@ import { useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
 import SongRepetition from './repetition/SongRepetition.tsx';
 import ScalableBox from '../components/ScalableBox.tsx';
+import { useRef } from 'react';
 
 const SongContent = () => {
   const song = useAppSelector((state) => state.song);
@@ -21,9 +22,11 @@ const SongContent = () => {
     fontStyles: { text },
   } = useAppSelector((state) => state.songbookSettings.songTheme);
   const songTheme = mode && (mode === appThemeMode ? undefined : mode === 'light' ? lightTheme : darkTheme);
+  const outerBoxRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <Box
+      ref={outerBoxRef}
       color={songTheme?.palette.text.primary}
       lineHeight={customSpacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string)}
       fontFamily={customFont ? font.fontFamily : theme.typography.fontFamily}
@@ -38,10 +41,10 @@ const SongContent = () => {
         background: songTheme?.palette.background.default,
         textDecoration: text.underline ? 'underline' : 'none',
       }}
-      overflow="auto hidden"
+      overflow="auto"
     >
       {song ? (
-        <ScalableBox display="flex" whiteSpace="nowrap">
+        <ScalableBox display="flex" whiteSpace="nowrap" outerBoxRef={outerBoxRef} song={song}>
           <SongText song={song} />
           <SongRepetition song={song} />
           {!noChords && (
