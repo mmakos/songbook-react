@@ -21,16 +21,14 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({ label, expansion, descri
         onMouseLeave={() => expansion && setExpanded(false)}
         control={<Switch checked={checked} onChange={(_, value) => onChange(value)} />}
         label={
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <>
             {label}
-            {expansion ? (
-              <Fade in={expanded}>
-                <div style={{ marginLeft: '0.5em' }}>{expansion}</div>
+            {expansion && (
+              <Fade in={expanded} unmountOnExit>
+                <span style={{ marginLeft: '0.5em' }}>{expansion}</span>
               </Fade>
-            ) : (
-              <div style={{ marginLeft: '0.5em' }}>{expansion}</div>
             )}
-          </div>
+          </>
         }
       />
       {description && (
