@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { Button, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LowercaseButton from '../../components/LowercaseButton.tsx';
 

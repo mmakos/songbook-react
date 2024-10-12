@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useState } from 'react';
-import { Button, Menu, Typography } from '@mui/material';
+import { Menu, Typography } from '@mui/material';
 import { IMainMenuGroupProps } from './MainMenuGroup.tsx';
 import LowercaseButton from '../../components/LowercaseButton.tsx';
 
