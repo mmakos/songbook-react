@@ -1,30 +1,65 @@
-import { CssBaseline, Divider, ThemeProvider } from '@mui/material';
+import { CssBaseline, Divider, Theme, useMediaQuery } from '@mui/material';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainMenu from './main-menu/MainMenu.tsx';
-import SongList from './song-list/SongList.tsx';
-import Song from './song/Song.tsx';
 import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
+import { useMemo } from 'react';
+import NotFound from './subsites/NotFound.tsx';
+
+import SongList from './song-list/SongList.tsx';
+import Song from './song/Song.tsx';
+import Settings from './settings/Settings.tsx';
+import Person from './author/Person.tsx';
+import Band from './author/Band.tsx';
+import Source from './author/Source.tsx';
+
+// const SongList = lazy(() => import('./song-list/SongList.tsx'));
+// const Song = lazy(() => import('./song/Song.tsx'));
+// const Settings = lazy(() => import('./settings/Settings.tsx'));
+// const Person = lazy(() => import('./author/Person.tsx'));
+// const Band = lazy(() => import('./author/Band.tsx'));
+// const Source = lazy(() => import('./author/Source.tsx'));
 
 const StoreApp = () => {
-  const theme = useAppSelector((state) => state.theme);
+  const preferredTheme = useAppSelector((state) => state.theme);
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme: Theme = useMemo(() => {
+    if (preferredTheme) {
+      return preferredTheme === 'dark' ? darkTheme : lightTheme;
+    } else {
+      return prefersDarkMode ? darkTheme : lightTheme;
+    }
+  }, [preferredTheme, prefersDarkMode]);
 
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <Notification />
       <BrowserRouter>
-        <MainMenu />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Routes>
-            <Route path="/songs" element={<SongList />} />
-            <Route path="/songs/:songId" element={<Song />} />
-          </Routes>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <MainMenu />
+          <div style={{ flexGrow: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Routes>
+                <Route path="/songs/:category?" element={<SongList />} />
+                <Route path="/song/:songSlug" element={<Song />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/person/:personSlug" element={<Person />} />
+                <Route path="/band/:bandSlug" element={<Band />} />
+                <Route path="/source/:sourceSlug" element={<Source />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </div>
+          <footer>
+            <Divider sx={{ mt: '0.5em' }} />
+            <CopyrightInfo />
+          </footer>
         </div>
-        <Divider sx={{ mt: '0.5em' }} />
-        <CopyrightInfo />
       </BrowserRouter>
     </ThemeProvider>
   );

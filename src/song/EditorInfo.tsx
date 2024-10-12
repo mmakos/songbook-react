@@ -3,8 +3,7 @@ import { Typography } from '@mui/material';
 import { FC } from 'react';
 import { IEditorInfo } from '../types/song.types.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import { isBoss } from '../user/user.utils.ts';
-import VerifiedUser from '../user/VerifiedUser.tsx';
+import UserIcon from '../user/VerifiedUser.tsx';
 
 interface IEditorInfoProps {
   prefix: string;
@@ -20,9 +19,7 @@ const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
         </BasicTooltip>
       )}
       {prefix} {new Date(editorInfo.time * 1000).toLocaleDateString()} przez&nbsp;
-      {editorInfo.userVerified && (
-        <VerifiedUser userId={editorInfo.name} color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
-      )}
+      <UserIcon userType={editorInfo.type} color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
       {editorInfo.name}
     </Typography>
   );

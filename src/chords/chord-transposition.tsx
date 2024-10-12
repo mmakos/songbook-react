@@ -19,18 +19,34 @@ export const transposeKey = (key: IKey, transposition: ITransposition): IKey => 
     };
   }
   return {
-    note: (transposition.type ?? transposedNote.default) == Accidental.FLAT ? transposedNote.flat : transposedNote.sharp,
+    note:
+      (transposition.type ?? transposedNote.default) == Accidental.FLAT ? transposedNote.flat : transposedNote.sharp,
     minor: key.minor,
   };
 };
 
 export const transposeNote = (note: INote, transposition: ITransposition): INote => {
   if (transposition.amount === 0) return note;
-  let amount = transposition.amount % 12;
-  if (amount < 0) amount += 12;
+  const amount = transposition.amount % 12;
   const noteIndex = getNoteIndex(note);
-
-}
+  let transposedNoteIndex = (noteIndex + amount) % 12;
+  if (transposedNoteIndex < 0) transposedNoteIndex += 12;
+  let noteBase = notesByIndex[transposedNoteIndex];
+  let accidental: Accidental | undefined;
+  if (noteBase === undefined) {
+    if (transposition.type === Accidental.FLAT) {
+      noteBase = notesByIndex[(transposedNoteIndex + 1) % 12];
+      accidental = Accidental.FLAT;
+    } else {
+      noteBase = notesByIndex[(transposedNoteIndex + 11) % 12];
+      accidental = Accidental.SHARP;
+    }
+  }
+  return {
+    base: noteBase,
+    accidental: accidental,
+  };
+};
 
 export const getNoteIndex = (note: INote): number => {
   const baseNoteIndex = noteIndexes[note.base];
@@ -52,6 +68,16 @@ const noteIndexes: { [key in NoteBase]: number } = {
   [NoteBase.G]: 7,
   [NoteBase.A]: 9,
   [NoteBase.H]: 11,
+};
+
+const notesByIndex: { [key: number]: NoteBase } = {
+  0: NoteBase.C,
+  2: NoteBase.D,
+  4: NoteBase.E,
+  5: NoteBase.F,
+  7: NoteBase.G,
+  9: NoteBase.A,
+  11: NoteBase.H,
 };
 
 interface INoteAlternatives {

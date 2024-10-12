@@ -1,22 +1,19 @@
 import { styled, TextField } from '@mui/material';
 
-export const SearchField = styled(TextField)(({ theme }) => ({
-  transition: theme.transitions.create('width'),
-  margin: '0 1em',
-  width: '20ch',
-  '&:focus-within': {
-    width: '30ch',
+export const SearchField = styled(TextField)<{ constWidth?: boolean }>(({ theme, constWidth }) => ({
+  [theme.breakpoints.up('sm')]: {
+    transition: theme.transitions.create('width'),
+    width: !constWidth ? '20ch' : undefined,
+    '&:focus-within': !constWidth
+      ? {
+          width: '30ch',
+        }
+      : {},
   },
+  margin: '0 1em',
   '& .MuiInputBase-root': {
     borderRadius: theme.shape.borderRadius,
   },
-  // transition: theme.transitions.create('width'),
-  // width: '12ch',
-  // '&:focus': {
-  //   width: '20ch',
-  // },
-  // [theme.breakpoints.up('sm')]: {
-  // },
   '& .MuiInputBase-root::after': {
     border: 'none',
   },

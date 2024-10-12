@@ -1,51 +1,82 @@
-export type TCategory = 'kaczmarski' | 'common' | 'patriotic' | 'religious' | 'carols' | string;
-
-export interface ISongOverview {
-  id: string;
-  title: string;
+export enum Category {
+  KACZMARSKI = 'kaczmarski',
+  OTHER = 'other',
+  PATRIOTIC = 'patriotic',
+  RELIGIOUS = 'religious',
+  CAROLS = 'carols',
 }
 
-export interface ICategorizedSongOverview extends ISongOverview {
-  category: ICategory;
+export enum UserType {
+  OWNER = 'owner',
+  BOT = 'bot',
+  VERIFIED = 'verified',
+  NORMAL = 'user',
+}
+
+export enum SourceType {
+  MOVIE = 'movie',
+  MUSICAL = 'musical',
+  SOUNDTRACK = 'soundtrack',
+  PLAY = 'play',
+  GAME = 'game',
+}
+
+export interface ISongOverview {
+  slug: string;
+  title: string;
+  category: Category;
 }
 
 export interface ISong {
-  id: number;
+  slug: string;
   title: string;
-  category: ICategory;
+  category: Category;
   created: IEditorInfo;
   edited?: IEditorInfo;
-  lyrics?: IAuthor[];
-  composer?: IAuthor[];
-  translation?: IAuthor[];
-  performers?: IAuthor[];
-  performances?: IPerformance[];
+  lyrics?: IPerson[];
+  composer?: IPerson[];
+  translation?: IPerson[];
+  performer?: IPerson[];
+  source?: ISource[];
+  band?: IBand;
+  ytVideo?: string[];
 
-  key: ISongKey;
+  key?: ISongKey;
   verses: IVerse[];
 
   next?: ISongOverview;
   previous?: ISongOverview;
 }
 
-export interface IAuthor {
-  id: string;
+export interface IPerson {
+  slug: string;
   name: string;
-  lastName?: string;
+  secondName?: string;
+  lastName: string;
+  nickname?: string;
+  url?: string;
+  forceNickname?: boolean;
+  forceSecondName?: boolean;
 }
 
-export interface IPerformance {
+export interface IBand {
+  slug: string;
+  name: string;
   url: string;
 }
 
-export interface ICategory {
-  id: TCategory;
+export interface ISource {
+  slug: string;
   name: string;
+  url?: string;
+  year?: number;
+  type: SourceType;
+
 }
 
 export interface IEditorInfo {
   name: string;
-  userVerified?: boolean;
+  type: UserType;
   verified?: boolean;
   time: number;
 }
@@ -198,9 +229,13 @@ export interface ISongKey {
    */
   original?: IKey;
   /**
-   * Tonacja komfortowa do śpiewania (lub zakres tonacji)
+   * Tonacja komfortowa do śpiewania (jeżeli jest maksymalna, to ta oznacza minimalną)
    */
-  comfort?: IKey[];
+  comfort?: IKey;
+  /**
+   * Maksymalna tonacja komfortowa do śpiewania
+   */
+  maxComfort?: IKey;
 }
 
 /**
@@ -230,6 +265,10 @@ export interface INote {
  */
 export interface IAdditionalSeries {
   elements: IElement[];
+  /**
+   * Opcjonalny element (w nawiasach)
+   */
+  optional?: boolean;
 }
 
 /**
@@ -244,10 +283,6 @@ export interface IElement {
    * Modyfikacja składnika (wielka/zwiększona, mała/zmniejszona)
    */
   modification?: IntervalModification;
-  /**
-   * Opcjonalny element (w nawiasach)
-   */
-  optional?: boolean;
 }
 
 export enum NoteBase {

@@ -1,0 +1,81 @@
+import MainMenuGroup from './group/MainMenuGroup.tsx';
+import { FC, useState } from 'react';
+import MainMenuItem, { TMenuType } from './item/MainMenuItem.tsx';
+import { Call, EmojiEmotions, Home, MusicNote } from '@mui/icons-material';
+import MainMenuSubItem from './item/MainMenuSubItem.tsx';
+import { Divider } from '@mui/material';
+import { Category } from '../types/song.types.ts';
+import { getCategoryDisplayName } from '../category/category.utils.ts';
+import CategoryIcon from '../category/CategoryIcon.tsx';
+
+interface IMainMenuTabsProps {
+  type: TMenuType;
+  close: () => void;
+}
+
+const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
+  const [songsExpanded, setSongsExpanded] = useState(false);
+  const [extrasExpanded, setExtrasExpanded] = useState(false);
+
+  const handleSongsClose = () => {
+    close();
+    setSongsExpanded(false);
+  };
+
+  const handleExtrasClose = () => {
+    close();
+    setSongsExpanded(false);
+  };
+
+  return (
+    <>
+      <MainMenuItem type={type} routeTo="/" text={'Strona główna'} icon={<Home />} close={close} />
+      <MainMenuGroup
+        type={type}
+        text="Piosenki"
+        icon={<MusicNote />}
+        expanded={songsExpanded}
+        setExpanded={setSongsExpanded}
+      >
+        <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
+        <Divider variant="middle"/>
+        {Object.values(Category).map((category: Category) => (
+          <MainMenuSubItem
+            type={type}
+            key={category}
+            text={getCategoryDisplayName(category)}
+            routeTo={`/songs/${category}`}
+            close={handleSongsClose}
+            icon={<CategoryIcon category={category} />}
+          />
+        ))}
+      </MainMenuGroup>
+      <MainMenuGroup
+        type={type}
+        text="Dodatki"
+        icon={<EmojiEmotions />}
+        expanded={extrasExpanded}
+        setExpanded={setExtrasExpanded}
+      >
+        <MainMenuSubItem type={type} text="Jak korzystać" routeTo="/extras/usage" close={handleExtrasClose} />
+        <MainMenuSubItem
+          type={type}
+          text="Nuty"
+          href="https://mmakos.pl/music/my-arrangements"
+          close={handleExtrasClose}
+        />
+        <MainMenuSubItem type={type} text="Tabulatury" routeTo="/extras/tabs" close={handleExtrasClose} />
+        <MainMenuSubItem type={type} text="Tłumaczenia" routeTo="/extras/translations" close={handleExtrasClose} />
+        <MainMenuSubItem
+          type={type}
+          text="Śpiewnik papierowy"
+          href="https://www.mmakos.pl/music/songbooks/my-songbook/"
+          close={handleExtrasClose}
+        />
+      </MainMenuGroup>
+      <MainMenuItem type={type} text={'Kontakt'} icon={<Call />} close={close} routeTo="/contact"/>
+    </>
+  );
+};
+
+export default MainMenuTabs;

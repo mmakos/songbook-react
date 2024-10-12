@@ -1,10 +1,11 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { ISong, IVerse } from '../../types/song.types.ts';
 import { Collapse, Fade, IconButton } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import VerseText from './VerseText.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
-import { setExpandVerses, setHoverExpandVerses } from '../../store/songbook.reducer.ts';
+import { initialSongbookState, setExpandVerses, setHoverExpandVerses } from '../../store/songbook.reducer.ts';
+import useLineHeight from '../../store/useLineHeight.hook.ts';
 
 interface ICollapsibleVerseTextProps {
   verse: IVerse;
@@ -13,18 +14,27 @@ interface ICollapsibleVerseTextProps {
 
 const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) => {
   const { expandVerses, hoverExpandVerses } = useAppSelector((state) => state.songDisplayState);
+  let spacing = useAppSelector((state) => state.songbookSettings.songTheme.spacing);
+  const customSpacing = useAppSelector((state) => state.songbookSettings.songTheme.customSpacing);
   const [showOriginal, setShowOriginal] = useState(!expandVerses);
   const dispatch = useAppDispatch();
 
-  const verseRefValid = verse.verseRef && verse.verseRef < song.verses.length;
+  if (!customSpacing) {
+    spacing = initialSongbookState.songbookSettings.songTheme.spacing;
+  }
+
+  const lineHeight = useLineHeight();
+
+  const indent = verse.indent;
+  const verseRefValid = verse.verseRef !== undefined && verse.verseRef < song.verses.length;
 
   if ((!showOriginal || expandVerses) && verseRefValid) {
-    verse = song.verses[verse.verseRef];
+    verse = song.verses[verse.verseRef!];
   }
 
   if (!verseRefValid) {
     return (
-      <div style={{ marginLeft: verse.indent * 2 + 'em', marginBottom: '0.7em' }}>
+      <div style={{ marginLeft: verse.indent * (spacing?.verseIndent ?? 3) + 'ch', marginBottom: `${spacing.verseSpacing}em` }}>
         <VerseText verse={verse} />
       </div>
     );
@@ -38,15 +48,15 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
     <div
       style={{
         display: 'flex',
-        marginBottom: '0.7em',
-        marginLeft: `calc(${verse.indent * 2}em - 24px - 0.3em)`,
+        marginBottom: spacing?.verseSpacing ? `${spacing.verseSpacing}em` : '0.7em',
+        marginLeft: `calc(${indent * (spacing?.verseIndent ?? 3)}ch - ${lineHeight + 0.3}em)`,
         alignItems: 'start',
       }}
       onMouseEnter={() => dispatch(setHoverExpandVerses(true))}
       onMouseLeave={() => dispatch(setHoverExpandVerses(false))}
     >
       <Fade in={hoverExpandVerses}>
-        <IconButton onClick={handleExpand} sx={{ padding: 0, mr: '0.3em' }}>
+        <IconButton onClick={handleExpand} sx={{ padding: 0, mr: '0.3em' }} color="inherit">
           <ExpandMore
             sx={{
               rotate: expandVerses ? '0deg' : '-90deg',
@@ -56,7 +66,12 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
           />
         </IconButton>
       </Fade>
-      <Collapse in={expandVerses} collapsedSize="24px" onEntered={() => setShowOriginal(false)} onExited={() => setShowOriginal(true)}>
+      <Collapse
+        in={expandVerses}
+        collapsedSize={`${lineHeight}em`}
+        onEntered={() => setShowOriginal(false)}
+        onExited={() => setShowOriginal(true)}
+      >
         <div>
           <VerseText verse={verse} />
         </div>

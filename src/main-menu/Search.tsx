@@ -2,10 +2,11 @@ import SearchField from './SearchField.tsx';
 import SearchIcon from '@mui/icons-material/Search';
 import { Autocomplete, CircularProgress } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ISongOverview } from '../types/song.types.ts';
 import { useNavigate } from 'react-router-dom';
 import { getAutocomplete } from '../store/songbook.actions.ts';
+import { compareCategory, getCategoryDisplayName } from '../category/category.utils.ts';
 
 const Search = () => {
   const { autocomplete, autocompleteLoad } = useAppSelector((state) => state.searchState);
@@ -15,9 +16,8 @@ const Search = () => {
   const inputRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
-        console.log('inputRef', inputRef.current)
         if (inputRef.current) {
           event.preventDefault();
           inputRef.current?.focus();
@@ -32,12 +32,18 @@ const Search = () => {
     };
   }, []);
 
-  const handleSelection = (_, selectedSong: ISongOverview | string) => {
+  const sortedAutocomplete = useMemo(() => {
+    const a = autocomplete ? [...autocomplete] : [];
+    a.sort((a, b) => compareCategory(a.category, b.category));
+    return a;
+  }, [autocomplete]);
+
+  const handleSelection = (_: SyntheticEvent, selectedSong: ISongOverview | string | null) => {
     if (!selectedSong) return;
     if (typeof selectedSong === 'string') {
       navigate(`/search?key=${selectedSong}`);
     } else {
-      navigate(`/songs/${selectedSong.id}`);
+      navigate(`/song/${selectedSong.slug}`);
     }
   };
 
@@ -49,12 +55,12 @@ const Search = () => {
       blurOnSelect
       autoHighlight
       clearOnEscape
+      sx={{ width: { xs: '100%', md: 'auto' }, mr: { xs: '2em', sm: '0' } }}
       value={''}
       inputValue={query}
-      ref={inputRef}
-      options={query?.length >= 3 ? (autocomplete ?? []) : []}
-      groupBy={(option) => option.category.name}
-      getOptionLabel={(song) => song.title ?? song}
+      options={query?.length >= 3 ? sortedAutocomplete : []}
+      groupBy={(option) => getCategoryDisplayName((option as ISongOverview).category)}
+      getOptionLabel={(option: ISongOverview | string) => (option as ISongOverview).title ?? option}
       onChange={handleSelection}
       onInputChange={(_, value) => {
         setQuery(value);
