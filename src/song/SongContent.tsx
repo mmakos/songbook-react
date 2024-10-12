@@ -1,16 +1,18 @@
 import SongText from './text/SongText.tsx';
 import { Box, Collapse, Skeleton, Stack, useTheme } from '@mui/material';
 import SongChords from './chord/SongChords.tsx';
-import { useAppSelector } from '../store/songbook.store.ts';
+import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
 import SongRepetition from './repetition/SongRepetition.tsx';
 import ScalableBox from '../components/ScalableBox.tsx';
 import { useRef } from 'react';
+import { changeZoom } from '../store/songbook.reducer.ts';
 
 const SongContent = () => {
   const song = useAppSelector((state) => state.song);
   const showChords = useAppSelector((state) => state.songSettings.showChords);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
+  const zoom = useAppSelector((state) => state.songDisplayState.zoom);
   const theme = useTheme();
   const appThemeMode = useAppSelector((state) => state.theme);
   const {
@@ -23,6 +25,7 @@ const SongContent = () => {
   } = useAppSelector((state) => state.songbookSettings.songTheme);
   const songTheme = mode && (mode === appThemeMode ? undefined : mode === 'light' ? lightTheme : darkTheme);
   const outerBoxRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useAppDispatch();
 
   return (
     <Box
@@ -44,7 +47,13 @@ const SongContent = () => {
       overflow="auto"
     >
       {song ? (
-        <ScalableBox display="flex" whiteSpace="nowrap" outerBoxRef={outerBoxRef} song={song}>
+        <ScalableBox
+          display="flex"
+          whiteSpace="nowrap"
+          outerBoxRef={outerBoxRef}
+          zoom={zoom}
+          changeZoomPossible={(possible) => dispatch(changeZoom(possible ? 'normal' : undefined))}
+        >
           <SongText song={song} />
           <SongRepetition song={song} />
           {!noChords && (

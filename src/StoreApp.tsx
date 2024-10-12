@@ -1,4 +1,5 @@
-import { CssBaseline, Divider, Theme, ThemeProvider, useMediaQuery } from '@mui/material';
+import { CssBaseline, Divider, Theme, useMediaQuery } from '@mui/material';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';

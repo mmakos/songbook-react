@@ -1,6 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { Button, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import LowercaseButton from '../../components/LowercaseButton.tsx';
 
 export type TMenuType = 'drawer' | 'appbar';
 
@@ -34,9 +35,9 @@ const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href,
     );
   } else {
     return (
-      <Button onClick={handleMenuItemClicked} startIcon={icon} color="inherit" sx={{ mr: '0.5em' }}>
+      <LowercaseButton onClick={handleMenuItemClicked} startIcon={icon} color="inherit" sx={{ mr: '0.5em' }}>
         <Typography>{text}</Typography>
-      </Button>
+      </LowercaseButton>
     );
   }
 };

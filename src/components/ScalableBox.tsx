@@ -1,48 +1,51 @@
-import { FC, RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, RefObject, useEffect, useMemo, useRef } from 'react';
 import { Box, BoxProps, useTheme } from '@mui/material';
-import { ISong } from '../types/song.types.ts';
 
-const ScalableBox: FC<Omit<BoxProps, 'style'> & { outerBoxRef: RefObject<HTMLDivElement | null>; song: ISong }> = ({
-  outerBoxRef,
-  song,
-  ...props
-}) => {
+export type TScale = 'normal' | 'small' | undefined;
+
+const ScalableBox: FC<
+  Omit<BoxProps, 'style'> & {
+    outerBoxRef: RefObject<HTMLDivElement | null>;
+    zoom: TScale;
+    changeZoomPossible: (possible: boolean) => void;
+  }
+> = ({ outerBoxRef, zoom, changeZoomPossible, ...props }) => {
   const theme = useTheme();
-  const [scaled, setScaled] = useState(false);
   const innerBoxRef = useRef<HTMLDivElement | null>(null);
-  const tapTimeoutRef = useRef<number | null>(null);
+
+  const zoomSet = useRef(false);
 
   useEffect(() => {
-    setScaled(false);
-  }, [song]);
+    const observer = new ResizeObserver(() => {
+      const outer = outerBoxRef.current?.clientWidth ?? 100000;
+      const inner = innerBoxRef.current?.scrollWidth ?? 0;
+      if (outer < inner) {
+        if (!zoomSet.current) {
+          changeZoomPossible(true);
+          zoomSet.current = true;
+        }
+      } else if (zoomSet.current) {
+        changeZoomPossible(false);
+        zoomSet.current = false;
+      }
+    });
+
+    if (outerBoxRef.current) {
+      observer.observe(outerBoxRef.current!);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const [scale, height] = useMemo(() => {
-    if (!innerBoxRef.current || !outerBoxRef.current) return [1, undefined];
+    if (!innerBoxRef.current || !outerBoxRef.current || zoom !== 'small') return [1, undefined];
 
     const outerBox = outerBoxRef.current!;
     const innerBox = innerBoxRef.current!;
-
-    if (scaled) {
-      const scale = outerBox.clientWidth / innerBox.scrollWidth;
-      if (scale === 1) return [1, undefined];
-      return [scale, outerBox.clientHeight * scale];
-    }
-
-    return [1, undefined];
-  }, [scaled, outerBoxRef, outerBoxRef.current?.clientWidth]);
-
-  const handleTouchStart = () => {
-    const current = tapTimeoutRef.current;
-    if (current) {
-      clearTimeout(current);
-      tapTimeoutRef.current = null;
-      setScaled(true);
-    } else {
-      tapTimeoutRef.current = setTimeout(() => {
-        tapTimeoutRef.current = null;
-      }, 300);
-    }
-  };
+    const scale = outerBox.clientWidth / innerBox.scrollWidth;
+    if (scale === 1) return [1, undefined];
+    return [scale, innerBox.clientHeight * scale];
+  }, [zoom]);
 
   return (
     <Box
@@ -55,8 +58,6 @@ const ScalableBox: FC<Omit<BoxProps, 'style'> & { outerBoxRef: RefObject<HTMLDiv
         transformOrigin: 'top left',
         WebkitOverflowScrolling: 'touch',
       }}
-      onDoubleClick={() => setScaled(!scaled)}
-      onTouchStart={handleTouchStart}
     />
   );
 };

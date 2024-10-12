@@ -13,6 +13,7 @@ import SongSettings from './SongSettings.tsx';
 import SongRoute from './SongRoute.tsx';
 import SongContent from './SongContent.tsx';
 import SongVideo from './SongVideo.tsx';
+import SongControls from './SongControls.tsx';
 
 const Song: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -57,6 +58,18 @@ const Song: FC = () => {
       <div style={{ flex: 1 }}>
         <SongTitle />
         <SongRoute />
+        <div
+          style={{
+            marginBottom: '0.5em',
+            display: 'flex',
+            flexWrap: 'nowrap',
+            overflow: 'auto',
+            gap: '0.5em',
+            scrollbarWidth: 'none',
+          }}
+        >
+          <SongControls type="chip" video={!!song?.ytVideo} />
+        </div>
         <SongInfo />
         <SongVideo />
         {!noChords && <SongSettings />}

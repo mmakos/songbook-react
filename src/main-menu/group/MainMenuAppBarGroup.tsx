@@ -1,6 +1,7 @@
 import { FC, MouseEvent, useState } from 'react';
 import { Button, Menu, Typography } from '@mui/material';
 import { IMainMenuGroupProps } from './MainMenuGroup.tsx';
+import LowercaseButton from '../../components/LowercaseButton.tsx';
 
 const MainMenuAppBarGroup: FC<Omit<IMainMenuGroupProps, 'type'>> = ({
   children,
@@ -18,9 +19,9 @@ const MainMenuAppBarGroup: FC<Omit<IMainMenuGroupProps, 'type'>> = ({
 
   return (
     <>
-      <Button onClick={handleExpand} startIcon={icon} color="inherit" sx={{ mr: '0.5em' }}>
+      <LowercaseButton onClick={handleExpand} startIcon={icon} color="inherit" sx={{ mr: '0.5em' }}>
         <Typography>{text}</Typography>
-      </Button>
+      </LowercaseButton>
       <Menu anchorEl={anchor} keepMounted open={!!expanded && !!anchor} onClose={() => setExpanded(false)}>
         {children}
       </Menu>

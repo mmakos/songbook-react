@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';
+import Logo from '../components/icon/Logo.tsx';
 
 const MainMenu = () => {
   const navigate = useNavigate();

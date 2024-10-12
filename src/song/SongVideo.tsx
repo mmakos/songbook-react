@@ -1,10 +1,11 @@
 import { FC, useEffect, useState } from 'react';
-import { Collapse, IconButton, Paper } from '@mui/material';
+import { Collapse, IconButton, Paper, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { setSongVideoOpen } from '../store/songbook.reducer.ts';
 
 const SongVideo: FC = () => {
+  const theme = useTheme();
   const song = useAppSelector((state) => state.song);
   const open = useAppSelector((state) => state.songDisplayState.videoOpen);
   const [collapsed, setCollapsed] = useState(!open);
@@ -39,6 +40,7 @@ const SongVideo: FC = () => {
                 style={{
                   marginBottom: song.ytVideo && i < song.ytVideo.length - 1 ? '1em' : undefined,
                   border: 0,
+                  borderRadius: theme.shape.borderRadius,
                   maxWidth: '500px',
                   aspectRatio: '16 / 9',
                 }}

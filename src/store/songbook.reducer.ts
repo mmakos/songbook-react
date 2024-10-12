@@ -18,6 +18,7 @@ import { FontFamily, IFont } from '../components/font/FontChooser.tsx';
 import { getTranspositionBetweenNotes, ITransposition } from '../chords/chord-transposition.tsx';
 import { IFontStyle } from '../components/font/FontStyle.tsx';
 import { ISpacing } from '../components/font/FontSpacing.tsx';
+import { TScale } from '../components/ScalableBox.tsx';
 
 export interface INotificationState {
   open?: boolean;
@@ -59,6 +60,7 @@ export interface ISongDisplayState {
   videoOpen?: boolean;
   expandVerses?: boolean;
   hoverExpandVerses?: boolean;
+  zoom?: TScale;
 }
 
 export interface IPersonState {
@@ -344,6 +346,10 @@ const songbookSlice = createSlice({
     setGlobalChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
       state.songbookSettings.chordDifficulty = { ...state.songbookSettings.chordDifficulty, ...action.payload };
     },
+
+    changeZoom: (state: ISongbookState, action: PayloadAction<TScale>) => {
+      state.songDisplayState.zoom = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSongList.fulfilled, (state: ISongbookState, action) => {
@@ -413,6 +419,7 @@ export const {
   setNoChordInfo,
   setNoChords,
   setGlobalChordsDifficulty,
+  changeZoom,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;

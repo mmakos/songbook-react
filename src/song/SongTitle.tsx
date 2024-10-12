@@ -1,29 +1,14 @@
 import { Fade, IconButton, Skeleton, Typography } from '@mui/material';
-import { InfoOutlined, Link, YouTube } from '@mui/icons-material';
+import { Link } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { FC, useState } from 'react';
-import { notifySuccess, setSongInfoOpen, setSongSettingsOpen, setSongVideoOpen } from '../store/songbook.reducer.ts';
+import { notifySuccess } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import { SettingsIcon } from '../components/SettingsIcon.tsx';
 
 const SongTitle: FC = () => {
   const song = useAppSelector((state) => state.song);
-  const { videoOpen, settingsOpen, infoOpen } = useAppSelector((state) => state.songDisplayState);
-  const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const [hover, setHover] = useState(false);
   const dispatch = useAppDispatch();
-
-  const toggleSettingsOpen = () => {
-    dispatch(setSongSettingsOpen(!settingsOpen));
-  };
-
-  const toggleInfoOpen = () => {
-    dispatch(setSongInfoOpen(!infoOpen));
-  };
-
-  const toggleVideoOpen = () => {
-    dispatch(setSongVideoOpen(!videoOpen));
-  };
 
   const copyUrlToString = () => {
     if (!song) return;
@@ -47,27 +32,6 @@ const SongTitle: FC = () => {
           </IconButton>
         </Fade>
       </BasicTooltip>
-      <div style={{ marginLeft: 'auto' }}>
-        {song.ytVideo && (
-          <BasicTooltip title="Nagranie piosenki">
-            <IconButton onClick={toggleVideoOpen}>
-              <YouTube />
-            </IconButton>
-          </BasicTooltip>
-        )}
-        {!noChords && (
-          <BasicTooltip title="Ustawienia wyświetlania piosenki">
-            <IconButton onClick={toggleSettingsOpen}>
-              <SettingsIcon />
-            </IconButton>
-          </BasicTooltip>
-        )}
-        <BasicTooltip title="Informacje o piosence">
-          <IconButton onClick={toggleInfoOpen}>
-            <InfoOutlined />
-          </IconButton>
-        </BasicTooltip>
-      </div>
     </div>
   );
 };
