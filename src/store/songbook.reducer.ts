@@ -13,12 +13,20 @@ import {
 } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { hard } from '../chords/chord-difficulty.tsx';
+import { expert } from '../chords/chord-difficulty.tsx';
 import { FontFamily, IFont } from '../components/font/FontChooser.tsx';
 import { getTranspositionBetweenNotes, ITransposition } from '../chords/chord-transposition.tsx';
 import { IFontStyle } from '../components/font/FontStyle.tsx';
 import { ISpacing } from '../components/font/FontSpacing.tsx';
 import { TScale } from '../components/ScalableBox.tsx';
+import {
+  getBoolFromStorage,
+  getObjectFromStorage,
+  getStringFromStorage,
+  saveBoolToStorage,
+  saveObjectToStorage,
+  saveStringToStorage,
+} from './local-storage.utils.ts';
 
 export interface INotificationState {
   open?: boolean;
@@ -152,21 +160,7 @@ export interface ISongbookState {
   theme?: PaletteMode;
 }
 
-let initialSongSettings: ISongSettings = {
-  transposition: { amount: 0 },
-  chordDifficulty: hard,
-  showChords: true,
-};
-
-const storageSettings = localStorage.getItem('songSettings');
-if (storageSettings) {
-  try {
-    const parsed = JSON.parse(storageSettings);
-    initialSongSettings = { ...initialSongSettings, ...parsed };
-  } catch (exception) {
-    console.log(exception);
-  }
-}
+const initialChordDifficulty = {...expert, ...getObjectFromStorage('chord-difficulty')}
 
 export const initialSongbookState: ISongbookState = {
   notification: {
@@ -177,32 +171,49 @@ export const initialSongbookState: ISongbookState = {
   band: {},
   source: {},
   searchState: {},
-  songDisplayState: {},
-  songSettings: initialSongSettings,
+  songDisplayState: {
+    videoOpen: getBoolFromStorage('video-open'),
+    infoOpen: getBoolFromStorage('info-open'),
+    settingsOpen: getBoolFromStorage('settings-open'),
+    expandVerses: getBoolFromStorage('expand-verses'),
+  },
+  theme: getStringFromStorage('theme') as PaletteMode,
+  songSettings: {
+    transposition: { amount: 0 },
+    chordDifficulty: initialChordDifficulty,
+    showChords: !getBoolFromStorage('no-chords'),
+  },
   songbookSettings: {
-    chordDifficulty: initialSongSettings.chordDifficulty,
+    chordDifficulty: initialChordDifficulty,
     songTheme: {
       fontStyles: {
-        text: {},
-        text1: { italic: true },
-        text2: { underline: true },
-        text3: { bold: true },
-        repetition: { bold: true },
-        chords: { bold: true },
-        silentChords: { bold: true, italic: true },
+        text: getObjectFromStorage('song-theme-text-style'),
+        text1: { italic: true, ...getObjectFromStorage('song-theme-text1-style') },
+        text2: { underline: true, ...getObjectFromStorage('song-theme-text2-style') },
+        text3: { bold: true, ...getObjectFromStorage('song-theme-text3-style') },
+        repetition: { bold: true, ...getObjectFromStorage('song-theme-repetition-style') },
+        chords: { bold: true, ...getObjectFromStorage('song-theme-chords-style') },
+        silentChords: { bold: true, italic: true, ...getObjectFromStorage('song-theme-silent-chords-style') },
       },
       font: {
         fontFamily: FontFamily.VERDANA,
         fontSize: 14,
+        ...getObjectFromStorage('song-theme-font'),
       },
+      customFont: getBoolFromStorage('song-theme-custom-font'),
       spacing: {
         lineHeight: 1.5,
         verseSpacing: 0.7,
         verseIndent: 3,
         repetitionSpacing: 1,
         chordsSpacing: 5,
+        ...getObjectFromStorage('song-theme-spacing'),
       },
+      mode: getStringFromStorage('song-theme-mode') as PaletteMode,
+      customSpacing: getBoolFromStorage('song-theme-custom-spacing'),
     },
+    noChordInfo: getBoolFromStorage('no-chord-info'),
+    noChords: getBoolFromStorage('no-chords'),
   },
 };
 
@@ -229,12 +240,15 @@ const songbookSlice = createSlice({
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.settingsOpen = action.payload;
+      saveBoolToStorage('settings-open', action.payload);
     },
     setSongInfoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.infoOpen = action.payload;
+      saveBoolToStorage('info-open', action.payload);
     },
     setSongVideoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.videoOpen = action.payload;
+      saveBoolToStorage('video-open', action.payload);
     },
     notifySuccess: (state: ISongbookState, action: PayloadAction<string>) => {
       state.notification = {
@@ -284,18 +298,16 @@ const songbookSlice = createSlice({
     },
     setExpandVerses: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.expandVerses = action.payload;
+      saveBoolToStorage('expand-verses', action.payload);
     },
     updateGlobalSettingsWithSongSettings: (state: ISongbookState) => {
-      state.songbookSettings = {
-        ...state.songbookSettings,
-        chordDifficulty: state.songSettings.chordDifficulty,
-        noChords: !state.songSettings.showChords,
-      };
-      localStorage.setItem('songSettings', JSON.stringify(state.songbookSettings));
+      setGlobalChordsDifficulty(state.songSettings.chordDifficulty);
+      setNoChords(!state.songSettings.showChords);
       state.notification = { open: true, message: 'Zaktualizowano globalne ustawienia', severity: 'success' };
     },
     changeTheme: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
       state.theme = action.payload;
+      saveStringToStorage('theme', action.payload);
     },
     setAutocompleteLoad: (state: ISongbookState) => {
       state.searchState.autocompleteLoad = true;
@@ -303,48 +315,63 @@ const songbookSlice = createSlice({
 
     setSongThemeMode: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
       state.songbookSettings.songTheme.mode = action.payload;
+      saveStringToStorage('song-theme-mode', action.payload);
     },
     setSongThemeFont: (state: ISongbookState, action: PayloadAction<IFont>) => {
       state.songbookSettings.songTheme.font = action.payload;
+      saveObjectToStorage('song-theme-font', action.payload);
     },
     setSongThemeCustomFont: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.songTheme.customFont = action.payload;
+      saveBoolToStorage('song-theme-custom-font', action.payload);
     },
     setSongThemeTextFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.text = action.payload;
+      saveObjectToStorage('song-theme-text-style', action.payload);
     },
     setSongThemeText1FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.text1 = action.payload;
+      saveObjectToStorage('song-theme-text1-style', action.payload);
     },
     setSongThemeText2FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.text2 = action.payload;
+      saveObjectToStorage('song-theme-text2-style', action.payload);
     },
     setSongThemeText3FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.text3 = action.payload;
+      saveObjectToStorage('song-theme-text3-style', action.payload);
     },
     setSongThemeRepetitionFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.repetition = action.payload;
+      saveObjectToStorage('song-theme-repetition-style', action.payload);
     },
     setSongThemeChordsFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.chords = action.payload;
+      saveObjectToStorage('song-theme-chords-style', action.payload);
     },
     setSongThemeSilentChordsFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.silentChords = action.payload;
+      saveObjectToStorage('song-theme-silent-chords-style', action.payload);
     },
     setSongThemeCustomSpacing: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.songTheme.customSpacing = action.payload;
+      saveBoolToStorage('song-theme-custom-spacing', action.payload);
     },
     setSongThemeSpacing: (state: ISongbookState, action: PayloadAction<ISpacing>) => {
       state.songbookSettings.songTheme.spacing = action.payload;
+      saveObjectToStorage('song-theme-spacing', action.payload);
     },
     setNoChordInfo: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.noChordInfo = action.payload;
+      saveBoolToStorage('no-chord-info', action.payload);
     },
     setNoChords: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.noChords = action.payload;
+      saveBoolToStorage('no-chords', action.payload);
     },
     setGlobalChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
       state.songbookSettings.chordDifficulty = { ...state.songbookSettings.chordDifficulty, ...action.payload };
+      saveObjectToStorage('chord-difficulty', state.songbookSettings.chordDifficulty);
     },
 
     changeZoom: (state: ISongbookState, action: PayloadAction<TScale>) => {
