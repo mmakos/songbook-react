@@ -38,7 +38,6 @@ const LineRepetition: FC<ILineRepetitionProps> = ({ line, previousLine, first, l
   return (
     <div
       style={{
-        height: `${height}em`,
         lineHeight: height,
         borderLeft: line.repetition ? 'solid' : undefined,
         paddingLeft: '0.1em',
@@ -46,7 +45,7 @@ const LineRepetition: FC<ILineRepetitionProps> = ({ line, previousLine, first, l
         marginBottom: marginBottom && `${marginBottom}em`,
       }}
     >
-      {line.repetitionEnd && (line.repetitionEnd >= 0 ? 'x' + line.repetitionEnd : 'x∞')}
+      {line.repetitionEnd ? (line.repetitionEnd >= 0 ? 'x' + line.repetitionEnd : 'x∞') : <>&nbsp;</>}
     </div>
   );
 };
