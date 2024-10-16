@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getPerson } from '../store/songbook.actions.ts';
 import { useParams } from 'react-router-dom';
 import { clearPerson } from '../store/songbook.reducer.ts';
@@ -7,6 +7,7 @@ import { Divider, Paper, Typography } from '@mui/material';
 import RouteLink from '../components/RouteLink.tsx';
 import PersonInfo from './PersonInfo.tsx';
 import { personAsString } from './person.utils.ts';
+import Progress from '../components/Progress.tsx';
 
 const Person = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +24,14 @@ const Person = () => {
     };
   }, []);
 
-  if (!person.person) return;
+  const songs = useMemo(() => {
+    if (!person.songs) return;
+    const s = [...person.songs];
+    s.sort((a, b) => a.title.localeCompare(b.title));
+    return s;
+  }, [person.songs]);
+
+  if (!person.person) return <Progress />;
 
   return (
     <div
@@ -40,12 +48,12 @@ const Person = () => {
         <Typography variant="h4" mb="0.5rem">
           {personAsString(person.person)}
         </Typography>
-        <PersonInfo person={person.person} imageUrl={person.imageUrl}/>
-        {person.songs && (
+        <PersonInfo person={person.person} imageUrl={person.imageUrl} />
+        {songs && (
           <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             <Typography variant="h5">Piosenki</Typography>
             <Divider sx={{ my: '0.5em' }} />
-            {person.songs.map((song) => (
+            {songs.map((song) => (
               <RouteLink key={song.slug} lineHeight={1.75} color={'textPrimary'} to={`/song/${song.slug}`}>
                 {song.title}
               </RouteLink>

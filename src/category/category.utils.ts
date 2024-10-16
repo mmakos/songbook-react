@@ -1,11 +1,15 @@
-import { Category } from '../types/song.types.ts';
+import { AuthorCategory, Category } from '../types/song.types.ts';
+import { TSearchCategory } from '../search/search.utils.ts';
 
-const categoryNames: Record<Category, string> = {
+const categoryNames: Record<TSearchCategory, string> = {
+  [AuthorCategory.BAND]: 'Zespół',
+  [AuthorCategory.PERSON]: 'Artysta',
+  [AuthorCategory.SOURCE]: 'Źródło',
   [Category.KACZMARSKI]: 'Kaczmarski i Spółka',
-  [Category.OTHER]: 'Popularne',
+  [Category.OTHER]: 'Pozostałe',
   [Category.RELIGIOUS]: 'Religijne',
   [Category.PATRIOTIC]: 'Patriotyczne',
-  [Category.CAROLS]: 'Kolędy',
+  [Category.CAROLS]: 'Kolędy'
 };
 
 const categoryOrder: Record<Category, number> = {
@@ -16,7 +20,7 @@ const categoryOrder: Record<Category, number> = {
   [Category.CAROLS]: 4,
 };
 
-export const getCategoryDisplayName = (category: Category) => {
+export const getCategoryDisplayName = (category: TSearchCategory) => {
   return categoryNames[category];
 };
 

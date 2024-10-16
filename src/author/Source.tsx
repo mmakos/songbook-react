@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getSource } from '../store/songbook.actions.ts';
 import { useParams } from 'react-router-dom';
 import { clearSource } from '../store/songbook.reducer.ts';
@@ -8,6 +8,7 @@ import RouteLink from '../components/RouteLink.tsx';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import SourceTypeIcon from './SourceTypeIcon.tsx';
 import { sourceTypeAblative, sourceTypeNominative } from './source.utils.ts';
+import Progress from '../components/Progress.tsx';
 
 const Source = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,14 @@ const Source = () => {
     };
   }, []);
 
-  if (!source.source) return;
+  const songs = useMemo(() => {
+    if (!source.songs) return;
+    const s = [...source.songs];
+    s.sort((a, b) => a.title.localeCompare(b.title));
+    return s;
+  }, [source.songs]);
+
+  if (!source.source) return <Progress />;
 
   return (
     <div
@@ -56,28 +64,28 @@ const Source = () => {
             </div>
             {source.imageUrl && (
               <>
-              <Divider sx={{my: '0.5em'}}/>
-              <a href={source.imageUrl} target="_blank" rel="noopener">
-                <img
-                  src={source.imageUrl}
-                  style={{
-                    height: '240px',
-                    borderRadius: theme.shape.borderRadius,
-                    border: 'solid',
-                    borderColor: theme.palette.divider,
-                  }}
-                  alt={source.source.name}
-                />
-              </a>
+                <Divider sx={{ my: '0.5em' }} />
+                <a href={source.imageUrl} target="_blank" rel="noopener">
+                  <img
+                    src={source.imageUrl}
+                    style={{
+                      height: '240px',
+                      borderRadius: theme.shape.borderRadius,
+                      border: 'solid',
+                      borderColor: theme.palette.divider,
+                    }}
+                    alt={source.source.name}
+                  />
+                </a>
               </>
             )}
           </Paper>
         )}
-        {source.songs && (
+        {songs && (
           <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             <Typography variant="h5">Piosenki</Typography>
             <Divider sx={{ my: '0.5em' }} />
-            {source.songs.map((song) => (
+            {songs.map((song) => (
               <RouteLink key={song.slug} lineHeight={1.75} color={'textPrimary'} to={`/song/${song.slug}`}>
                 {song.title}
               </RouteLink>

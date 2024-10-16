@@ -29,49 +29,52 @@ const SongContent = () => {
 
   return (
     <Box
-      ref={outerBoxRef}
       color={songTheme?.palette.text.primary}
-      lineHeight={customSpacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string)}
-      fontFamily={customFont ? font.fontFamily : theme.typography.fontFamily}
-      fontSize={customFont ? `${font.fontSize}px` : (theme.typography.body1.fontSize as string)}
-      fontWeight={text.bold ? 'bold' : 'normal'}
-      fontStyle={text.italic ? 'italic' : 'normal'}
       borderRadius="4px 4px 0 0"
-      mx={{ xs: '1em', md: '2em' }}
+      sx={{ background: songTheme?.palette.background.default }}
+      px={{ xs: '1em', md: '2em' }}
       pt={{ xs: '1em', md: '1.5em' }}
       pb="0.5em"
-      sx={{
-        background: songTheme?.palette.background.default,
-        textDecoration: text.underline ? 'underline' : 'none',
-      }}
-      overflow="auto"
     >
-      {song ? (
-        <ScalableBox
-          display="flex"
-          whiteSpace="nowrap"
-          outerBoxRef={outerBoxRef}
-          zoom={zoom}
-          changeZoomPossible={(possible) => dispatch(changeZoom(possible ? 'normal' : undefined))}
-        >
-          <SongText song={song} />
-          <SongRepetition song={song} />
-          {!noChords && (
-            <Collapse in={showChords} orientation="horizontal">
-              <SongChords song={song} />
-            </Collapse>
-          )}
-        </ScalableBox>
-      ) : (
-        <Stack spacing={1}>
-          <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
-          <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
-          <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
-          <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
-          <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
-          <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
-        </Stack>
-      )}
+      <Box
+        ref={outerBoxRef}
+        lineHeight={customSpacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string)}
+        fontFamily={customFont ? font.fontFamily : theme.typography.fontFamily}
+        fontSize={customFont ? `${font.fontSize}px` : (theme.typography.body1.fontSize as string)}
+        fontWeight={text.bold ? 'bold' : 'normal'}
+        fontStyle={text.italic ? 'italic' : 'normal'}
+        sx={{
+          textDecoration: text.underline ? 'underline' : 'none',
+        }}
+        overflow="auto"
+      >
+        {song ? (
+          <ScalableBox
+            display="flex"
+            whiteSpace="nowrap"
+            outerBoxRef={outerBoxRef}
+            zoom={zoom}
+            changeZoomPossible={(possible) => dispatch(changeZoom(possible ? 'normal' : undefined))}
+          >
+            <SongText song={song} />
+            <SongRepetition song={song} />
+            {!noChords && (
+              <Collapse in={showChords} orientation="horizontal">
+                <SongChords song={song} />
+              </Collapse>
+            )}
+          </ScalableBox>
+        ) : (
+          <Stack spacing={1}>
+            <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
+            <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
+            <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
+            <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
+            <Skeleton height="7em" width="20em" variant="rounded"></Skeleton>
+            <Skeleton height="4em" width="20em" variant="rounded"></Skeleton>
+          </Stack>
+        )}
+      </Box>
     </Box>
   );
 };

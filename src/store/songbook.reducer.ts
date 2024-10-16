@@ -89,8 +89,15 @@ export interface ISourceState {
   imageUrl?: string;
 }
 
+export interface IFastSearch {
+  songs: ISongOverview[];
+  people: IPerson[];
+  bands: IBand[];
+  sources: ISource[];
+}
+
 export interface ISearchState {
-  autocomplete?: ISongOverview[];
+  autocomplete?: IFastSearch;
   autocompleteLoad?: boolean;
 }
 
@@ -160,7 +167,7 @@ export interface ISongbookState {
   theme?: PaletteMode;
 }
 
-const initialChordDifficulty = {...expert, ...getObjectFromStorage('chord-difficulty')}
+const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };
 
 export const initialSongbookState: ISongbookState = {
   notification: {
@@ -386,7 +393,7 @@ const songbookSlice = createSlice({
       state.song = action.payload as ISong;
     });
     builder.addCase(getAutocomplete.fulfilled, (state: ISongbookState, action) => {
-      state.searchState.autocomplete = action.payload as ISongOverview[];
+      state.searchState.autocomplete = action.payload as IFastSearch;
       state.searchState.autocompleteLoad = false;
     });
     builder.addCase(getPerson.fulfilled, (state: ISongbookState, action) => {

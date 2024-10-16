@@ -24,7 +24,7 @@ export const saveBoolToStorage = (key: string, value?: boolean) => {
 
 export const getBoolFromStorage = (key: string): boolean | undefined => {
   const item = localStorage.getItem(key);
-  return item ? !!item : undefined;
+  return item ? item === "true" : undefined;
 };
 
 export const getStringFromStorage = (key: string): string | undefined => {
