@@ -3,7 +3,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { HttpService } from '../http/http.service.ts';
 import { ISong, ISongOverview } from '../types/song.types.ts';
-import { IBandState, IPersonState, ISourceState, setAutocompleteLoad } from './songbook.reducer.ts';
+import { IBandState, IFastSearch, IPersonState, ISourceState, setAutocompleteLoad } from './songbook.reducer.ts';
 import { generateWikiImageUrl } from '../author/person.utils.ts';
 
 export const fetchSongList = createAsyncThunk('songbook/fetchSongList', async () => {
@@ -21,7 +21,7 @@ export const getSong = createAsyncThunk('songbook/getSong', async (slug: string)
 export const getAutocomplete = createAsyncThunk('songbook/autocomplete', async (key: string, thunkAPI) => {
   thunkAPI.dispatch(setAutocompleteLoad());
   return await HttpService.get(`autocomplete/?q=${key}`).then((response) => {
-    return response.data as ISongOverview[];
+    return response.data as IFastSearch;
   });
 });
 

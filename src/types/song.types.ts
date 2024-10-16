@@ -6,6 +6,12 @@ export enum Category {
   CAROLS = 'carols',
 }
 
+export enum AuthorCategory {
+  SOURCE = 'source',
+  PERSON = 'person',
+  BAND = 'band',
+}
+
 export enum UserType {
   OWNER = 'owner',
   BOT = 'bot',

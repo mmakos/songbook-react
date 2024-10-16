@@ -1,11 +1,12 @@
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getBand } from '../store/songbook.actions.ts';
 import { useParams } from 'react-router-dom';
 import { clearBand } from '../store/songbook.reducer.ts';
 import { Divider, Link, Paper, Typography, useTheme } from '@mui/material';
 import RouteLink from '../components/RouteLink.tsx';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
+import Progress from '../components/Progress.tsx';
 
 const Band = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +24,14 @@ const Band = () => {
     };
   }, []);
 
-  if (!band.band) return;
+  const songs = useMemo(() => {
+    if (!band.songs) return;
+    const s = [...band.songs];
+    s.sort((a, b) => a.title.localeCompare(b.title));
+    return s;
+  }, [band.songs]);
+
+  if (!band.band) return <Progress />;
 
   return (
     <div
@@ -67,11 +75,11 @@ const Band = () => {
             )}
           </Paper>
         )}
-        {band.songs && (
+        {songs && (
           <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             <Typography variant="h5">Piosenki</Typography>
             <Divider sx={{ my: '0.5em' }} />
-            {band.songs.map((song) => (
+            {songs.map((song) => (
               <RouteLink key={song.slug} lineHeight={1.75} color={'textPrimary'} to={`/song/${song.slug}`}>
                 {song.title}
               </RouteLink>

@@ -12,11 +12,12 @@ export const personAsString = (person: IPerson): string => {
     } else {
       name += split.map((s) => s[0] + '.').join('');
     }
+    name += ' '
   }
   if (person.nickname) {
     name += ` "${person.nickname}"`;
   }
-  return name + ' ' + person.lastName;
+  return name + person.lastName;
 };
 
 const regex = /https:\/\/([a-z]{2})\.wikipedia\.org\/wiki\/(.*)/;

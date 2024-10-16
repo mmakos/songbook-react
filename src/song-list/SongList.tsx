@@ -4,6 +4,7 @@ import { fetchSongList } from '../store/songbook.actions.ts';
 import FullscreenPaper from '../components/FullscreenPaper.tsx';
 import { useParams } from 'react-router-dom';
 import SongListGrid from './SongListGrid.tsx';
+import Progress from '../components/Progress.tsx';
 
 const SongList = () => {
   const songs = useAppSelector((state) => state.songs);
@@ -23,7 +24,7 @@ const SongList = () => {
     return filteredSongs;
   }, [songs, category]);
 
-  if (!categorySongs) return;
+  if (!categorySongs) return <Progress />;
 
   return (
     <FullscreenPaper>
@@ -31,5 +32,4 @@ const SongList = () => {
     </FullscreenPaper>
   );
 };
-
 export default SongList;

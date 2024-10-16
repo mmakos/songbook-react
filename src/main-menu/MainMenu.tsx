@@ -1,9 +1,9 @@
 import { AppBar, Container, IconButton, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import Search from './Search.tsx';
 import { useNavigate } from 'react-router-dom';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';
+import Search from '../search/Search.tsx';
 
 const MainMenu = () => {
   const navigate = useNavigate();
