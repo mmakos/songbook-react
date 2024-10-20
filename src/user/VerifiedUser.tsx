@@ -6,7 +6,9 @@ import DarthVader from '../components/icon/DarthVader.tsx';
 import R2D2 from '../components/icon/R2D2.tsx';
 import { UserType } from '../types/song.types.ts';
 
-const VerifiedUser: FC<SvgIconProps & { userType: UserType }> = ({ userType, ...props }) => {
+const VerifiedUser: FC<SvgIconProps & { userType?: UserType }> = ({ userType, ...props }) => {
+  if (!userType) return;
+
   switch (userType) {
     case UserType.OWNER:
       return (
@@ -27,7 +29,6 @@ const VerifiedUser: FC<SvgIconProps & { userType: UserType }> = ({ userType, ...
         </BasicTooltip>
       );
   }
-  return undefined;
 };
 
 export default VerifiedUser;

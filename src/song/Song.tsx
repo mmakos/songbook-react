@@ -47,7 +47,7 @@ const Song: FC = () => {
   };
 
   return (
-    <div style={{ position: 'relative', alignItems: 'center', maxWidth: '100%', padding: '0 1em' }}>
+    <div style={{ position: 'relative', alignItems: 'center', maxWidth: '100%' }}>
       {song?.previous && (
         <BasicTooltip title={`Poprzednia piosenka: ${song.previous.title}`}>
           <IconButton sx={{ position: 'fixed', top: '50%', left: '0.5em' }} onClick={previousSong}>
@@ -68,7 +68,7 @@ const Song: FC = () => {
             scrollbarWidth: 'none',
           }}
         >
-          <SongControls type="chip" video={!!song?.ytVideo} />
+          <SongControls type="chip" video={!!song?.video} />
         </div>
         <SongInfo />
         <SongVideo />

@@ -1,4 +1,4 @@
-import { CssBaseline, Divider, Theme, useMediaQuery } from '@mui/material';
+import { Container, CssBaseline, Divider, Theme, useMediaQuery } from '@mui/material';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
@@ -8,13 +8,13 @@ import CopyrightInfo from './footer/CopyrightInfo.tsx';
 import { useAppSelector } from './store/songbook.store.ts';
 import { useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
-
-import SongList from './song-list/SongList.tsx';
 import Song from './song/Song.tsx';
 import Settings from './settings/Settings.tsx';
 import Person from './author/Person.tsx';
 import Band from './author/Band.tsx';
 import Source from './author/Source.tsx';
+import SongFullTable from './song-list/SongFullTable.tsx';
+import FullSearch from './search/FullSearch.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -42,21 +42,20 @@ const StoreApp = () => {
       <BrowserRouter>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <MainMenu />
-          <div style={{ flexGrow: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Routes>
-                <Route path="/songs/:category?" element={<SongList />} />
-                <Route path="/song/:songSlug" element={<Song />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/person/:personSlug" element={<Person />} />
-                <Route path="/band/:bandSlug" element={<Band />} />
-                <Route path="/source/:sourceSlug" element={<Source />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </div>
+          <Container sx={{ flexGrow: 1, mt: '1em', display: 'flex', justifyContent: 'center' }}>
+            <Routes>
+              <Route path="/songs/:category?" element={<SongFullTable />} />
+              <Route path="/song/:songSlug" element={<Song />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/person/:personSlug" element={<Person />} />
+              <Route path="/band/:bandSlug" element={<Band />} />
+              <Route path="/source/:sourceSlug" element={<Source />} />
+              <Route path="/search" element={<FullSearch />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Container>
           <footer>
-            <Divider sx={{ mt: '0.5em' }} />
+            <Divider sx={{ mt: '0.7em' }} />
             <CopyrightInfo />
           </footer>
         </div>

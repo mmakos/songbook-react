@@ -7,6 +7,6 @@ export const api = axios.create({
 });
 
 export const HttpService = {
-  get: (url: string) => api.get(url),
+  get: (url: string, params?: object) => api.get(url, { params: params }),
   getExternal: (url: string) => axios.get(url),
 };

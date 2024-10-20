@@ -14,13 +14,13 @@ const SongVideo: FC = () => {
     dispatch(setSongVideoOpen(false));
   };
 
-  if (!song?.ytVideo) return;
+  if (!song?.video) return;
 
   return (
     <Collapse in={open} collapsedSize={0} unmountOnExit>
       <Paper sx={{ position: 'relative', mb: '0.5em', padding: '1em 1em' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {song.ytVideo.map((ytId, i) => (
+          {song.video.map((ytId, i) => (
             <iframe
               key={ytId}
               width="100%"
@@ -28,7 +28,7 @@ const SongVideo: FC = () => {
               title={'Nagranie piosenki ' + song.title}
               allowFullScreen
               style={{
-                marginBottom: song.ytVideo && i < song.ytVideo.length - 1 ? '1em' : undefined,
+                marginBottom: song.video && i < song.video.length - 1 ? '1em' : undefined,
                 border: 0,
                 borderRadius: theme.shape.borderRadius,
                 maxWidth: '500px',

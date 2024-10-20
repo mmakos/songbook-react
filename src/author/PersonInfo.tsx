@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Divider, Link, Paper, useTheme } from '@mui/material';
 import { IPerson } from '../types/song.types.ts';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
-import { personAsString } from './person.utils.ts';
+import { personAsString } from './author.utils.ts';
 import PersonNames from './PersonNames.tsx';
 
 interface IPersonInfoProps {

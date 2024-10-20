@@ -1,16 +1,6 @@
-import { Accidental, IBand, IPerson, ISong, ISongOverview, ISource } from '../types/song.types.ts';
+import { Accidental, ISong, ISongOverview } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  fetchSongList,
-  getAutocomplete,
-  getBand,
-  getBandImageUrl,
-  getPerson,
-  getPersonImageUrl,
-  getSong,
-  getSource,
-  getSourceImageUrl,
-} from './songbook.actions.ts';
+import { fetchSongList, getSong } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { expert } from '../chords/chord-difficulty.tsx';
@@ -71,36 +61,6 @@ export interface ISongDisplayState {
   zoom?: TScale;
 }
 
-export interface IPersonState {
-  person?: IPerson;
-  songs?: ISongOverview[];
-  imageUrl?: string;
-}
-
-export interface IBandState {
-  band?: IBand;
-  songs?: ISongOverview[];
-  imageUrl?: string;
-}
-
-export interface ISourceState {
-  source?: ISource;
-  songs?: ISongOverview[];
-  imageUrl?: string;
-}
-
-export interface IFastSearch {
-  songs: ISongOverview[];
-  people: IPerson[];
-  bands: IBand[];
-  sources: ISource[];
-}
-
-export interface ISearchState {
-  autocomplete?: IFastSearch;
-  autocompleteLoad?: boolean;
-}
-
 export interface ISongTheme {
   mode?: PaletteMode;
   customFont?: boolean;
@@ -133,25 +93,9 @@ export interface ISongbookState {
    */
   song?: ISong;
   /**
-   * Obecnie wyświetlana osoba (z piosenkami)
-   */
-  person: IPersonState;
-  /**
-   * Obecnie wyświetlany zespół (z piosenkami)
-   */
-  band: IBandState;
-  /**
-   * Obecnie wyświetlane źródło (z piosenkami)
-   */
-  source: ISourceState;
-  /**
    * Powiadomienia dla użytkownika
    */
   notification: INotificationState;
-  /**
-   * Stan wyszukiwarki (wyszukane piosenki itd.)
-   */
-  searchState: ISearchState;
   /**
    * Stan wyświetlenej piosenki, np. czy są rozwinięte informacje o piosence lub ustawienia
    */
@@ -174,10 +118,6 @@ export const initialSongbookState: ISongbookState = {
     message: '',
     severity: 'success',
   },
-  person: {},
-  band: {},
-  source: {},
-  searchState: {},
   songDisplayState: {
     videoOpen: getBoolFromStorage('video-open'),
     infoOpen: getBoolFromStorage('info-open'),
@@ -235,15 +175,6 @@ const songbookSlice = createSlice({
         chordDifficulty: state.songbookSettings.chordDifficulty,
         transposition: { amount: 0 },
       };
-    },
-    clearPerson: (state: ISongbookState) => {
-      state.person = {};
-    },
-    clearBand: (state: ISongbookState) => {
-      state.band = {};
-    },
-    clearSource: (state: ISongbookState) => {
-      state.source = {};
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.settingsOpen = action.payload;
@@ -315,9 +246,6 @@ const songbookSlice = createSlice({
     changeTheme: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
       state.theme = action.payload;
       saveStringToStorage('theme', action.payload);
-    },
-    setAutocompleteLoad: (state: ISongbookState) => {
-      state.searchState.autocompleteLoad = true;
     },
 
     setSongThemeMode: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
@@ -392,35 +320,10 @@ const songbookSlice = createSlice({
     builder.addCase(getSong.fulfilled, (state: ISongbookState, action) => {
       state.song = action.payload as ISong;
     });
-    builder.addCase(getAutocomplete.fulfilled, (state: ISongbookState, action) => {
-      state.searchState.autocomplete = action.payload as IFastSearch;
-      state.searchState.autocompleteLoad = false;
-    });
-    builder.addCase(getPerson.fulfilled, (state: ISongbookState, action) => {
-      state.person = { ...state.person, ...(action.payload as IPersonState) };
-    });
-    builder.addCase(getPersonImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.person = { ...state.person, imageUrl: action.payload as string };
-    });
-    builder.addCase(getBand.fulfilled, (state: ISongbookState, action) => {
-      state.band = { ...state.band, ...(action.payload as IBandState) };
-    });
-    builder.addCase(getBandImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.band = { ...state.band, imageUrl: action.payload as string };
-    });
-    builder.addCase(getSource.fulfilled, (state: ISongbookState, action) => {
-      state.source = { ...state.source, ...(action.payload as ISourceState) };
-    });
-    builder.addCase(getSourceImageUrl.fulfilled, (state: ISongbookState, action) => {
-      state.source = { ...state.source, imageUrl: action.payload as string };
-    });
   },
 });
 export const {
   clearSong,
-  clearPerson,
-  clearBand,
-  clearSource,
   setSongSettingsOpen,
   setSongInfoOpen,
   setSongVideoOpen,
@@ -437,7 +340,6 @@ export const {
   setExpandVerses,
   updateGlobalSettingsWithSongSettings,
   changeTheme,
-  setAutocompleteLoad,
   setSongThemeMode,
   setSongThemeFont,
   setSongThemeCustomFont,

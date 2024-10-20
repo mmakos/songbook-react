@@ -11,6 +11,7 @@ interface IEditorInfoProps {
 }
 
 const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
+  const date = new Date(editorInfo.time);
   return (
     <Typography variant="caption" color="textSecondary" sx={{ display: 'flex', alignItems: 'center' }}>
       {editorInfo.verified && (
@@ -18,7 +19,16 @@ const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
           <Verified color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
         </BasicTooltip>
       )}
-      {prefix} {new Date(editorInfo.time * 1000).toLocaleDateString()} przez&nbsp;
+      {prefix}
+      {!isNaN(date.valueOf()) && (
+        <>
+          &nbsp;
+          <BasicTooltip title={date.toLocaleString()}>
+            <>{date.toLocaleDateString()}</>
+          </BasicTooltip>
+        </>
+      )}
+      &nbsp;przez&nbsp;
       <UserIcon userType={editorInfo.type} color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
       {editorInfo.name}
     </Typography>

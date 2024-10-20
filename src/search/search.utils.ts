@@ -1,7 +1,7 @@
 import { AuthorCategory, Category, IBand, IPerson, ISongOverview, ISource } from '../types/song.types.ts';
-import { IFastSearch } from '../store/songbook.reducer.ts';
-import { personAsString } from '../author/person.utils.ts';
+import { personAsString } from '../author/author.utils.ts';
 import { compareCategory } from '../category/category.utils.ts';
+import { IFastSearch } from './search.types.ts';
 
 export type TSearchCategory = AuthorCategory | Category;
 
@@ -13,10 +13,10 @@ export interface ISearchItem {
 
 export const autocompleteSearchItems = (fastSearch: IFastSearch) => {
   return [
+    ...fastSearch.songs.map(songToSearchItem).sort(compareWithCategory),
     ...fastSearch.bands.map(bandToSearchItem).sort(compare),
     ...fastSearch.people.map(personToSearchItem).sort(compare),
     ...fastSearch.sources.map(sourceToSearchItem).sort(compare),
-    ...fastSearch.songs.map(songToSearchItem).sort(compareWithCategory),
   ];
 };
 

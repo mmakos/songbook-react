@@ -45,7 +45,7 @@ export interface ISong {
   performer?: IPerson[];
   source?: ISource[];
   band?: IBand;
-  ytVideo?: string[];
+  video?: string[];
 
   key?: ISongKey;
   verses: IVerse[];
@@ -82,9 +82,9 @@ export interface ISource {
 
 export interface IEditorInfo {
   name: string;
-  type: UserType;
+  type?: UserType;
   verified?: boolean;
-  time: number;
+  time: string;
 }
 
 /**

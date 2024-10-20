@@ -4,6 +4,7 @@ import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';
 import Search from '../search/Search.tsx';
+import RandomSong from '../song/RandomSong.tsx';
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const MainMenu = () => {
         <Toolbar disableGutters>
           {downMd ? <DrawerMenu /> : <AppBarMenu />}
           <Search />
+          <RandomSong />
           <IconButton onClick={() => navigate('settings/')} color="inherit">
             <SettingsIcon />
           </IconButton>

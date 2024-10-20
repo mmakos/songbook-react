@@ -1,15 +1,15 @@
 import ChordSettings from './chord/ChordSettings.tsx';
-import FullscreenPaper from '../components/FullscreenPaper.tsx';
 import SongTheme from './song/SongTheme.tsx';
 import AppSettings from './app/AppSettings.tsx';
+import { Paper } from '@mui/material';
 
 const Settings = () => {
   return (
-    <FullscreenPaper>
-      <AppSettings/>
+    <Paper sx={{ padding: '1em 2em' }}>
+      <AppSettings />
       <SongTheme />
       <ChordSettings />
-    </FullscreenPaper>
+    </Paper>
   );
 };
 

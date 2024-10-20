@@ -5,9 +5,10 @@ import { DarkModeOutlined, LightMode, SettingsBrightness } from '@mui/icons-mate
 interface IThemeChooserProps {
   theme?: PaletteMode;
   changeTheme: (theme?: PaletteMode) => void;
+  systemLabel?: string;
 }
 
-const ThemeChooser: FC<IThemeChooserProps & ToggleButtonGroupProps> = ({ theme, changeTheme, ...props }) => {
+const ThemeChooser: FC<IThemeChooserProps & ToggleButtonGroupProps> = ({ theme, changeTheme, systemLabel, ...props }) => {
   const changeSongThemeMode = (value: string) => {
     let palette: PaletteMode | undefined;
     if (value === 'dark') palette = 'dark';
@@ -28,7 +29,7 @@ const ThemeChooser: FC<IThemeChooserProps & ToggleButtonGroupProps> = ({ theme, 
       </ToggleButton>
       <ToggleButton value="system">
         <SettingsBrightness sx={{ mr: '0.3em' }} />
-        Systemu
+        {systemLabel ?? "Systemu"}
       </ToggleButton>
       <ToggleButton value="dark">
         <DarkModeOutlined sx={{ mr: '0.3em' }} />

@@ -38,6 +38,7 @@ const SongTheme = () => {
         sx={{ maxWidth: '40ch' }}
         changeTheme={(theme) => dispatch(setSongThemeMode(theme))}
         theme={mode}
+        systemLabel="Aplikacji"
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <FormControlLabel

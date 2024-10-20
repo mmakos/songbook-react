@@ -1,93 +1,71 @@
-import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect, useMemo } from 'react';
-import { getBand } from '../store/songbook.actions.ts';
 import { useParams } from 'react-router-dom';
-import { clearBand } from '../store/songbook.reducer.ts';
-import { Divider, Link, Paper, Typography, useTheme } from '@mui/material';
-import RouteLink from '../components/RouteLink.tsx';
+import { Container, Divider, Link, Paper, Typography, useTheme } from '@mui/material';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import Progress from '../components/Progress.tsx';
+import SongTable from '../song-list/SongTable.tsx';
+import { useEffect, useState } from 'react';
+import { IBand } from '../types/song.types.ts';
+import { fetchAuthor } from './author.actions.ts';
 
 const Band = () => {
-  const dispatch = useAppDispatch();
-  const band = useAppSelector((state) => state.band);
+  const [band, setBand] = useState<IBand>();
+  const [imageUrl, setImageUrl] = useState<string>();
   const { bandSlug } = useParams();
   const theme = useTheme();
 
+  const fetchBand = () => {
+    if (!bandSlug) return;
+    fetchAuthor(`band/${bandSlug}/`, (band) => setBand(band as IBand), setImageUrl);
+  };
+
   useEffect(() => {
-    bandSlug && dispatch(getBand(bandSlug));
+    setBand(undefined);
+    fetchBand();
   }, [bandSlug]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearBand());
-    };
-  }, []);
-
-  const songs = useMemo(() => {
-    if (!band.songs) return;
-    const s = [...band.songs];
-    s.sort((a, b) => a.title.localeCompare(b.title));
-    return s;
-  }, [band.songs]);
-
-  if (!band.band) return <Progress />;
+  if (!band) return <Progress />;
 
   return (
-    <div
-      style={{
-        position: 'relative',
+    <Container
+      sx={{
         display: 'flex',
-        alignItems: 'center',
-        marginBottom: '0.5em',
-        marginTop: '1em',
-        minWidth: '50%',
+        flexDirection: 'column',
       }}
     >
-      <div style={{ flex: 1 }}>
-        <Typography variant="h4" mb="0.5rem">
-          {band.band.name}
-        </Typography>
-        {band.band.url && (
-          <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex' }}>
-              <InfoUrlIcon url={band.band.url} sx={{ mr: '0.3em' }} />
-              <Link href={band.band.url} color="inherit" underline="hover" target="_blank" rel="noopener">
-                Więcej informacje o zespole
-              </Link>
-            </div>
-            {band.imageUrl && (
-              <>
-                <Divider sx={{ my: '0.5em' }} />
-                <a href={band.imageUrl} target="_blank" rel="noopener">
-                  <img
-                    src={band.imageUrl}
-                    style={{
-                      height: '240px',
-                      borderRadius: theme.shape.borderRadius,
-                      border: 'solid',
-                      borderColor: theme.palette.divider,
-                    }}
-                    alt={band.band.name}
-                  />
-                </a>
-              </>
-            )}
-          </Paper>
-        )}
-        {songs && (
-          <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
-            <Typography variant="h5">Piosenki</Typography>
-            <Divider sx={{ my: '0.5em' }} />
-            {songs.map((song) => (
-              <RouteLink key={song.slug} lineHeight={1.75} color={'textPrimary'} to={`/song/${song.slug}`}>
-                {song.title}
-              </RouteLink>
-            ))}
-          </Paper>
-        )}
-      </div>
-    </div>
+      <Typography variant="h4" mb="0.5rem">
+        {band.name}
+      </Typography>
+      {band.url && (
+        <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex' }}>
+            <InfoUrlIcon url={band.url} sx={{ mr: '0.3em' }} />
+            <Link href={band.url} color="inherit" underline="hover" target="_blank" rel="noopener">
+              Więcej informacje o zespole
+            </Link>
+          </div>
+          {imageUrl && (
+            <>
+              <Divider sx={{ my: '0.5em' }} />
+              <a href={imageUrl} target="_blank" rel="noopener">
+                <img
+                  src={imageUrl}
+                  style={{
+                    height: '240px',
+                    borderRadius: theme.shape.borderRadius,
+                    border: 'solid',
+                    borderColor: theme.palette.divider,
+                  }}
+                  alt={band.name}
+                />
+              </a>
+            </>
+          )}
+        </Paper>
+      )}
+      <Paper>
+        <SongTable band={bandSlug} />
+      </Paper>
+    </Container>
   );
 };
 

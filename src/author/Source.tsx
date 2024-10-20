@@ -1,99 +1,77 @@
-import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useEffect, useMemo } from 'react';
-import { getSource } from '../store/songbook.actions.ts';
+import { useEffect, useState } from 'react';
+import { fetchAuthor } from './author.actions.ts';
 import { useParams } from 'react-router-dom';
-import { clearSource } from '../store/songbook.reducer.ts';
-import { Divider, Link, Paper, Typography, useTheme } from '@mui/material';
-import RouteLink from '../components/RouteLink.tsx';
+import { Container, Divider, Link, Paper, Typography, useTheme } from '@mui/material';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import SourceTypeIcon from './SourceTypeIcon.tsx';
-import { sourceTypeAblative, sourceTypeNominative } from './source.utils.ts';
+import { sourceTypeAblative, sourceTypeNominative } from './author.utils.ts';
 import Progress from '../components/Progress.tsx';
+import SongTable from '../song-list/SongTable.tsx';
+import { ISource } from '../types/song.types.ts';
 
 const Source = () => {
-  const dispatch = useAppDispatch();
-  const source = useAppSelector((state) => state.source);
+  const [source, setSource] = useState<ISource>();
+  const [imageUrl, setImageUrl] = useState<string>();
   const { sourceSlug } = useParams();
   const theme = useTheme();
 
+  const fetchSource = () => {
+    if (!sourceSlug) return;
+    fetchAuthor(`source/${sourceSlug}/`, (source) => setSource(source as ISource), setImageUrl);
+  };
+
   useEffect(() => {
-    sourceSlug && dispatch(getSource(sourceSlug));
+    setSource(undefined);
+    fetchSource();
   }, [sourceSlug]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearSource());
-    };
-  }, []);
-
-  const songs = useMemo(() => {
-    if (!source.songs) return;
-    const s = [...source.songs];
-    s.sort((a, b) => a.title.localeCompare(b.title));
-    return s;
-  }, [source.songs]);
-
-  if (!source.source) return <Progress />;
+  if (!source) return <Progress />;
 
   return (
-    <div
-      style={{
-        position: 'relative',
+    <Container
+      sx={{
         display: 'flex',
-        alignItems: 'center',
-        marginBottom: '0.5em',
-        marginTop: '1em',
-        minWidth: '50%',
+        flexDirection: 'column',
       }}
     >
-      <div style={{ flex: 1 }}>
-        <Typography variant="h4" mb="0.5rem">
-          <SourceTypeIcon sx={{ mr: '0.3em' }} type={source.source.type} />
-          {source.source.name}
-        </Typography>
-        {source.source.url && (
-          <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
-            <Typography>
-              {`${sourceTypeNominative(source.source.type)} "${source.source.name}"${source.source.year && ' z roku ' + source.source.year}`}
-            </Typography>
-            <div style={{ display: 'flex', marginTop: '0.5em' }}>
-              <InfoUrlIcon url={source.source.url} sx={{ mr: '0.3em' }} />
-              <Link href={source.source.url} color="inherit" underline="hover" target="_blank" rel="noopener">
-                Więcej informacje o {sourceTypeAblative(source.source.type)}
-              </Link>
-            </div>
-            {source.imageUrl && (
-              <>
-                <Divider sx={{ my: '0.5em' }} />
-                <a href={source.imageUrl} target="_blank" rel="noopener">
-                  <img
-                    src={source.imageUrl}
-                    style={{
-                      height: '240px',
-                      borderRadius: theme.shape.borderRadius,
-                      border: 'solid',
-                      borderColor: theme.palette.divider,
-                    }}
-                    alt={source.source.name}
-                  />
-                </a>
-              </>
-            )}
-          </Paper>
-        )}
-        {songs && (
-          <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
-            <Typography variant="h5">Piosenki</Typography>
-            <Divider sx={{ my: '0.5em' }} />
-            {songs.map((song) => (
-              <RouteLink key={song.slug} lineHeight={1.75} color={'textPrimary'} to={`/song/${song.slug}`}>
-                {song.title}
-              </RouteLink>
-            ))}
-          </Paper>
-        )}
-      </div>
-    </div>
+      <Typography variant="h4" mb="0.5rem">
+        <SourceTypeIcon sx={{ mr: '0.3em' }} type={source.type} />
+        {source.name}
+      </Typography>
+      {source.url && (
+        <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
+          <Typography>
+            {`${sourceTypeNominative(source.type)} "${source.name}"${source.year && ' z roku ' + source.year}`}
+          </Typography>
+          <div style={{ display: 'flex', marginTop: '0.5em' }}>
+            <InfoUrlIcon url={source.url} sx={{ mr: '0.3em' }} />
+            <Link href={source.url} color="inherit" underline="hover" target="_blank" rel="noopener">
+              Więcej informacje o {sourceTypeAblative(source.type)}
+            </Link>
+          </div>
+          {imageUrl && (
+            <>
+              <Divider sx={{ my: '0.5em' }} />
+              <a href={imageUrl} target="_blank" rel="noopener">
+                <img
+                  src={imageUrl}
+                  style={{
+                    height: '240px',
+                    borderRadius: theme.shape.borderRadius,
+                    border: 'solid',
+                    borderColor: theme.palette.divider,
+                  }}
+                  alt={source.name}
+                />
+              </a>
+            </>
+          )}
+        </Paper>
+      )}
+      <Paper>
+        <SongTable source={sourceSlug} />
+      </Paper>
+    </Container>
   );
 };
 

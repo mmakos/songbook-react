@@ -20,7 +20,7 @@ const SongTitle: FC = () => {
 
   return (
     <div
-      style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em', marginTop: '1em' }}
+      style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em'}}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
