@@ -14,9 +14,11 @@ import SongRoute from './SongRoute.tsx';
 import SongContent from './SongContent.tsx';
 import SongVideo from './SongVideo.tsx';
 import SongControls from './SongControls.tsx';
+import NotFound from '../subsites/NotFound.tsx';
 
 const Song: FC = () => {
   const song = useAppSelector((state) => state.song);
+  const songTimeout = useAppSelector((state) => state.songTimeout);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();
   const { songSlug } = useParams();
@@ -45,6 +47,10 @@ const Song: FC = () => {
       navigate(`/song/${song.next.slug}`);
     }
   };
+
+  if (songTimeout) {
+    return <NotFound />;
+  }
 
   return (
     <div style={{ position: 'relative', alignItems: 'center', maxWidth: '100%' }}>

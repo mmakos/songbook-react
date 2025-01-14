@@ -89,6 +89,10 @@ export interface ISongbookState {
    */
   song?: ISong;
   /**
+   * Czy poszedł timeout dla pobierania piosenki
+   */
+  songTimeout?: boolean;
+  /**
    * Powiadomienia dla użytkownika
    */
   notification: INotificationState;
@@ -308,10 +312,16 @@ const songbookSlice = createSlice({
     changeZoom: (state: ISongbookState, action: PayloadAction<TScale>) => {
       state.songDisplayState.zoom = action.payload;
     },
+    resetSongTimeout: (state: ISongbookState) => {
+      state.songTimeout = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getSong.fulfilled, (state: ISongbookState, action) => {
       state.song = action.payload as ISong;
+    });
+    builder.addCase(getSong.rejected, (state: ISongbookState) => {
+      state.songTimeout = true;
     });
   },
 });
@@ -349,6 +359,7 @@ export const {
   setNoChords,
   setGlobalChordsDifficulty,
   changeZoom,
+  resetSongTimeout,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;
