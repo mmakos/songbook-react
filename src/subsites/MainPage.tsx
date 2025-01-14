@@ -1,4 +1,15 @@
-import {Avatar, Divider, Link, List, ListItem, ListItemAvatar, ListItemText, Typography, useTheme} from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Divider,
+  Link,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import {
   Timeline,
   TimelineConnector,
@@ -16,6 +27,7 @@ import {
   InfoOutlined,
   Language,
   MenuBook,
+  MusicNote,
   Piano,
   SentimentVerySatisfied,
   Settings,
@@ -27,12 +39,32 @@ import Logo from '../components/icon/Logo.tsx';
 import RouteLink from '../components/RouteLink.tsx';
 import Grid from '@mui/material/Grid2';
 import SearchIcon from '@mui/icons-material/Search';
+import RouteButton from '../components/RouteButton.tsx';
+import useRandomSong from '../store/useRandomSong.hook.ts';
 
 const MainPage = () => {
   const theme = useTheme();
+  const randomSong = useRandomSong();
 
   return (
     <div>
+      <Grid container spacing={2} mb="2em">
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <RouteButton to="/songs" variant="contained" startIcon={<MusicNote />} fullWidth>
+            Piosenki
+          </RouteButton>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Button onClick={() => randomSong()} variant="outlined" startIcon={<CasinoOutlined />} fullWidth>
+            Losuj piosenkę
+          </Button>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <RouteButton to="/settings" variant="outlined" startIcon={<Settings />} fullWidth>
+            Ustawienia
+          </RouteButton>
+        </Grid>
+      </Grid>
       <Divider>
         <Typography variant="h4">Historia śpiewnika</Typography>
       </Divider>
@@ -148,7 +180,7 @@ const MainPage = () => {
           <List>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <SentimentVerySatisfied />
                 </Avatar>
               </ListItemAvatar>
@@ -156,7 +188,7 @@ const MainPage = () => {
             </ListItem>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <Settings />
                 </Avatar>
               </ListItemAvatar>
@@ -164,7 +196,7 @@ const MainPage = () => {
             </ListItem>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <InfoOutlined />
                 </Avatar>
               </ListItemAvatar>
@@ -172,7 +204,7 @@ const MainPage = () => {
             </ListItem>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <YouTube />
                 </Avatar>
               </ListItemAvatar>
@@ -180,7 +212,7 @@ const MainPage = () => {
             </ListItem>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <SearchIcon />
                 </Avatar>
               </ListItemAvatar>
@@ -188,7 +220,7 @@ const MainPage = () => {
             </ListItem>
             <ListItem>
               <ListItemAvatar>
-                <Avatar sx={{bgcolor: theme.palette.primary.main}}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                   <CasinoOutlined />
                 </Avatar>
               </ListItemAvatar>

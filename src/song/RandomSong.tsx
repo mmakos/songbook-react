@@ -1,17 +1,9 @@
 import { IconButton } from '@mui/material';
 import { CasinoOutlined } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { HttpService } from '../http/http.service.ts';
-import { Category } from '../types/song.types.ts';
+import useRandomSong from '../store/useRandomSong.hook.ts';
 
 const RandomSong = () => {
-  const navigate = useNavigate();
-
-  const drawSong = () => {
-    HttpService.get(`/random-song/?category=${Category.KACZMARSKI},${Category.OTHER}`).then((result) => {
-      navigate(`/song/${result.data}`);
-    });
-  };
+  const drawSong = useRandomSong();
 
   return (
     <IconButton
