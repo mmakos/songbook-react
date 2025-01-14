@@ -1,6 +1,6 @@
-import { Accidental, ISong, ISongOverview } from '../types/song.types.ts';
+import { Accidental, ISong } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchSongList, getSong } from './songbook.actions.ts';
+import { getSong } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { expert } from '../chords/chord-difficulty.tsx';
@@ -84,10 +84,6 @@ interface IFontStyles {
  * Główny stan aplikacji - śpiewnika (root reducera)
  */
 export interface ISongbookState {
-  /**
-   * Lista piosenek (kiedy wyświetlamy coś związanego z listą wszystkich piosenek)
-   */
-  songs?: ISongOverview[];
   /**
    * Obecnie wyświetlana piosenka
    */
@@ -314,9 +310,6 @@ const songbookSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchSongList.fulfilled, (state: ISongbookState, action) => {
-      state.songs = action.payload as ISongOverview[];
-    });
     builder.addCase(getSong.fulfilled, (state: ISongbookState, action) => {
       state.song = action.payload as ISong;
     });

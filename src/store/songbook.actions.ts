@@ -1,15 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { HttpService } from '../http/http.service.ts';
-import { ISong, ISongOverview } from '../types/song.types.ts';
+import { ISong } from '../types/song.types.ts';
+import pako from 'pako';
 
-export const fetchSongList = createAsyncThunk('songbook/fetchSongList', async () => {
-  return await HttpService.get('songs/').then((response) => {
-    return response.data as ISongOverview[];
-  });
-});
+const decompress = (compressedBase64: string) => {
+  const compressedData = Uint8Array.from(atob(compressedBase64), (c) => c.charCodeAt(0));
+
+  return pako.inflate(compressedData, { to: 'string' });
+};
 
 export const getSong = createAsyncThunk('songbook/getSong', async (slug: string) => {
   return await HttpService.get(`song/${slug}/`).then((response) => {
-    return response.data as ISong;
+    const song: ISong = response.data;
+    song.verses = JSON.parse(decompress(response.data.verses));
+    return song;
   });
 });

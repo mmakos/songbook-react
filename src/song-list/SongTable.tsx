@@ -1,4 +1,12 @@
-import { DataGrid, GridColDef, GridSlots, GridSortModel, GridToolbarContainer, useGridApiRef } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridSlots,
+  GridSortDirection,
+  GridSortModel,
+  GridToolbarContainer,
+  useGridApiRef,
+} from '@mui/x-data-grid';
 import { FC, useEffect, useState } from 'react';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import muiDataGridPL from '../components/MuiDataGridPL.ts';
@@ -8,6 +16,7 @@ import ArtistsTableCell from './ArtistsTableCell.tsx';
 import SourcesTableCell from './SourcesTableCell.tsx';
 import { Typography, useTheme } from '@mui/material';
 import { Category } from '../types/song.types.ts';
+import { useSearchParams } from 'react-router-dom';
 
 const Title: FC<{ title?: string }> = ({ title }) => {
   return (
@@ -83,13 +92,43 @@ interface ISongTableProps {
   title?: string;
 }
 
+const strToNumber = (str: string | null, def: number): number => {
+  if (!str) return def;
+  const number = +str;
+  return isNaN(number) ? def : number;
+};
+
 const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query, title }) => {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(25);
   const [rowCount, setRowCount] = useState(0);
-  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'title', sort: 'asc' }]);
+
+  const [params, setParams] = useSearchParams();
+
+  const page = strToNumber(params.get('p'), 0);
+  const pageSize = strToNumber(params.get('s'), 25);
+  const sortField = params.get('f');
+    
+  const sortModel: GridSortModel = sortField
+    ? [
+        {
+          field: sortField,
+          sort: (params.get('o') ?? 'asc') as GridSortDirection,
+        },
+      ]
+    : [];
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    if (model.length > 0) {
+      const m = model[0];
+      params.set('f', m.field);
+      m.sort && params.set('o', m.sort);
+    } else {
+      params.delete('f');
+      params.delete('o');
+    }
+    setParams(params);
+  };
 
   const apiRef = useGridApiRef();
 
@@ -166,9 +205,10 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
           },
           onPageChange: (_, page) => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            setPage(page);
+            params.set('p', '' + page);
+            setParams(params);
           },
-          onRowsPerPageChange: (event) => setPageSize(+event.target.value),
+          onRowsPerPageChange: (event) => setParams({ s: event.target.value }),
           labelRowsPerPage: 'Wierszy na stronie',
           labelDisplayedRows: ({ from, to, count }) => `${from}–${to} z ${count >= 0 ? count : 'wielu'}`,
         },
@@ -177,7 +217,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
       paginationMode="server"
       sortingMode="server"
       sortModel={sortModel}
-      onSortModelChange={setSortModel}
+      onSortModelChange={handleSortModelChange}
       filterMode="server"
       slots={{
         toolbar: (() => <Title title={title} />) as GridSlots['toolbar'],

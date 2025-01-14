@@ -140,9 +140,7 @@ export interface ILine {
  */
 export interface ITextRun {
   text: string;
-  italic?: boolean;
-  underline?: boolean;
-  bold?: boolean;
+  style?: number;
 }
 
 /**

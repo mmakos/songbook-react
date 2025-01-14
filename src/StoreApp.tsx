@@ -15,6 +15,7 @@ import Band from './author/Band.tsx';
 import Source from './author/Source.tsx';
 import SongFullTable from './song-list/SongFullTable.tsx';
 import FullSearch from './search/FullSearch.tsx';
+import MainPage from "./subsites/MainPage.tsx";
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -44,6 +45,7 @@ const StoreApp = () => {
           <MainMenu />
           <Container sx={{ flexGrow: 1, mt: '1em', display: 'flex', justifyContent: 'center' }}>
             <Routes>
+              <Route path="/" element={<MainPage />} />
               <Route path="/songs/:category?" element={<SongFullTable />} />
               <Route path="/song/:songSlug" element={<Song />} />
               <Route path="/settings" element={<Settings />} />

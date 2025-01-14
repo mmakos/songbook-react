@@ -1,7 +1,7 @@
 import MainMenuGroup from './group/MainMenuGroup.tsx';
 import { FC, useState } from 'react';
 import MainMenuItem, { TMenuType } from './item/MainMenuItem.tsx';
-import { Call, EmojiEmotions, Home, MusicNote } from '@mui/icons-material';
+import { EmojiEmotions, Home, MusicNote } from '@mui/icons-material';
 import MainMenuSubItem from './item/MainMenuSubItem.tsx';
 import { Divider } from '@mui/material';
 import { Category } from '../types/song.types.ts';
@@ -38,7 +38,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         setExpanded={setSongsExpanded}
       >
         <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
-        <Divider variant="middle"/>
+        <Divider variant="middle" />
         {Object.values(Category).map((category: Category) => (
           <MainMenuSubItem
             type={type}
@@ -57,23 +57,38 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         expanded={extrasExpanded}
         setExpanded={setExtrasExpanded}
       >
-        <MainMenuSubItem type={type} text="Jak korzystać" routeTo="/extras/usage" close={handleExtrasClose} />
+        <MainMenuSubItem
+          type={type}
+          text="Jak korzystać"
+          href="https://spiewnik.mmakos.pl/dodatki/jak-korzystac/"
+          close={handleExtrasClose}
+        />
         <MainMenuSubItem
           type={type}
           text="Nuty"
           href="https://mmakos.pl/music/my-arrangements"
           close={handleExtrasClose}
         />
-        <MainMenuSubItem type={type} text="Tabulatury" routeTo="/extras/tabs" close={handleExtrasClose} />
-        <MainMenuSubItem type={type} text="Tłumaczenia" routeTo="/extras/translations" close={handleExtrasClose} />
+        <MainMenuSubItem
+          type={type}
+          text="Tabulatury"
+          href="https://spiewnik.mmakos.pl/dodatki/tabulatury/"
+          close={handleExtrasClose}
+        />
+        <MainMenuSubItem
+          type={type}
+          text="Tłumaczenia"
+          href="https://spiewnik.mmakos.pl/dodatki/tlumaczenia/"
+          close={handleExtrasClose}
+        />
         <MainMenuSubItem
           type={type}
           text="Śpiewnik papierowy"
-          href="https://www.mmakos.pl/music/songbooks/my-songbook/"
+          href="https://mmakos.pl/spiewnik"
           close={handleExtrasClose}
         />
       </MainMenuGroup>
-      <MainMenuItem type={type} text={'Kontakt'} icon={<Call />} close={close} routeTo="/contact"/>
+      {/*<MainMenuItem type={type} text={'Kontakt'} icon={<Call />} close={close} routeTo="/contact"/>*/}
     </>
   );
 };
