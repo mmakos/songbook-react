@@ -10,7 +10,7 @@ const drawSadEmoji = () => {
 const NotFound = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Typography variant="h1">404 {drawSadEmoji()}</Typography>
+      <Typography variant="h1">4{drawSadEmoji()}4</Typography>
       <Typography variant="h3" mb="1em" mt="0.3em">
         Nie ma takiej piosenki!
       </Typography>
