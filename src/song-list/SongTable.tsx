@@ -108,12 +108,13 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
   const page = strToNumber(params.get('p'), 0);
   const pageSize = strToNumber(params.get('s'), 25);
   const sortField = params.get('f');
-    
+  const sort = (params.get('o') ?? 'asc') as GridSortDirection;
+
   const sortModel: GridSortModel = sortField
     ? [
         {
           field: sortField,
-          sort: (params.get('o') ?? 'asc') as GridSortDirection,
+          sort: sort,
         },
       ]
     : [];
@@ -169,7 +170,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, sortModel, category, band, source, person, query]);
+  }, [page, pageSize, sort, category, band, source, person, query]);
 
   useEffect(() => {
     apiRef.current.setColumnVisibility('category', !category);
