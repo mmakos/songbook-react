@@ -29,7 +29,7 @@ export const getBoolFromStorage = (key: string): boolean | undefined => {
 
 export const getStringFromStorage = (key: string): string | undefined => {
   const item = localStorage.getItem(key);
-  return item !== null ? item : undefined;
+  return item ?? undefined;
 };
 
 export const getObjectFromStorage = (key: string): object => {

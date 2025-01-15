@@ -120,11 +120,11 @@ export const initialSongbookState: ISongbookState = {
   },
   songDisplayState: {
     videoOpen: getBoolFromStorage('video-open'),
-    infoOpen: getBoolFromStorage('info-open'),
-    settingsOpen: getBoolFromStorage('settings-open'),
+    infoOpen: getBoolFromStorage('info-open') ?? true,
+    settingsOpen: getBoolFromStorage('settings-open') ?? true,
     expandVerses: getBoolFromStorage('expand-verses'),
   },
-  theme: getStringFromStorage('theme') as PaletteMode,
+  theme: (getStringFromStorage('theme') as PaletteMode) ?? 'dark',
   songSettings: {
     transposition: { amount: 0 },
     chordDifficulty: initialChordDifficulty,
@@ -318,7 +318,7 @@ const songbookSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getSong.fulfilled, (state: ISongbookState, action) => {
-      state.song = action.payload as ISong;
+      state.song = action.payload;
     });
     builder.addCase(getSong.rejected, (state: ISongbookState) => {
       state.songTimeout = true;
