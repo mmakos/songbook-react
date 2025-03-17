@@ -5,6 +5,7 @@ import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';
 import Search from '../search/Search.tsx';
 import RandomSong from '../song/RandomSong.tsx';
+import UserMenu from '../user/UserMenu.tsx';
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const MainMenu = () => {
           <IconButton onClick={() => navigate('settings/')} color="inherit">
             <SettingsIcon />
           </IconButton>
+          <UserMenu />
         </Toolbar>
       </Container>
     </AppBar>

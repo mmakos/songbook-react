@@ -17,6 +17,7 @@ import {
   saveObjectToStorage,
   saveStringToStorage,
 } from './local-storage.utils.ts';
+import {IUser} from "../user/user.types.ts";
 
 export interface INotificationState {
   open?: boolean;
@@ -109,6 +110,10 @@ export interface ISongbookState {
    */
   songbookSettings: ISongbookSettings;
   theme?: PaletteMode;
+  /**
+   * Dane o zalogowanym użytkowniku
+   */
+  user?: IUser;
 }
 
 const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };

@@ -4,7 +4,7 @@ import { SvgIconProps } from '@mui/material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import DarthVader from '../components/icon/DarthVader.tsx';
 import R2D2 from '../components/icon/R2D2.tsx';
-import { UserType } from '../types/song.types.ts';
+import { UserType } from './user.types.ts';
 
 const VerifiedUser: FC<SvgIconProps & { userType?: UserType }> = ({ userType, ...props }) => {
   if (!userType) return;

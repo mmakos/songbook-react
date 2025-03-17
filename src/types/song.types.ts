@@ -1,3 +1,5 @@
+import {UserType} from "../user/user.types.ts";
+
 export enum Category {
   KACZMARSKI = 'kaczmarski',
   OTHER = 'other',
@@ -10,13 +12,6 @@ export enum AuthorCategory {
   SOURCE = 'source',
   PERSON = 'person',
   BAND = 'band',
-}
-
-export enum UserType {
-  OWNER = 'owner',
-  BOT = 'bot',
-  VERIFIED = 'verified',
-  NORMAL = 'user',
 }
 
 export enum SourceType {
