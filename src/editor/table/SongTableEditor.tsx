@@ -21,8 +21,9 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { Strike } from '@tiptap/extension-strike';
 import './styles.css';
 import Piano from '../../piano/Piano.tsx';
-import { Collapse } from '@mui/material';
+import { Collapse, IconButton } from '@mui/material';
 import { useState } from 'react';
+import { Piano as PianoIcon, PianoOff } from '@mui/icons-material';
 
 const SongTableEditor = () => {
   const editor = useEditor({
@@ -55,7 +56,10 @@ const SongTableEditor = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-      <Collapse in={pianoOpen}>
+      <div style={{ display: 'flex' }}>
+        <IconButton onClick={() => setPianoOpen(!pianoOpen)}>{pianoOpen ? <PianoOff /> : <PianoIcon />}</IconButton>
+      </div>
+      <Collapse in={pianoOpen} unmountOnExit>
         <Piano setOpen={setPianoOpen} />
       </Collapse>
       <StyledEditorContent editor={editor} />
