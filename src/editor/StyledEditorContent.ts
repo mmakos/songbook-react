@@ -3,21 +3,20 @@ import { EditorContent } from '@tiptap/react';
 
 const StyledEditorContent = styled(EditorContent)(({ theme }) => ({
   '.tiptap': {
-    borderWidth: 1,
     borderRadius: theme.shape.borderRadius,
-    borderStyle: 'solid',
-    borderColor: theme.palette.action.disabled,
-    outline: 'none',
+    outline: '1px solid white',
+    outlineWidth: 1,
+    outlineColor: theme.palette.action.disabled,
     padding: '0.5em',
     minHeight: '1em',
     minWidth: '20ch',
     ':hover': {
-      borderWidth: 2,
-      borderColor: theme.palette.text.primary,
+      outlineWidth: 2,
+      outlineColor: theme.palette.text.primary,
     },
     ':focus': {
-      borderWidth: 2,
-      borderColor: theme.palette.primary.main,
+      outlineWidth: 2,
+      outlineColor: theme.palette.primary.main,
     },
     p: {
       ':first-child': {

@@ -6,18 +6,18 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { History } from '@tiptap/extension-history';
 import StyledEditorContent from './StyledEditorContent.ts';
-import Indent from './IndentExtension.ts';
-import TextReplacer from './TextReplacer.ts';
 import DoubleHardWrapToParagraph from './AutoParExtension.ts';
 import { FC } from 'react';
-import {Italic} from "@tiptap/extension-italic";
-import {Underline} from "@tiptap/extension-underline";
+import { Italic } from '@tiptap/extension-italic';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Strike } from '@tiptap/extension-strike';
 
-interface ISongTextEditorProps {
-  text: string;
+interface ISongChordsEditorProps {
+  chords: string;
 }
 
-const SongTextEditor: FC<ISongTextEditorProps> = ({ text }) => {
+const SongChordsEditor: FC<ISongChordsEditorProps> = ({ chords }) => {
   const editor = useEditor({
     extensions: [
       Text,
@@ -26,20 +26,16 @@ const SongTextEditor: FC<ISongTextEditorProps> = ({ text }) => {
       Document,
       Bold,
       Italic,
-      Underline,
+      Subscript,
+      Superscript,
+      Strike,
       History,
       DoubleHardWrapToParagraph,
-      TextReplacer,
-      Indent.configure({
-        types: ['paragraph'],
-        minLevel: 0,
-        maxLevel: 3,
-      }),
     ],
-    content: text,
+    content: chords,
   });
 
   return <StyledEditorContent editor={editor} />;
 };
 
-export default SongTextEditor;
+export default SongChordsEditor;
