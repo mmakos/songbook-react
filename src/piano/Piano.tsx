@@ -1,7 +1,7 @@
 import { FC, MouseEvent, useMemo, useRef, useState } from 'react';
 import { playSound } from './MidiPlayer.ts';
 import { IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { DeleteForever, Done, ExpandLess, Hearing, PlayArrow, Stop, TouchApp } from '@mui/icons-material';
+import {DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp} from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import PianoTextButtonIcon from './icon/PianoTextButtonIcon.tsx';
 import InversionIcon from './icon/InversionIcon.tsx';
@@ -148,9 +148,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
             <Hearing />
           </IconButton>
           {chordsToPlayProvider && (
-            <IconButton onClick={playback ? stopPlayback : playChords}>
-              {playback ? <Stop /> : <PlayArrow />}
-            </IconButton>
+            <IconButton onClick={playback ? stopPlayback : playChords}>{playback ? <Stop /> : <Speaker />}</IconButton>
           )}
           <IconButton onClick={clearSelection}>
             <DeleteForever />

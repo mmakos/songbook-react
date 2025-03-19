@@ -22,11 +22,12 @@ import './styles.css';
 import Piano from '../../piano/Piano.tsx';
 import { Collapse, IconButton } from '@mui/material';
 import { useState } from 'react';
-import { Piano as PianoIcon, PianoOff } from '@mui/icons-material';
+import { Piano as PianoIcon, PianoOff, RecordVoiceOver, Stop } from '@mui/icons-material';
 import { IChord } from '../../types/song.types.ts';
 import { DOMSerializer } from 'prosemirror-model';
 import TypedTableCell from '../ClassTableCell.tsx';
 import { extractChordsFromFragment, flattenChords } from './converter/htmlToSong.converter.ts';
+import { cancelSpeech, readText } from '../text-reader.ts';
 
 const SongTableEditor = () => {
   const editor = useEditor({
@@ -56,6 +57,7 @@ const SongTableEditor = () => {
     content: songToHTML(dzieciHioba),
   });
   const [pianoOpen, setPianoOpen] = useState(true);
+  const [reading, setReading] = useState(false);
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -68,10 +70,20 @@ const SongTableEditor = () => {
     return flattenChords(extractChordsFromFragment(div.innerHTML));
   };
 
+  const readSelectedText = () => {
+    if (!editor) return;
+    const slice = editor.state.selection.content();
+    setReading(true);
+    readText(slice.content.textBetween(0, slice.content.size), () => setReading(false));
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
       <div style={{ display: 'flex' }}>
         <IconButton onClick={() => setPianoOpen(!pianoOpen)}>{pianoOpen ? <PianoOff /> : <PianoIcon />}</IconButton>
+        <IconButton onClick={reading ? cancelSpeech : readSelectedText}>
+          {reading ? <Stop /> : <RecordVoiceOver />}
+        </IconButton>
       </div>
       <Collapse in={pianoOpen} unmountOnExit>
         <Piano setOpen={setPianoOpen} chordsToPlayProvider={getSelectedChords} />
