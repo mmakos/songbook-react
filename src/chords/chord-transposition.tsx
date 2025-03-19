@@ -60,7 +60,7 @@ export const getTranspositionBetweenNotes = (original: INote, transposed: INote)
   return { amount: diff, type: transposed.accidental };
 };
 
-const noteIndexes: { [key in NoteBase]: number } = {
+const noteIndexes: Record<NoteBase, number> = {
   [NoteBase.C]: 0,
   [NoteBase.D]: 2,
   [NoteBase.E]: 4,
@@ -70,7 +70,7 @@ const noteIndexes: { [key in NoteBase]: number } = {
   [NoteBase.H]: 11,
 };
 
-const notesByIndex: { [key: number]: NoteBase } = {
+const notesByIndex: Record<number, NoteBase> = {
   0: NoteBase.C,
   2: NoteBase.D,
   4: NoteBase.E,

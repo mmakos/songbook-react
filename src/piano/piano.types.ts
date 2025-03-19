@@ -5,6 +5,12 @@ export const PIANO_WHITE_KEYS = 16;
 
 export type TInversion = 0 | 1 | 2;
 
+export enum ChordMode {
+  KEY,
+  MAJOR,
+  MINOR,
+}
+
 export interface IPianoKey {
   note: number;
   black?: boolean;
@@ -14,9 +20,9 @@ export interface IPianoKey {
 export interface IPianoToggleOptions {
   touch?: boolean; // Czy klawisz trzeba trzymać
   chord?: boolean;
-  minor?: boolean;
   sixth?: boolean;
   seventh?: boolean;
+  mode: ChordMode;
   inversion: TInversion;
 }
 
@@ -31,5 +37,6 @@ export interface IPianoOptions {
 export const defaultPianoToggleOptions: IPianoToggleOptions = {
   touch: true,
   chord: true,
+  mode: ChordMode.KEY,
   inversion: 0,
 };

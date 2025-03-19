@@ -1,14 +1,15 @@
 import { FC, MouseEvent, useMemo, useRef, useState } from 'react';
 import { playSound } from './MidiPlayer.ts';
 import { IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import {DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp} from '@mui/icons-material';
+import { DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp } from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import PianoTextButtonIcon from './icon/PianoTextButtonIcon.tsx';
 import InversionIcon from './icon/InversionIcon.tsx';
 import PianoKey from './PianoKey.tsx';
 import { getChordNotes, getChordNotesForNote } from './chord-interpreter.ts';
 import { defaultPianoToggleOptions, IPianoKey, IPianoToggleOptions, PIANO_KEYS, TInversion } from './piano.types.ts';
-import { IChord } from '../types/song.types.ts';
+import { IChord, NoteBase } from '../types/song.types.ts';
+import PianoModeIcon from './icon/PianoModeIcon.tsx';
 
 interface IPianoProps {
   setOpen: (open: boolean) => void;
@@ -31,7 +32,9 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
   const playbackTimeoutId = useRef<number>();
 
   const keyAction = (key: IPianoKey, pressed: boolean) => {
-    const notes = toggleOptions.chord ? getChordNotesForNote(key.note, toggleOptions) : [key.note];
+    const notes = toggleOptions.chord
+      ? getChordNotesForNote(key.note, toggleOptions, { note: { base: NoteBase.A }, minor: true })
+      : [key.note];
     notes.forEach((n) => (keys[n].selected = pressed));
     if (pressed) {
       playSound(notes.map((n) => n + 48));
@@ -77,9 +80,9 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
   };
 
   const handleToggleOptionsChange = (_: unknown, values: string[]) => {
-    const newOptions: IPianoToggleOptions = { inversion: toggleOptions.inversion };
+    const newOptions: IPianoToggleOptions = { inversion: toggleOptions.inversion, mode: toggleOptions.mode };
     values.forEach((v) => {
-      if (v !== 'inversion') newOptions[v as keyof IPianoToggleOptions] = true as never;
+      if (v !== 'inversion' && v !== 'mode') newOptions[v as keyof IPianoToggleOptions] = true as never;
     });
     setToggleOptions(newOptions);
   };
@@ -87,6 +90,11 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
   const handleInversionChange = (e: MouseEvent) => {
     e.preventDefault();
     setToggleOptions({ ...toggleOptions, inversion: ((toggleOptions.inversion + 1) % 3) as TInversion });
+  };
+
+  const handleModeChange = (e: MouseEvent) => {
+    e.preventDefault();
+    setToggleOptions({ ...toggleOptions, mode: (toggleOptions.mode + 1) % 3 });
   };
 
   const toggleValues = useMemo(() => {
@@ -107,20 +115,20 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
           padding: '10px',
         }}
       >
-        <ToggleButtonGroup value={toggleValues} onChange={handleToggleOptionsChange}>
-          <BasicTooltip title="Touch mode (release keys)">
+        <ToggleButtonGroup value={toggleValues} onChange={handleToggleOptionsChange} size="small">
+          <BasicTooltip title="Tryb gry (puszczanie klawiszy)">
             <ToggleButton value="touch">
               <TouchApp />
             </ToggleButton>
           </BasicTooltip>
-          <BasicTooltip title="Tryb akordów (wciśnięcie klawisza generuje cały akord)">
+          <BasicTooltip title="Tryb gry akordami (wciśnięcie klawisza generuje cały akord)">
             <ToggleButton value="chord">
               <PianoTextButtonIcon>A</PianoTextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
-          <BasicTooltip title="Akord molowy">
-            <ToggleButton value="minor">
-              <PianoTextButtonIcon style={{ fontSize: '15px' }}>Cm</PianoTextButtonIcon>
+          <BasicTooltip title="Tryb akordów (akordy zgodnie z ustawioną tonacją / dur / moll)">
+            <ToggleButton value="mode" onClick={handleModeChange}>
+              <PianoModeIcon mode={toggleOptions.mode} />
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Akord z septymą">

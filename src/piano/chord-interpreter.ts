@@ -1,26 +1,10 @@
-import {
-  Accidental,
-  ChordModification,
-  IChord,
-  IElement,
-  IntervalModification,
-  NoteBase,
-} from '../types/song.types.ts';
-import { IPianoToggleOptions, PIANO_KEYS } from './piano.types.ts'; // Obsługa akordów na klawiaturze
+import { ChordModification, IChord, IElement, IKey, IntervalModification } from '../types/song.types.ts';
+import { ChordMode, IPianoToggleOptions, PIANO_KEYS } from './piano.types.ts';
+import { getNoteIndex } from '../chords/chord-transposition.tsx'; // Obsługa akordów na klawiaturze
 
 // Obsługa akordów na klawiaturze
 // Dźwięki są notowane od c małego (0) do c dwukreślnego (25),
 // Czyli jest to midi przesunięte 48
-
-const noteBases: Record<NoteBase, number> = {
-  [NoteBase.C]: 0,
-  [NoteBase.D]: 2,
-  [NoteBase.E]: 4,
-  [NoteBase.F]: 5,
-  [NoteBase.G]: 7,
-  [NoteBase.A]: 9,
-  [NoteBase.H]: 11,
-};
 
 const intervalOffsets: Map<number, number> = new Map([
   [1, 0],
@@ -42,9 +26,7 @@ const getIntervalOffset = (element: IElement) => {
 };
 
 export const getChordNotes = (chord: IChord) => {
-  let baseNote = noteBases[chord.note.base];
-  if (chord.note.accidental === Accidental.FLAT) --baseNote;
-  else if (chord.note.accidental === Accidental.SHARP) ++baseNote;
+  const baseNote = getNoteIndex(chord.note) % 12;
 
   if (chord.modification === ChordModification.CLUSTER) {
     return Array.from(Array(13), (_, i) => baseNote + i);
@@ -84,23 +66,62 @@ export const getChordNotes = (chord: IChord) => {
     notesArray.push(...removed.map((n) => n + 12));
     notesArray.sort((a, b) => a - b);
     if (notesArray[0] >= 12) {
-      notesArray.forEach((v, i, a) => a[i] = v - 12);
+      notesArray.forEach((v, i, a) => (a[i] = v - 12));
     }
   }
 
   return notesArray;
 };
 
+const minorChords = [
+  [3, 7, 8, 10],
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+  [3, 7, 9, 10],
+  [4, 8, 9, 11],
+  [4, 7, 8, 10],
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+  [4, 7, 9, 10],
+  [3, 6, 8, 9],
+];
+
+const majorChords = [
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+  [3, 7, 9, 10],
+  [4, 8, 9, 11],
+  [3, 7, 8, 10],
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+  [4, 7, 9, 10],
+  [3, 6, 8, 9],
+  [3, 7, 8, 10],
+  [4, 7, 9, 11],
+  [3, 6, 8, 10],
+];
+
+const getThirdAndFifth = (chordNote: number, mode: ChordMode, key: IKey): number[] => {
+  if (mode === ChordMode.MAJOR) return [4, 7, 8, 10];
+  else if (mode === ChordMode.MINOR) return [3, 7, 9, 10];
+  const keyBase = getNoteIndex(key.note) % 12;
+  const relative = (chordNote - keyBase + 12) % 12;
+  return (key.minor ? minorChords : majorChords)[relative];
+};
+
 /**
  * Zwraca dźwięki akordu dla pojedynczego dźwięku według ustawień.
  */
-export const getChordNotesForNote = (note: number, pianoToggleOptions: IPianoToggleOptions): number[] => {
+export const getChordNotesForNote = (note: number, pianoToggleOptions: IPianoToggleOptions, key: IKey): number[] => {
   const notes = [];
   notes.push(note);
-  notes.push(note + (pianoToggleOptions.minor ? 3 : 4));
-  notes.push(note + 7);
-  if (pianoToggleOptions.sixth) notes.push(note + 9);
-  if (pianoToggleOptions.seventh) notes.push(note + 10);
+  const [third, fifth, sixth, seventh] = getThirdAndFifth(note, pianoToggleOptions.mode, key);
+  notes.push(note + third);
+  notes.push(note + fifth);
+  if (pianoToggleOptions.sixth) notes.push(note + sixth);
+  if (pianoToggleOptions.seventh) notes.push(note + seventh);
   if (pianoToggleOptions.inversion) {
     const removed = notes.splice(notes.length - pianoToggleOptions.inversion, pianoToggleOptions.inversion);
     notes.unshift(...removed.map((n) => n - 12));
