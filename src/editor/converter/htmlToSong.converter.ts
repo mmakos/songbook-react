@@ -8,7 +8,7 @@ import {
   IElement,
   IntervalModification,
   NoteBase,
-} from '../../../types/song.types.ts';
+} from '../../types/song.types.ts';
 import { extract } from './html.utils.ts';
 
 const parseIntervalModification = (str: string): [string, IntervalModification | undefined] => {

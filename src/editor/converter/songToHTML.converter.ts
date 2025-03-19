@@ -11,11 +11,11 @@ import { noteAsString } from '../../chords/chord-display.tsx';
 const runToHTML = (run: ITextRun): string => {
   switch (run.style) {
     case 1:
-      return `<i>${run.text}</i>`;
+      return `<em>${run.text}</em>`;
     case 2:
       return `<u>${run.text}</u>`;
     case 3:
-      return `<b>${run.text}</b>`;
+      return `<strong>${run.text}</strong>`;
   }
   return run.text;
 };
@@ -72,56 +72,72 @@ const chordToHTML = (chord: IChord): string => {
   return str;
 };
 
-const songToHTML = (song: ISong): string[] => {
-  let text = '';
-  let chords = '<b>';
+const songToHTML = (song: ISong): string => {
+  const text = [];
+  const chords = [];
+  const repetitions = [];
+  let hasRepetitions = false;
   for (const verse of song.verses) {
-    text += verse.indent ? `<p data-indent="${verse.indent}">` : '<p>';
-    chords += '<p>';
+    let verseHTML = verse.indent ? `<p data-indent="${verse.indent}">` : '<p>';
+    let chordsHTML = '<p>';
+    let repetitionsHTML = '';
     let firstLine = true;
     for (const line of verse.lines) {
       if (!firstLine) {
-        text += '<br>';
-        chords += '<br>';
+        verseHTML += '<br>';
+        chordsHTML += '<br>';
+        repetitionsHTML += '<br>';
       }
       firstLine = false;
       if (line.text) {
         for (const run of line.text) {
-          text += runToHTML(run);
+          verseHTML += runToHTML(run);
         }
         if (line.repetitionEnd) {
-          text += ` |x${line.repetitionEnd > 0 ? line.repetitionEnd : '∞'}`;
+          repetitionsHTML += ` |x${line.repetitionEnd > 0 ? line.repetitionEnd : '∞'}`;
+          hasRepetitions = true;
         } else if (line.repetition) {
-          text += ' |';
+          repetitionsHTML += ' |';
+          hasRepetitions = true;
         }
       }
       if (line.chords) {
         let firstSerie = true;
         for (const chordSeries of line.chords.chords) {
-          if (!firstSerie) chords += ' ';
+          if (!firstSerie) chordsHTML += ' ';
           firstSerie = false;
-          if (chordSeries.optional) chords += '<i>';
-          if (chordSeries.silent) chords += '(';
+          if (chordSeries.optional) chordsHTML += '<em>';
+          if (chordSeries.silent) chordsHTML += '(';
 
           let firstChord = true;
           for (const complexChord of chordSeries.chords) {
-            if (!firstChord) chords += ' ';
+            if (!firstChord) chordsHTML += ' ';
             firstChord = false;
-            chords += chordToHTML(complexChord.chord);
-            if (complexChord.alternative) chords += '/' + chordToHTML(complexChord.alternative);
+            chordsHTML += chordToHTML(complexChord.chord);
+            if (complexChord.alternative) chordsHTML += '/' + chordToHTML(complexChord.alternative);
           }
 
-          if (chordSeries.repeat) chords += '…';
-          if (chordSeries.silent) chords += ')';
-          if (chordSeries.optional) chords += '</i>';
+          if (chordSeries.repeat) chordsHTML += '…';
+          if (chordSeries.silent) chordsHTML += ')';
+          if (chordSeries.optional) chordsHTML += '</em>';
         }
       }
     }
-    text += '</p>';
-    chords += '</p>';
+    text.push(verseHTML + '</p>');
+    chords.push(chordsHTML + '</p>');
+    repetitions.push(repetitionsHTML + '</p>');
   }
-  chords += '</b>';
-  return [text, chords];
+  let html = '<table><tbody><tr><th>Słowa</th>';
+  if (hasRepetitions) html += '<th>Powtórzenia</th>';
+  html += '<th>Akordy</th></tr>';
+
+  for (let i = 0; i < text.length; ++i) {
+    html += `<tr><td>${text[i]}</td>`;
+    if (hasRepetitions) html += `<td><strong>${repetitions[i]}</strong></td>`;
+    html += `<td cell-type="chord"><strong>${chords[i]}</strong></td></tr>`;
+  }
+
+  return html + '</tbody></table>';
 };
 
 export default songToHTML;

@@ -13,12 +13,6 @@ const ClassTableCell = TableCell.extend({
       }
     }
   },
-  //
-  // renderHTML({_, HTMLAttributes}) {
-  //   if (HTMLAttributes['cell-type'])
-  //
-  //     return ['td', HTMLAttributes, 0]
-  // }
 });
 
 export default ClassTableCell;

@@ -18,7 +18,6 @@ import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
 import LogIn from './user/LogIn.tsx';
 import SongEditor from './editor/SongEditor.tsx';
-import SongTableEditor from './editor/table/SongTableEditor.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -58,7 +57,6 @@ const StoreApp = () => {
               <Route path="/source/:sourceSlug" element={<Source />} />
               <Route path="/search" element={<FullSearch />} />
               <Route path="/edit" element={<SongEditor />} />
-              <Route path="/edit-table" element={<SongTableEditor />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Container>
