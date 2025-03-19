@@ -1,7 +1,8 @@
 import { styled } from '@mui/material';
+import {PIANO_WHITE_KEYS} from "./piano.types.ts";
 
 const WhiteKey = styled('div')({
-  width: 'calc(100% / 15 - 2px)',
+  width: `calc(100% / ${PIANO_WHITE_KEYS} - 2px)`,
   aspectRatio: '1 / 4',
   background: 'white',
   zIndex: 1,

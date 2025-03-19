@@ -1,44 +1,19 @@
-import { FC, MouseEvent, useMemo, useState } from 'react';
+import { FC, MouseEvent, useMemo, useRef, useState } from 'react';
 import { playSound } from './MidiPlayer.ts';
 import { IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { DeleteForever, Done, ExpandLess, Hearing, TouchApp } from '@mui/icons-material';
-import { IKey } from '../types/song.types.ts';
+import { DeleteForever, Done, ExpandLess, Hearing, PlayArrow, Stop, TouchApp } from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import PianoTextButtonIcon from './icon/PianoTextButtonIcon.tsx';
 import InversionIcon from './icon/InversionIcon.tsx';
 import PianoKey from './PianoKey.tsx';
+import { getChordNotes, getChordNotesForNote } from './chord-interpreter.ts';
+import { defaultPianoToggleOptions, IPianoKey, IPianoToggleOptions, PIANO_KEYS, TInversion } from './piano.types.ts';
+import { IChord } from '../types/song.types.ts';
 
 interface IPianoProps {
   setOpen: (open: boolean) => void;
-}
-
-export interface IPianoKey {
-  note: number;
-  black?: boolean;
-  selected?: boolean;
-}
-
-interface IPianoToggleOptions {
-  touch?: boolean; // Czy klawisz trzeba trzymać
-  chord?: boolean;
-  minor?: boolean;
-  sixth?: boolean;
-  seventh?: boolean;
-  inversion: number;
-}
-
-const defaultPianoToggleOptions: IPianoToggleOptions = {
-  touch: true,
-  chord: true,
-  inversion: 0,
-};
-
-interface IPianoOptions {
-  maxKeys: number; // Maksymalna liczba wciśniętych klawiszy jednocześnie
-  soundLength: number;
-  clear: void;
-  insert: void;
-  tune: IKey;
+  chordsToPlayProvider?: () => IChord[] | undefined;
+  chordTypedConsumer?: (chord: IChord) => void;
 }
 
 const isBlack = (note: number) => {
@@ -47,37 +22,18 @@ const isBlack = (note: number) => {
   return note % 2 === 0;
 };
 
-const getNotes = (note: number, pianoToggleOptions: IPianoToggleOptions): number[] => {
-  const notes = [];
-  notes.push(note);
-  notes.push(note + (pianoToggleOptions.minor ? 3 : 4));
-  notes.push(note + 7);
-  if (pianoToggleOptions.sixth) notes.push(note + 9);
-  if (pianoToggleOptions.seventh) notes.push(note + 10);
-  if (pianoToggleOptions.inversion) {
-    const removed = notes.splice(notes.length - pianoToggleOptions.inversion, pianoToggleOptions.inversion);
-    notes.unshift(...removed.map((n) => n - 12));
-  }
-  if (notes[notes.length - 1] >= 25) {
-    return notes.map((n) => n - 12);
-  } else if (notes[0] < 0) {
-    return notes.map((n) => n + 12);
-  }
+const pianoKeys: IPianoKey[] = Array.from(Array(PIANO_KEYS), (_, i) => ({ note: i, black: isBlack(i) }));
 
-  return notes;
-};
-
-const pianoKeys: IPianoKey[] = Array.from(Array(25), (_, i) => ({ note: i, black: isBlack(i) }));
-
-const Piano: FC<IPianoProps> = ({ setOpen }) => {
+const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsumer }) => {
   const [keys, setKeys] = useState(pianoKeys);
   const [toggleOptions, setToggleOptions] = useState(defaultPianoToggleOptions);
+  const [playback, setPlayback] = useState(false);
+  const playbackTimeoutId = useRef<number>();
 
-  const toggleKeySelect = (key: IPianoKey) => {
-    const notes = toggleOptions.chord ? getNotes(key.note, toggleOptions) : [key.note];
-    const select = !keys[notes[0]].selected;
-    notes.forEach((n) => (keys[n].selected = select));
-    if (select) {
+  const keyAction = (key: IPianoKey, pressed: boolean) => {
+    const notes = toggleOptions.chord ? getChordNotesForNote(key.note, toggleOptions) : [key.note];
+    notes.forEach((n) => (keys[n].selected = pressed));
+    if (pressed) {
       playSound(notes.map((n) => n + 48));
     }
     setKeys([...keys]);
@@ -92,6 +48,34 @@ const Piano: FC<IPianoProps> = ({ setOpen }) => {
     playSound(keys.filter((k) => k.selected).map((k) => k.note + 48));
   };
 
+  const stopPlayback = () => {
+    clearTimeout(playbackTimeoutId.current);
+    playbackTimeoutId.current = undefined;
+    clearSelection();
+    setPlayback(false);
+  };
+
+  const playChord = (chords: IChord[]) => {
+    clearSelection();
+    if (!chords.length) {
+      setPlayback(false);
+      return;
+    }
+    const chord = getChordNotes(chords.splice(0, 1)[0]);
+    chord.forEach((n) => (keys[n].selected = true));
+    setKeys([...keys]);
+    playSound(chord.map((n) => n + 48));
+    playbackTimeoutId.current = setTimeout(() => playChord(chords), 1000);
+  };
+
+  const playChords = () => {
+    const chords = chordsToPlayProvider?.();
+    if (!chords?.length) return;
+    setPlayback(true);
+    // const chords: IChord[] = [{ note: { base: NoteBase.F } }, { note: { base: NoteBase.C } }];
+    playChord(chords);
+  };
+
   const handleToggleOptionsChange = (_: unknown, values: string[]) => {
     const newOptions: IPianoToggleOptions = { inversion: toggleOptions.inversion };
     values.forEach((v) => {
@@ -102,7 +86,7 @@ const Piano: FC<IPianoProps> = ({ setOpen }) => {
 
   const handleInversionChange = (e: MouseEvent) => {
     e.preventDefault();
-    setToggleOptions({ ...toggleOptions, inversion: (toggleOptions.inversion + 1) % 3 });
+    setToggleOptions({ ...toggleOptions, inversion: ((toggleOptions.inversion + 1) % 3) as TInversion });
   };
 
   const toggleValues = useMemo(() => {
@@ -116,7 +100,6 @@ const Piano: FC<IPianoProps> = ({ setOpen }) => {
       <div
         style={{
           background: 'black',
-          // height: '2rem',
           borderRadius: '10px 10px 0 0',
           borderBottom: 'solid #a00',
           display: 'flex',
@@ -164,12 +147,19 @@ const Piano: FC<IPianoProps> = ({ setOpen }) => {
           <IconButton onClick={playSelected}>
             <Hearing />
           </IconButton>
+          {chordsToPlayProvider && (
+            <IconButton onClick={playback ? stopPlayback : playChords}>
+              {playback ? <Stop /> : <PlayArrow />}
+            </IconButton>
+          )}
           <IconButton onClick={clearSelection}>
             <DeleteForever />
           </IconButton>
-          <IconButton>
-            <Done />
-          </IconButton>
+          {chordTypedConsumer && (
+            <IconButton>
+              <Done />
+            </IconButton>
+          )}
           <IconButton onClick={() => setOpen(false)}>
             <ExpandLess />
           </IconButton>
@@ -177,7 +167,13 @@ const Piano: FC<IPianoProps> = ({ setOpen }) => {
       </div>
       <div style={{ display: 'flex' }}>
         {keys.map((key) => (
-          <PianoKey key={key.note} pianoKey={key} touch={toggleOptions.touch} toggleKey={toggleKeySelect} />
+          <PianoKey
+            key={key.note}
+            pianoKey={key}
+            touch={toggleOptions.touch}
+            keyAction={keyAction}
+            disabled={playback}
+          />
         ))}
       </div>
     </div>

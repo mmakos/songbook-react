@@ -11,11 +11,11 @@ import { noteAsString } from '../../../chords/chord-display.tsx';
 const runToHTML = (run: ITextRun): string => {
   switch (run.style) {
     case 1:
-      return `<i>${run.text}</i>`;
+      return `<em>${run.text}</em>`;
     case 2:
       return `<u>${run.text}</u>`;
     case 3:
-      return `<b>${run.text}</b>`;
+      return `<strong>${run.text}</strong>`;
   }
   return run.text;
 };
@@ -106,7 +106,7 @@ const songToHTML = (song: ISong): string => {
         for (const chordSeries of line.chords.chords) {
           if (!firstSerie) chordsHTML += ' ';
           firstSerie = false;
-          if (chordSeries.optional) chordsHTML += '<i>';
+          if (chordSeries.optional) chordsHTML += '<em>';
           if (chordSeries.silent) chordsHTML += '(';
 
           let firstChord = true;
@@ -119,7 +119,7 @@ const songToHTML = (song: ISong): string => {
 
           if (chordSeries.repeat) chordsHTML += '…';
           if (chordSeries.silent) chordsHTML += ')';
-          if (chordSeries.optional) chordsHTML += '</i>';
+          if (chordSeries.optional) chordsHTML += '</em>';
         }
       }
     }
@@ -133,8 +133,8 @@ const songToHTML = (song: ISong): string => {
 
   for (let i = 0; i < text.length; ++i) {
     html += `<tr><td>${text[i]}</td>`;
-    if (hasRepetitions) html += `<td><b>${repetitions[i]}</b></td>`;
-    html += `<td><b>${chords[i]}</b></td></tr>`;
+    if (hasRepetitions) html += `<td><strong>${repetitions[i]}</strong></td>`;
+    html += `<td cell-type="chord"><strong>${chords[i]}</strong></td></tr>`;
   }
 
   return html + '</tbody></table>';

@@ -294,15 +294,15 @@ export enum NoteBase {
   H = 'H',
 }
 
+export enum IntervalModification {
+  AUG = 'AUG',
+  DIM = 'DIM',
+}
+
 export enum ChordModification {
   AUG = 'AUG',
   DIM = 'DIM',
   CLUSTER = 'CLUSTER',
-}
-
-export enum IntervalModification {
-  AUG = 'AUG',
-  DIM = 'DIM',
 }
 
 export enum Accidental {
