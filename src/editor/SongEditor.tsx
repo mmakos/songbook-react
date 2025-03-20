@@ -37,10 +37,11 @@ import UnmodifiableTableHeader from './UnmodifiableTableHeader.ts';
 import PreventCellDrag from './PreventTableDrag.ts';
 import InsertRowBottom from './icon/InsertRowBottom.tsx';
 import InsertRowTop from './icon/InsertRowTop.tsx';
-import InsertRepetitionColumn from './icon/InsertRepetitionColumn.tsx';
 import InsertChordColumn from './icon/InsertChordColumn.tsx';
 import DeleteRow from './icon/DeleteRow.tsx';
 import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
+import RemoveColumn from './icon/RemoveColumn.tsx';
+import InsertRepetitionColumn from './icon/InsertRepetitionColumn.tsx';
 
 const SongEditor = () => {
   const editor = useEditor({
@@ -68,6 +69,8 @@ const SongEditor = () => {
   const [pianoOpen, setPianoOpen] = useState(true);
   const [reading, setReading] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
+  const [repetitionColumn, setRepetitionColumn] = useState(false);
+  const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -85,6 +88,24 @@ const SongEditor = () => {
     const slice = editor.state.selection.content();
     setReading(true);
     readText(slice.content.textBetween(0, slice.content.size), () => setReading(false));
+  };
+
+  const handleAdditionalChordColumn = () => {
+    if (additionalChordColumn) {
+      editor?.chain().focus().removeChordsColumn().run();
+    } else {
+      editor?.chain().focus().addChordsColumn().run();
+    }
+    setAdditionalChordColumn(!additionalChordColumn);
+  };
+
+  const handleRepetitionColumn = () => {
+    if (repetitionColumn) {
+      editor?.chain().focus().removeRepetitionColumn().run();
+    } else {
+      editor?.chain().focus().addRepetitionColumn().run()
+    }
+    setRepetitionColumn(!repetitionColumn);
   };
 
   return (
@@ -136,11 +157,11 @@ const SongEditor = () => {
           >
             <DeleteRow />
           </ToggleButton>
-          <ToggleButton value="addRepetitionColumn">
-            <InsertRepetitionColumn />
+          <ToggleButton value="addRepetitionColumn" onClick={handleRepetitionColumn} selected={repetitionColumn}>
+            {repetitionColumn ? <RemoveColumn transform="scale(-1,1)" /> : <InsertRepetitionColumn />}
           </ToggleButton>
-          <ToggleButton value="addChordsColumn">
-            <InsertChordColumn onClick={() => editor?.chain().focus().addChordsColumn().run()}/>
+          <ToggleButton value="addChordsColumn" onClick={handleAdditionalChordColumn} selected={additionalChordColumn}>
+            {additionalChordColumn ? <RemoveColumn /> : <InsertChordColumn />}
           </ToggleButton>
         </StyledToggleButtonGroup>
         <StyledToggleButtonGroupDivider />

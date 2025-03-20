@@ -60,14 +60,6 @@ export const ExclusiveBold = Bold.extend({
           }
           return commands.unsetMark('bold');
         },
-
-      setBold:
-        () =>
-        ({ commands }) => {
-          commands.unsetMark('italic');
-          commands.unsetMark('underline');
-          return commands.setMark('bold');
-        },
     };
   },
 });
