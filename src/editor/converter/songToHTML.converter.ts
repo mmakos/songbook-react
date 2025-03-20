@@ -78,17 +78,13 @@ const songToHTML = (song: ISong): string => {
   const repetitions = [];
   let hasRepetitions = false;
   for (const verse of song.verses) {
-    let verseHTML = verse.indent ? `<p data-indent="${verse.indent}">` : '<p>';
-    let chordsHTML = '<p>';
-    let repetitionsHTML = '';
-    let firstLine = true;
+    let verseHTML = verse.indent ? `<td data-indent="${verse.indent}">` : '<td>';
+    let chordsHTML = '<td cell-type="chord">';
+    let repetitionsHTML = '<td>';
     for (const line of verse.lines) {
-      if (!firstLine) {
-        verseHTML += '<br>';
-        chordsHTML += '<br>';
-        repetitionsHTML += '<br>';
-      }
-      firstLine = false;
+      verseHTML += '<p>';
+      chordsHTML += '<p>';
+      repetitionsHTML += '<p>';
       if (line.text) {
         for (const run of line.text) {
           verseHTML += runToHTML(run);
@@ -122,19 +118,22 @@ const songToHTML = (song: ISong): string => {
           if (chordSeries.optional) chordsHTML += '</em>';
         }
       }
+      verseHTML += '</p>';
+      chordsHTML += '</p>';
+      repetitionsHTML += '</p>';
     }
-    text.push(verseHTML + '</p>');
-    chords.push(chordsHTML + '</p>');
-    repetitions.push(repetitionsHTML + '</p>');
+    text.push(verseHTML + '</td>');
+    chords.push(chordsHTML + '</td>');
+    repetitions.push(repetitionsHTML + '</td>');
   }
   let html = '<table><tbody><tr><th>Słowa</th>';
   if (hasRepetitions) html += '<th>Powtórzenia</th>';
   html += '<th>Akordy</th></tr>';
 
   for (let i = 0; i < text.length; ++i) {
-    html += `<tr><td>${text[i]}</td>`;
-    if (hasRepetitions) html += `<td><strong>${repetitions[i]}</strong></td>`;
-    html += `<td cell-type="chord"><strong>${chords[i]}</strong></td></tr>`;
+    html += '<tr>' + text[i];
+    if (hasRepetitions) html += repetitions[i];
+    html += chords[i] + '</tr>'
   }
 
   return html + '</tbody></table>';

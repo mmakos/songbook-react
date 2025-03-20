@@ -65,7 +65,8 @@ const parseAdditionals = (html: string, chord: IChord) => {
     html = html.slice(5);
     const supEnd = html.indexOf('</sup>');
     if (supEnd >= 0) {
-      const additionals = html.slice(0, supEnd)
+      const additionals = html
+        .slice(0, supEnd)
         .split(' ')
         .map(parseAdditionalSeries)
         .filter((a) => !!a);
@@ -275,12 +276,13 @@ const parseChordLine = (line: string): IChordSeries[] => {
 };
 
 export const parseChordCell = (cell: string): IChordSeries[][] => {
-  return cell.split('<br>').map(parseChordLine);
+  return extract(cell.replace(/<strong>|<\/strong>|<u>|<\/u>/g, ''), '<p>', '</p>').map(parseChordLine);
 };
 
 export const extractChordsFromFragment = (html: string): IChordSeries[][] => {
   const cells = extract(html, 'cell-type="chord">', '</td>');
-  return cells.flatMap((c) => extract(c, '<strong>', '</strong>').flatMap(parseChordCell));
+
+  return cells.flatMap(parseChordCell);
 };
 
 export const flattenChords = (lines: IChordSeries[][]): IChord[] => {

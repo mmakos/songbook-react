@@ -21,9 +21,9 @@ const Indent = Extension.create<IndentOptions>({
 
   addOptions() {
     return {
-      types: ['listItem', 'paragraph'],
+      types: ['tableCell'],
       minLevel: 0,
-      maxLevel: 8,
+      maxLevel: 3,
     };
   },
 

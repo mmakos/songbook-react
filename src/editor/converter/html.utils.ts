@@ -11,4 +11,24 @@ export const extract = (html: string, startHTML: string, endHTML: string): strin
   }
 
   return result;
-}
+};
+
+export const stripTags = (html: string, startTags: string[], endTags: string[]): string => {
+  let sliced;
+  do {
+    sliced = false;
+    for (const s of startTags) {
+      if (html.startsWith(s)) {
+        html = html.slice(s.length);
+        sliced = true;
+      }
+    }
+    for (const e of endTags) {
+      if (html.endsWith(e)) {
+        html = html.slice(0, html.length - e.length);
+        sliced = true;
+      }
+    }
+  } while (sliced);
+  return html;
+};

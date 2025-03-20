@@ -34,7 +34,7 @@ export interface IPianoOptions {
   tune: IKey;
 }
 
-export const defaultPianoToggleOptions: IPianoToggleOptions = {
+export const defaultPianoOptions: IPianoToggleOptions = {
   touch: true,
   chord: true,
   mode: ChordMode.KEY,

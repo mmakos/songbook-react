@@ -9,10 +9,10 @@ export const playSound = (midi: number[]) => {
   const imag = new Float32Array(real.length);
   const wave = context.createPeriodicWave(real, imag, { disableNormalization: false });
 
-  gain.gain.setValueAtTime(1, context.currentTime);
+  gain.gain.setValueAtTime(0.5, context.currentTime);
   gain.gain.linearRampToValueAtTime(0, context.currentTime + 1);
   gain.connect(context.destination);
-  gainUpper?.gain.setValueAtTime(0.7, context.currentTime);
+  gainUpper?.gain.setValueAtTime(0.35, context.currentTime);
   gainUpper?.gain.linearRampToValueAtTime(0, context.currentTime + 1);
   gainUpper?.connect(context.destination);
 

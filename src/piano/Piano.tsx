@@ -1,15 +1,16 @@
-import { FC, MouseEvent, useMemo, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { playSound } from './MidiPlayer.ts';
-import { IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { ToggleButton } from '@mui/material';
 import { DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp } from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import PianoTextButtonIcon from './icon/PianoTextButtonIcon.tsx';
 import InversionIcon from './icon/InversionIcon.tsx';
 import PianoKey from './PianoKey.tsx';
 import { getChordNotes, getChordNotesForNote } from './chord-interpreter.ts';
-import { defaultPianoToggleOptions, IPianoKey, IPianoToggleOptions, PIANO_KEYS, TInversion } from './piano.types.ts';
+import { ChordMode, defaultPianoOptions, IPianoKey, PIANO_KEYS, TInversion } from './piano.types.ts';
 import { IChord, NoteBase } from '../types/song.types.ts';
 import PianoModeIcon from './icon/PianoModeIcon.tsx';
+import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
 
 interface IPianoProps {
   setOpen: (open: boolean) => void;
@@ -27,13 +28,13 @@ const pianoKeys: IPianoKey[] = Array.from(Array(PIANO_KEYS), (_, i) => ({ note: 
 
 const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsumer }) => {
   const [keys, setKeys] = useState(pianoKeys);
-  const [toggleOptions, setToggleOptions] = useState(defaultPianoToggleOptions);
+  const [pianoOptions, setPianoOptions] = useState(defaultPianoOptions);
   const [playback, setPlayback] = useState(false);
   const playbackTimeoutId = useRef<number>();
 
   const keyAction = (key: IPianoKey, pressed: boolean) => {
-    const notes = toggleOptions.chord
-      ? getChordNotesForNote(key.note, toggleOptions, { note: { base: NoteBase.A }, minor: true })
+    const notes = pianoOptions.chord
+      ? getChordNotesForNote(key.note, pianoOptions, { note: { base: NoteBase.A }, minor: true })
       : [key.note];
     notes.forEach((n) => (keys[n].selected = pressed));
     if (pressed) {
@@ -79,30 +80,6 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
     playChord(chords);
   };
 
-  const handleToggleOptionsChange = (_: unknown, values: string[]) => {
-    const newOptions: IPianoToggleOptions = { inversion: toggleOptions.inversion, mode: toggleOptions.mode };
-    values.forEach((v) => {
-      if (v !== 'inversion' && v !== 'mode') newOptions[v as keyof IPianoToggleOptions] = true as never;
-    });
-    setToggleOptions(newOptions);
-  };
-
-  const handleInversionChange = (e: MouseEvent) => {
-    e.preventDefault();
-    setToggleOptions({ ...toggleOptions, inversion: ((toggleOptions.inversion + 1) % 3) as TInversion });
-  };
-
-  const handleModeChange = (e: MouseEvent) => {
-    e.preventDefault();
-    setToggleOptions({ ...toggleOptions, mode: (toggleOptions.mode + 1) % 3 });
-  };
-
-  const toggleValues = useMemo(() => {
-    return Object.entries(toggleOptions)
-      .map(([k, v]) => (v ? k : undefined))
-      .filter((v) => v);
-  }, [toggleOptions]);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div
@@ -115,60 +92,96 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
           padding: '10px',
         }}
       >
-        <ToggleButtonGroup value={toggleValues} onChange={handleToggleOptionsChange} size="small">
+        <StyledToggleButtonGroup size="small">
           <BasicTooltip title="Tryb gry (puszczanie klawiszy)">
-            <ToggleButton value="touch">
+            <ToggleButton
+              value="touch"
+              selected={pianoOptions.touch}
+              onClick={() => setPianoOptions({ ...pianoOptions, touch: !pianoOptions.touch })}
+            >
               <TouchApp />
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Tryb gry akordami (wciśnięcie klawisza generuje cały akord)">
-            <ToggleButton value="chord">
+            <ToggleButton
+              value="chord"
+              selected={pianoOptions.chord}
+              onClick={() => setPianoOptions({ ...pianoOptions, chord: !pianoOptions.chord })}
+            >
               <PianoTextButtonIcon>A</PianoTextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
+        </StyledToggleButtonGroup>
+        <StyledToggleButtonGroupDivider />
+        <StyledToggleButtonGroup size="small">
           <BasicTooltip title="Tryb akordów (akordy zgodnie z ustawioną tonacją / dur / moll)">
-            <ToggleButton value="mode" onClick={handleModeChange}>
-              <PianoModeIcon mode={toggleOptions.mode} />
+            <ToggleButton
+              value="mode"
+              selected={pianoOptions.mode !== ChordMode.KEY}
+              onClick={() => setPianoOptions({ ...pianoOptions, mode: (pianoOptions.mode + 1) % 3 })}
+            >
+              <PianoModeIcon mode={pianoOptions.mode} />
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Akord z septymą">
-            <ToggleButton value="seventh">
+            <ToggleButton
+              value="seventh"
+              selected={pianoOptions.seventh}
+              onClick={() => setPianoOptions({ ...pianoOptions, seventh: !pianoOptions.seventh })}
+            >
               <PianoTextButtonIcon>
                 A<sup>7</sup>
               </PianoTextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Akord z sekstą">
-            <ToggleButton value="sixth">
+            <ToggleButton
+              value="sixth"
+              selected={pianoOptions.sixth}
+              onClick={() => setPianoOptions({ ...pianoOptions, sixth: !pianoOptions.sixth })}
+            >
               <PianoTextButtonIcon>
                 a<sup>6</sup>
               </PianoTextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Przewrót akordu">
-            <ToggleButton value="inversion" onClick={handleInversionChange}>
-              <InversionIcon inversion={toggleOptions.inversion} />
+            <ToggleButton
+              value="inversion"
+              selected={pianoOptions.inversion !== 0}
+              onClick={() =>
+                setPianoOptions({
+                  ...pianoOptions,
+                  inversion: ((pianoOptions.inversion + 1) % 3) as TInversion,
+                })
+              }
+            >
+              <InversionIcon inversion={pianoOptions.inversion} />
             </ToggleButton>
           </BasicTooltip>
-        </ToggleButtonGroup>
+        </StyledToggleButtonGroup>
         <div style={{ alignContent: 'center', marginLeft: 'auto' }}>
-          <IconButton onClick={playSelected}>
-            <Hearing />
-          </IconButton>
-          {chordsToPlayProvider && (
-            <IconButton onClick={playback ? stopPlayback : playChords}>{playback ? <Stop /> : <Speaker />}</IconButton>
-          )}
-          <IconButton onClick={clearSelection}>
-            <DeleteForever />
-          </IconButton>
-          {chordTypedConsumer && (
-            <IconButton>
-              <Done />
-            </IconButton>
-          )}
-          <IconButton onClick={() => setOpen(false)}>
-            <ExpandLess />
-          </IconButton>
+          <StyledToggleButtonGroup size="small">
+            <ToggleButton value="hearing" onClick={playSelected}>
+              <Hearing />
+            </ToggleButton>
+            {chordsToPlayProvider && (
+              <ToggleButton value="playback" selected={playback} onClick={playback ? stopPlayback : playChords}>
+                {playback ? <Stop /> : <Speaker />}
+              </ToggleButton>
+            )}
+            <ToggleButton value="delete" onClick={clearSelection}>
+              <DeleteForever />
+            </ToggleButton>
+            {chordTypedConsumer && (
+              <ToggleButton value="done">
+                <Done />
+              </ToggleButton>
+            )}
+            <ToggleButton value="hide" onClick={() => setOpen(false)}>
+              <ExpandLess />
+            </ToggleButton>
+          </StyledToggleButtonGroup>
         </div>
       </div>
       <div style={{ display: 'flex' }}>
@@ -176,7 +189,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
           <PianoKey
             key={key.note}
             pianoKey={key}
-            touch={toggleOptions.touch}
+            touch={pianoOptions.touch}
             keyAction={keyAction}
             disabled={playback}
           />

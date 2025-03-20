@@ -1,7 +1,9 @@
 import { styled } from '@mui/material';
 import { EditorContent } from '@tiptap/react';
 
-const StyledEditorContent = styled(EditorContent)(({ theme }) => ({
+const StyledEditorContent = styled(EditorContent, {
+  shouldForwardProp: (prop) => prop !== 'showGrid',
+})<{ showGrid?: boolean }>(({ showGrid, theme }) => ({
   '.tiptap': {
     borderRadius: theme.shape.borderRadius,
     outline: '1px solid white',
@@ -19,24 +21,39 @@ const StyledEditorContent = styled(EditorContent)(({ theme }) => ({
       outlineColor: theme.palette.primary.main,
     },
     p: {
-      ':first-child': {
-        marginTop: 0,
-      },
-      ':last-child': {
-        marginBottom: 0,
-      },
+      margin: 0,
     },
     '[data-indent="1"]': {
-      marginLeft: '4ch',
+      paddingLeft: '3em',
     },
     '[data-indent="2"]': {
-      marginLeft: '8ch',
+      paddingLeft: '5em',
     },
     '[data-indent="3"]': {
-      marginLeft: '12ch',
+      paddingLeft: '7em',
     },
     '[data-indent="4"]': {
-      marginLeft: '16ch',
+      paddingLeft: '9em',
+    },
+
+    table: {
+      borderCollapse: 'collapse',
+      'th, td': {
+        padding: '0.5em 1em',
+        border: showGrid ? '1px dashed gray' : undefined,
+      },
+      td: {
+        verticalAlign: 'top',
+      },
+      'td:not(:first-of-type)': {
+        fontWeight: 'bold',
+        'u': {
+          textDecoration: 'none'
+        }
+      },
+      '.selectedCell': {
+        background: 'gray',
+      },
     },
   },
 }));

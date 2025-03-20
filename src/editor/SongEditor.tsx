@@ -2,37 +2,51 @@ import { useEditor } from '@tiptap/react';
 import { Text } from '@tiptap/extension-text';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
-import { HardBreak } from '@tiptap/extension-hard-break';
 import { History } from '@tiptap/extension-history';
 import StyledEditorContent from './StyledEditorContent.ts';
 import Indent from './IndentExtension.ts';
 import TextReplacer from './TextReplacer.ts';
-import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
-import { TableHeader } from '@tiptap/extension-table-header';
 import songToHTML from './converter/songToHTML.converter.ts';
-import { dzieciHioba } from './test/dzieci-hioba.json.ts';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Strike } from '@tiptap/extension-strike';
-import './styles.css';
 import Piano from '../piano/Piano.tsx';
-import { Collapse, IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { MouseEvent, useState } from 'react';
-import { Looks3, LooksOne, LooksTwo, Piano as PianoIcon, PianoOff, RecordVoiceOver, Stop } from '@mui/icons-material';
+import { Collapse, ToggleButton } from '@mui/material';
+import { useState } from 'react';
+import {
+  Grid4x4,
+  Looks3,
+  LooksOne,
+  LooksTwo,
+  Piano as PianoIcon,
+  PianoOff,
+  RecordVoiceOver,
+  Redo,
+  Undo,
+} from '@mui/icons-material';
 import { IChord } from '../types/song.types.ts';
 import { DOMSerializer } from 'prosemirror-model';
-import TypedTableCell from './ClassTableCell.tsx';
 import { extractChordsFromFragment, flattenChords } from './converter/htmlToSong.converter.ts';
 import { cancelSpeech, readText } from './text-reader.ts';
 import { ExclusiveBold, ExclusiveItalic, ExclusiveUnderline } from './ExclusiveStyle.ts';
+import TypedTableCell from './TypedTableCell.ts';
+import { dzieciHioba } from './test/dzieci-hioba.json.ts';
+import ParagraphRowTable from './ParagraphRowTable.ts';
+import UnmodifiableTableHeader from './UnmodifiableTableHeader.ts';
+import PreventCellDrag from './PreventTableDrag.ts';
+import InsertRowBottom from './icon/InsertRowBottom.tsx';
+import InsertRowTop from './icon/InsertRowTop.tsx';
+import InsertRepetitionColumn from './icon/InsertRepetitionColumn.tsx';
+import InsertChordColumn from './icon/InsertChordColumn.tsx';
+import DeleteRow from './icon/DeleteRow.tsx';
+import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
 
 const SongEditor = () => {
   const editor = useEditor({
     extensions: [
       Text,
       Paragraph,
-      HardBreak,
       Document,
       ExclusiveBold,
       ExclusiveItalic,
@@ -41,22 +55,19 @@ const SongEditor = () => {
       Superscript,
       Strike,
       History,
-      Table,
+      ParagraphRowTable,
       TypedTableCell,
       TableRow,
-      TableHeader,
+      UnmodifiableTableHeader,
       TextReplacer,
-      Indent.configure({
-        types: ['paragraph'],
-        minLevel: 0,
-        maxLevel: 3,
-      }),
+      Indent,
+      PreventCellDrag,
     ],
     content: songToHTML(dzieciHioba),
   });
   const [pianoOpen, setPianoOpen] = useState(true);
   const [reading, setReading] = useState(false);
-  const [style, setStyle] = useState<number>();
+  const [showGrid, setShowGrid] = useState(true);
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -76,40 +87,96 @@ const SongEditor = () => {
     readText(slice.content.textBetween(0, slice.content.size), () => setReading(false));
   };
 
-  const handleStyleChange = (_: MouseEvent, style?: number) => {
-    const command = editor?.chain().focus();
-    if (style == 1) command?.setItalic().run();
-    else if (style == 2) command?.setUnderline().run();
-    else if (style == 3) command?.setBold().run();
-    else command?.unsetItalic().unsetBold().unsetUnderline().run();
-    setStyle(style);
-  };
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
       <div style={{ display: 'flex' }}>
-        <ToggleButtonGroup exclusive value={style} onChange={handleStyleChange}>
-          <ToggleButton value="1">
+        <StyledToggleButtonGroup size="small">
+          <ToggleButton
+            value="1"
+            selected={editor?.isActive('italic')}
+            onClick={() => editor?.chain().focus().toggleItalic().run()}
+          >
             <LooksOne />
           </ToggleButton>
-          <ToggleButton value="2">
+          <ToggleButton
+            value="2"
+            selected={editor?.isActive('underline')}
+            onClick={() => editor?.chain().focus().toggleUnderline().run()}
+          >
             <LooksTwo />
           </ToggleButton>
-          <ToggleButton value="3">
+          <ToggleButton
+            value="3"
+            selected={editor?.isActive('bold')}
+            onClick={() => editor?.chain().focus().toggleBold().run()}
+          >
             <Looks3 />
           </ToggleButton>
-        </ToggleButtonGroup>
-        <div style={{ display: 'flex', alignContent: 'center', marginLeft: 'auto' }}>
-          <IconButton onClick={() => setPianoOpen(!pianoOpen)}>{pianoOpen ? <PianoOff /> : <PianoIcon />}</IconButton>
-          <IconButton onClick={reading ? cancelSpeech : readSelectedText}>
-            {reading ? <Stop /> : <RecordVoiceOver />}
-          </IconButton>
-        </div>
+        </StyledToggleButtonGroup>
+        <StyledToggleButtonGroupDivider />
+        <StyledToggleButtonGroup size="small">
+          <ToggleButton
+            value="insertRowAfter"
+            onClick={() => editor?.chain().focus().addRowAfter().run()}
+            disabled={!editor?.can().addRowAfter()}
+          >
+            <InsertRowBottom />
+          </ToggleButton>
+          <ToggleButton
+            value="insertRowBefore"
+            onClick={() => editor?.chain().focus().addRowBefore().run()}
+            disabled={!editor?.can().addRowBefore()}
+          >
+            <InsertRowTop />
+          </ToggleButton>
+          <ToggleButton
+            value="deleteRow"
+            onClick={() => editor?.chain().focus().deleteRow().run()}
+            disabled={!editor?.can().deleteRow()}
+          >
+            <DeleteRow />
+          </ToggleButton>
+          <ToggleButton value="addRepetitionColumn">
+            <InsertRepetitionColumn />
+          </ToggleButton>
+          <ToggleButton value="addChordsColumn">
+            <InsertChordColumn onClick={() => editor?.chain().focus().addChordsColumn().run()}/>
+          </ToggleButton>
+        </StyledToggleButtonGroup>
+        <StyledToggleButtonGroupDivider />
+        <StyledToggleButtonGroup size="small">
+          <ToggleButton
+            value="undo"
+            onClick={() => editor?.chain().focus().undo().run()}
+            disabled={!editor?.can().undo()}
+          >
+            <Undo />
+          </ToggleButton>
+          <ToggleButton
+            value="redo"
+            onClick={() => editor?.chain().focus().redo().run()}
+            disabled={!editor?.can().redo()}
+          >
+            <Redo />
+          </ToggleButton>
+        </StyledToggleButtonGroup>
+        <StyledToggleButtonGroupDivider />
+        <StyledToggleButtonGroup size="small">
+          <ToggleButton value="showGrid" selected={showGrid} onChange={() => setShowGrid(!showGrid)}>
+            <Grid4x4 />
+          </ToggleButton>
+          <ToggleButton value="piano" selected={pianoOpen} onClick={() => setPianoOpen(!pianoOpen)}>
+            {pianoOpen ? <PianoIcon /> : <PianoOff />}
+          </ToggleButton>
+          <ToggleButton value="speech" selected={reading} onClick={reading ? cancelSpeech : readSelectedText}>
+            <RecordVoiceOver />
+          </ToggleButton>
+        </StyledToggleButtonGroup>
       </div>
       <Collapse in={pianoOpen} unmountOnExit>
         <Piano setOpen={setPianoOpen} chordsToPlayProvider={getSelectedChords} />
       </Collapse>
-      <StyledEditorContent editor={editor} />
+      <StyledEditorContent editor={editor} showGrid={showGrid} />
     </div>
   );
 };
