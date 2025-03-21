@@ -9,7 +9,6 @@ const StyledEditorContent = styled(EditorContent, {
     outline: '1px solid white',
     outlineWidth: 1,
     outlineColor: theme.palette.action.disabled,
-    padding: '0.5em',
     minHeight: '1em',
     minWidth: '20ch',
     ':hover': {
@@ -37,19 +36,44 @@ const StyledEditorContent = styled(EditorContent, {
     },
 
     table: {
+      width: '100%',
       borderCollapse: 'collapse',
       'th, td': {
         padding: '0.5em 1em',
-        border: showGrid ? '1px dashed gray' : undefined,
+      },
+      'th': {
+        borderBottom: '1px solid'
       },
       td: {
         verticalAlign: 'top',
+        border: showGrid ? '1px dashed gray' : undefined,
+        '&[cell-type="chord"], &[cell-type="repetition"]': {
+          fontWeight: 'bold',
+          'u': {
+            textDecoration: 'none'
+          }
+        },
+        '&[cell-type="comment"]': {
+          fontStyle: 'italic',
+          'strong': {
+            fontWeight: 'normal',
+          },
+          'u': {
+            textDecoration: 'none'
+          }
+        },
       },
-      'td:not(:first-of-type)': {
-        fontWeight: 'bold',
-        'u': {
-          textDecoration: 'none'
-        }
+      'tr:first-of-type th': {
+        borderTop: 'none',
+      },
+      'tr:last-of-type td': {
+        borderBottom: 'none',
+      },
+      'tr td:first-of-type,th:first-of-type': {
+        borderLeft: 'none',
+      },
+      'tr td:last-of-type,th:last-of-type': {
+        borderRight: 'none',
       },
       '.selectedCell': {
         background: 'gray',

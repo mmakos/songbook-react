@@ -78,9 +78,9 @@ const songToHTML = (song: ISong): string => {
   const repetitions = [];
   let hasRepetitions = false;
   for (const verse of song.verses) {
-    let verseHTML = verse.indent ? `<td data-indent="${verse.indent}">` : '<td>';
+    let verseHTML = verse.indent ? `<td data-indent="${verse.indent}" cell-type="text">` : '<td cell-type="text">';
     let chordsHTML = '<td cell-type="chord">';
-    let repetitionsHTML = '<td>';
+    let repetitionsHTML = '<td cell-type="repetition">';
     for (const line of verse.lines) {
       verseHTML += '<p>';
       chordsHTML += '<p>';

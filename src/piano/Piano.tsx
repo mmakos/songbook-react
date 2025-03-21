@@ -3,7 +3,7 @@ import { playSound } from './MidiPlayer.ts';
 import { ToggleButton } from '@mui/material';
 import { DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp } from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import PianoTextButtonIcon from './icon/PianoTextButtonIcon.tsx';
+import TextButtonIcon from '../components/icon/TextButtonIcon.tsx';
 import InversionIcon from './icon/InversionIcon.tsx';
 import PianoKey from './PianoKey.tsx';
 import { getChordNotes, getChordNotesForNote } from './chord-interpreter.ts';
@@ -108,7 +108,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
               selected={pianoOptions.chord}
               onClick={() => setPianoOptions({ ...pianoOptions, chord: !pianoOptions.chord })}
             >
-              <PianoTextButtonIcon>A</PianoTextButtonIcon>
+              <TextButtonIcon>A</TextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
         </StyledToggleButtonGroup>
@@ -129,9 +129,9 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
               selected={pianoOptions.seventh}
               onClick={() => setPianoOptions({ ...pianoOptions, seventh: !pianoOptions.seventh })}
             >
-              <PianoTextButtonIcon>
+              <TextButtonIcon>
                 A<sup>7</sup>
-              </PianoTextButtonIcon>
+              </TextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Akord z sekstą">
@@ -140,9 +140,9 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
               selected={pianoOptions.sixth}
               onClick={() => setPianoOptions({ ...pianoOptions, sixth: !pianoOptions.sixth })}
             >
-              <PianoTextButtonIcon>
+              <TextButtonIcon>
                 a<sup>6</sup>
-              </PianoTextButtonIcon>
+              </TextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
           <BasicTooltip title="Przewrót akordu">

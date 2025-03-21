@@ -1,9 +1,10 @@
 import { Table } from '@tiptap/extension-table';
 import { Command } from '@tiptap/core';
 import { EditorState, TextSelection } from '@tiptap/pm/state';
-import { Attrs, NodeType } from '@tiptap/pm/model';
+import { Attrs, Node, NodeType } from '@tiptap/pm/model';
 import {
   addColSpan,
+  deleteRow,
   isInTable,
   nextCell,
   removeColumn,
@@ -16,10 +17,8 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     songTable: {
       goToNextRow: () => ReturnType;
-      addChordsColumn: () => ReturnType;
-      removeChordsColumn: () => ReturnType;
-      addRepetitionColumn: () => ReturnType;
-      removeRepetitionColumn: () => ReturnType;
+      addColumn: (position: number, title: string, attrs?: Attrs, mergeHeader?: boolean) => ReturnType;
+      removeColumn: (position: number) => ReturnType;
     };
   }
 }
@@ -35,7 +34,8 @@ function addColumn(
   { map, tableStart, table }: TableRect,
   col: number,
   title: string,
-  attrs?: Attrs
+  attrs?: Attrs,
+  mergeHeader?: boolean
 ) {
   const refColumn = col > 0 ? -1 : 0;
   for (let row = 0; row < map.height; row++) {
@@ -47,15 +47,24 @@ function addColumn(
       tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null, addColSpan(cellAttrs, col - map.colCount(pos)));
       row += cellAttrs.rowspan - 1;
     } else {
-      const type: NodeType = table.nodeAt(map.map[index + refColumn])!.type;
-      console.log(type);
-      const pos = map.positionAt(row, col, table);
-      tr.insert(
-        tr.mapping.map(tableStart + pos),
-        row === 0
-          ? type.create(null, schema.nodes.paragraph.create(null, schema.text(title)))!
-          : type.createAndFill(attrs)!
-      );
+      const node: Node = table.nodeAt(map.map[index + refColumn])!;
+      const type: NodeType = node.type;
+      const isHeader = type.name === 'tableHeader';
+      if (isHeader && mergeHeader) {
+        const pos = map.positionAt(row, col - 1, table);
+        tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null, {
+          ...node.attrs,
+          colspan: (node.attrs.colspan || 1) + 1,
+        });
+      } else {
+        const pos = map.positionAt(row, col, table);
+        tr.insert(
+          tr.mapping.map(tableStart + pos),
+          isHeader
+            ? type.create(null, schema.nodes.paragraph.create(null, schema.text(title)))!
+            : type.createAndFill(attrs)!
+        );
+      }
     }
   }
   return tr;
@@ -71,53 +80,49 @@ const SongTable = Table.extend({
       goToNextRow:
         (): Command =>
         ({ state, dispatch }) => {
-          if (!dispatch || !isInTable(state)) return false;
+          if (!isInTable(state)) return false;
           const currentCell = selectionCell(state);
           const cellBelow = nextCell(currentCell, 'vert', 1);
           if (cellBelow == null) return false;
 
-          dispatch(state.tr.setSelection(TextSelection.near(cellBelow)));
+          dispatch?.(state.tr.setSelection(TextSelection.near(cellBelow)));
           return true;
         },
 
-      addChordsColumn:
+      deleteRow:
         (): Command =>
         ({ state, dispatch }) => {
-          if (!isInTable(state) || !dispatch) return false;
+          if (!isInTable(state)) return false;
           const rect = selectedRect(state);
-          const position = rect.map.width;
+          if (rect.top == 0) return false;
 
-          dispatch(addColumn(state, rect, position, 'Alter.', { cellType: 'chord' }));
+          dispatch && deleteRow(state, dispatch);
           return true;
         },
 
-      removeChordsColumn:
-        (): Command =>
+      addColumn:
+        (position: number, title: string, attrs?: Attrs, mergeHeader?: boolean): Command =>
         ({ state, dispatch }) => {
-          if (!isInTable(state) || !dispatch) return false;
+          if (!isInTable(state)) return false;
           const rect = selectedRect(state);
+          if (position < 0) {
+            position = rect.map.width + position + 1;
+          }
 
-          dispatch(removeColumn(state.tr, rect, rect.map.width - 1));
+          dispatch?.(addColumn(state, rect, position, title, attrs, mergeHeader));
           return true;
         },
 
-      addRepetitionColumn:
-        (): Command =>
+      removeColumn:
+        (position: number): Command =>
         ({ state, dispatch }) => {
-          if (!isInTable(state) || !dispatch) return false;
+          if (!isInTable(state)) return false;
           const rect = selectedRect(state);
+          if (position < 0) {
+            position = rect.map.width + position;
+          }
 
-          dispatch(addColumn(state, rect, 1, 'Rep.'));
-          return true;
-        },
-
-      removeRepetitionColumn:
-        (): Command =>
-        ({ state, dispatch }) => {
-          if (!isInTable(state) || !dispatch) return false;
-          const rect = selectedRect(state);
-
-          dispatch(removeColumn(state.tr, rect, 1));
+          dispatch?.(removeColumn(state.tr, rect, position));
           return true;
         },
     };

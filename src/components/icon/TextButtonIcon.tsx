@@ -1,6 +1,6 @@
 import { styled } from '@mui/material';
 
-const PianoTextButtonIcon = styled('div')({
+const TextButtonIcon = styled('div')({
   fontWeight: 'bold',
   fontSize: '20px',
   width: '24px',
@@ -10,4 +10,4 @@ const PianoTextButtonIcon = styled('div')({
   textTransform: 'none',
 });
 
-export default PianoTextButtonIcon;
+export default TextButtonIcon;
