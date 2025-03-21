@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import LowercaseButton from '../../components/LowercaseButton.tsx';
 
 export type TMenuType = 'drawer' | 'appbar';

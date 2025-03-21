@@ -2,7 +2,7 @@ import SearchField from './SearchField.tsx';
 import SearchIcon from '@mui/icons-material/Search';
 import { Autocomplete, CircularProgress } from '@mui/material';
 import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import { autocompleteSearchItems, getSearchItemUrl, ISearchItem } from './search.utils.ts';
 import { IFastSearch } from './search.types.ts';

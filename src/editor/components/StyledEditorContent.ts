@@ -4,6 +4,7 @@ import { EditorContent } from '@tiptap/react';
 const StyledEditorContent = styled(EditorContent, {
   shouldForwardProp: (prop) => prop !== 'showGrid',
 })<{ showGrid?: boolean }>(({ showGrid, theme }) => ({
+  width: '100%',
   '.tiptap': {
     borderRadius: theme.shape.borderRadius,
     outline: '1px solid white',
@@ -40,27 +41,28 @@ const StyledEditorContent = styled(EditorContent, {
       borderCollapse: 'collapse',
       'th, td': {
         padding: '0.5em 1em',
+        position: 'relative',
       },
-      'th': {
-        borderBottom: '1px solid'
+      th: {
+        borderBottom: '1px solid',
       },
       td: {
         verticalAlign: 'top',
         border: showGrid ? '1px dashed gray' : undefined,
         '&[cell-type="chord"], &[cell-type="repetition"]': {
           fontWeight: 'bold',
-          'u': {
-            textDecoration: 'none'
-          }
+          u: {
+            textDecoration: 'none',
+          },
         },
         '&[cell-type="comment"]': {
           fontStyle: 'italic',
-          'strong': {
+          strong: {
             fontWeight: 'normal',
           },
-          'u': {
-            textDecoration: 'none'
-          }
+          u: {
+            textDecoration: 'none',
+          },
         },
       },
       'tr:first-of-type th': {
@@ -78,6 +80,18 @@ const StyledEditorContent = styled(EditorContent, {
       '.selectedCell': {
         background: 'gray',
       },
+      '.column-resize-handle': {
+        backgroundColor: theme.palette.primary.main,
+        bottom: 0,
+        pointerEvents: 'none',
+        position: 'absolute',
+        right: '-1px',
+        top: 0,
+        width: '2px',
+      },
+    },
+    '&.resize-cursor': {
+      cursor: 'col-resize',
     },
   },
 }));

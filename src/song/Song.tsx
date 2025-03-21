@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 import { Divider, IconButton, Paper, Skeleton } from '@mui/material';
 import SongInfo from './SongInfo.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { getSong } from '../store/songbook.actions.ts';
 import { clearSong } from '../store/songbook.reducer.ts';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
@@ -80,7 +80,7 @@ const Song: FC = () => {
         <SongVideo />
         {!noChords && <SongSettings />}
         <Paper>
-          <SongContent />
+          <SongContent song={song}/>
           <Divider variant="middle" />
           <div style={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
             {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}

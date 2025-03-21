@@ -1,10 +1,8 @@
-import { Container, CssBaseline, Divider, Theme, useMediaQuery } from '@mui/material';
+import { CssBaseline, Theme, useMediaQuery } from '@mui/material';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import MainMenu from './main-menu/MainMenu.tsx';
-import CopyrightInfo from './footer/CopyrightInfo.tsx';
+import { Route } from 'react-router';
 import { useAppSelector } from './store/songbook.store.ts';
 import { useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
@@ -18,6 +16,8 @@ import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
 import LogIn from './user/LogIn.tsx';
 import SongEditor from './editor/SongEditor.tsx';
+import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
+import BasicLayout from './BasicLayout.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -25,6 +25,24 @@ import SongEditor from './editor/SongEditor.tsx';
 // const Person = lazy(() => import('./author/Person.tsx'));
 // const Band = lazy(() => import('./author/Band.tsx'));
 // const Source = lazy(() => import('./author/Source.tsx'));
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<BasicLayout />}>
+      <Route path="/" element={<MainPage />} />
+      <Route path="/songs/:category?" element={<SongFullTable />} />
+      <Route path="/song/:songSlug" element={<Song />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/person/:personSlug" element={<Person />} />
+      <Route path="/band/:bandSlug" element={<Band />} />
+      <Route path="/source/:sourceSlug" element={<Source />} />
+      <Route path="/search" element={<FullSearch />} />
+      <Route path="/edit" element={<SongEditor />} />
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  )
+);
 
 const StoreApp = () => {
   const preferredTheme = useAppSelector((state) => state.theme);
@@ -42,30 +60,7 @@ const StoreApp = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Notification />
-      <BrowserRouter>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <MainMenu />
-          <Container sx={{ flexGrow: 1, mt: '1em', display: 'flex', justifyContent: 'center' }}>
-            <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/songs/:category?" element={<SongFullTable />} />
-              <Route path="/song/:songSlug" element={<Song />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/login" element={<LogIn />} />
-              <Route path="/person/:personSlug" element={<Person />} />
-              <Route path="/band/:bandSlug" element={<Band />} />
-              <Route path="/source/:sourceSlug" element={<Source />} />
-              <Route path="/search" element={<FullSearch />} />
-              <Route path="/edit" element={<SongEditor />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Container>
-          <footer>
-            <Divider sx={{ mt: '0.7em' }} />
-            <CopyrightInfo />
-          </footer>
-        </div>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 };

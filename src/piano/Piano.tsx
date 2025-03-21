@@ -11,6 +11,7 @@ import { ChordMode, defaultPianoOptions, IPianoKey, PIANO_KEYS, TInversion } fro
 import { IChord, NoteBase } from '../types/song.types.ts';
 import PianoModeIcon from './icon/PianoModeIcon.tsx';
 import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
+import ResizeableDiv from "../components/resizeable/ResizeableDiv.tsx";
 
 interface IPianoProps {
   setOpen: (open: boolean) => void;
@@ -81,7 +82,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <ResizeableDiv minWidth={500} maxWidth={10000} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div
         style={{
           background: 'black',
@@ -195,7 +196,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
           />
         ))}
       </div>
-    </div>
+    </ResizeableDiv>
   );
 };
 

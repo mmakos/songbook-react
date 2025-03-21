@@ -4,7 +4,7 @@ import { Italic } from '@tiptap/extension-italic';
 import { getMarkType, isMarkActive } from '@tiptap/core';
 import { CellSelection, isInTable } from '@tiptap/pm/tables';
 import { EditorState } from '@tiptap/pm/state';
-import { CommandProps, InputRule } from '@tiptap/react';
+import { CommandProps } from '@tiptap/react';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Strike } from '@tiptap/extension-strike';
@@ -103,48 +103,6 @@ export const ExclusiveBold = Bold.extend({
   },
 });
 
-const intervalInputRule = new InputRule({
-  find: /((^|\s)[A-Ha-h](is|e?s|#|b)?)(\d)$/,
-  handler: ({ state, range, match }) => {
-    const { tr } = state;
-    const char = match[3];
-    const interval = +match[3];
-    const prep = match[1];
-    tr.insertText(char);
-    const start = range.from + prep.length;
-    const end = start + 1;
-    if (interval === 1) {
-      tr.addMark(start, end, state.schema.marks.chordStrike.create());
-      tr.addMark(start, end, state.schema.marks.chordSubscript.create());
-      tr.removeStoredMark(state.schema.marks.chordStrike);
-    } else if (interval === 3 || interval === 5) {
-      tr.addMark(start, end, state.schema.marks.chordSubscript.create());
-    } else {
-      tr.addMark(start, end, state.schema.marks.chordSuperscript.create());
-    }
-  },
-});
-
-const endIntervalInputRule = new InputRule({
-  find: /([\d)])(.)$/,
-  handler: ({ state, range, match }) => {
-    const { tr } = state;
-    const char = match[2];
-    const prep = match[1];
-    const start = range.from + prep.length;
-    const end = start + 1;
-    if (RegExp(/[A-Ha-h(]/).exec(char)) {
-      // Nowy akord
-      tr.insertText(' ' + char);
-      tr.removeMark(start, end + 1);
-    } else if (RegExp(/\d/).exec(char)) {
-      // dodatkowy składnik
-      tr.insertText(char);
-      tr.addMark(start, end, state.schema.marks.chordSuperscript.create());
-    }
-  },
-});
-
 export const ChordSuperscript = Superscript.extend({
   name: 'chordSuperscript',
 
@@ -159,10 +117,6 @@ export const ChordSuperscript = Superscript.extend({
           return commands.toggleMark('chordSuperscript');
         },
     };
-  },
-
-  addInputRules() {
-    return [endIntervalInputRule, intervalInputRule];
   },
 });
 

@@ -62,7 +62,7 @@ function addColumn(
           tr.mapping.map(tableStart + pos),
           isHeader
             ? type.create(null, schema.nodes.paragraph.create(null, schema.text(title)))!
-            : type.createAndFill(attrs)!
+            : type.createAndFill({...attrs})!
         );
       }
     }

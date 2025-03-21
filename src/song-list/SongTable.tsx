@@ -16,7 +16,7 @@ import ArtistsTableCell from './ArtistsTableCell.tsx';
 import SourcesTableCell from './SourcesTableCell.tsx';
 import { Typography, useTheme } from '@mui/material';
 import { Category } from '../types/song.types.ts';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 const Title: FC<{ title?: string }> = ({ title }) => {
   return (

@@ -1,7 +1,7 @@
 import SongTable from './SongTable.tsx';
 import { useMemo } from 'react';
 import { Category } from '../types/song.types.ts';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Paper } from '@mui/material';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 

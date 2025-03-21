@@ -1,5 +1,5 @@
 import { AppBar, Container, IconButton, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';

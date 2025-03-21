@@ -1,6 +1,6 @@
 import { useAppSelector } from '../store/songbook.store.ts';
 import { Avatar, IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 const UserMenu = () => {
   const user = useAppSelector((state) => state.user);
