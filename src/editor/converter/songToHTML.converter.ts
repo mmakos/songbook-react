@@ -3,8 +3,8 @@ import {
   IAdditionalSeries,
   IChord,
   IntervalModification,
-  ISong,
   ITextRun,
+  IVerse,
 } from '../../types/song.types.ts';
 import { noteAsString } from '../../chords/chord-display.tsx';
 
@@ -72,12 +72,12 @@ const chordToHTML = (chord: IChord): string => {
   return str;
 };
 
-const songToHTML = (song: ISong): string => {
+const songToHTML = (verses: IVerse[]): string => {
   const text = [];
   const chords = [];
   const repetitions = [];
   let hasRepetitions = false;
-  for (const verse of song.verses) {
+  for (const verse of verses) {
     let verseHTML = verse.indent ? `<td data-indent="${verse.indent}" cell-type="text">` : '<td cell-type="text">';
     let chordsHTML = '<td cell-type="chord">';
     let repetitionsHTML = '<td cell-type="repetition">';
@@ -133,7 +133,7 @@ const songToHTML = (song: ISong): string => {
   for (let i = 0; i < text.length; ++i) {
     html += '<tr>' + text[i];
     if (hasRepetitions) html += repetitions[i];
-    html += chords[i] + '</tr>'
+    html += chords[i] + '</tr>';
   }
 
   return html + '</tbody></table>';

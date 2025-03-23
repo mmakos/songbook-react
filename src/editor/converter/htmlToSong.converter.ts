@@ -3,13 +3,19 @@ import {
   ChordModification,
   IAdditionalSeries,
   IChord,
+  IChords,
   IChordSeries,
   IComplexChord,
   IElement,
+  ILine,
   IntervalModification,
+  ITextRun,
+  IVerse,
   NoteBase,
 } from '../../types/song.types.ts';
+import { Fragment, Node, Schema } from '@tiptap/pm/model';
 import { extract } from './html.utils.ts';
+import { getHTMLFromFragment } from '@tiptap/react';
 
 const parseIntervalModification = (str: string): [string, IntervalModification | undefined] => {
   if (str.startsWith('&lt;')) return [str.slice(4), IntervalModification.AUG];
@@ -129,6 +135,7 @@ const parseAccidental = (html: string, chord: IChord): string => {
 };
 
 const parseSimpleChord = (html: string): IChord | undefined => {
+  if (!html) return;
   const note = html[0];
   let normalizedNote = note.toUpperCase();
   html = html.slice(1);
@@ -215,8 +222,9 @@ const parseChordLine = (line: string): IChordSeries[] => {
     let endSeries = false;
     let repeat = false;
 
-    let specialStart = false;
+    let specialStart;
     do {
+      specialStart = false;
       if (chord.startsWith('(') && !optional) {
         optional = true;
         startSeries = true;
@@ -231,16 +239,19 @@ const parseChordLine = (line: string): IChordSeries[] => {
       }
     } while (specialStart);
 
-    let specialEnd = false;
+    let specialEnd;
+    let endOptional = false;
+    let endSilent = false;
     do {
+      specialEnd = false;
       if (chord.endsWith(')') && optional) {
-        optional = false;
+        endOptional = true;
         endSeries = true;
         chord = chord.substring(0, chord.length - 1);
         specialEnd = true;
       }
       if (chord.endsWith('<i>') && silent) {
-        silent = false;
+        endSilent = true;
         endSeries = true;
         chord = chord.substring(0, chord.length - 3);
         specialEnd = true;
@@ -263,6 +274,9 @@ const parseChordLine = (line: string): IChordSeries[] => {
         last.optional = optional;
       }
     }
+    if (endOptional) optional = false;
+    if (endSilent) optional = false;
+
     last.chords.push(chord);
     if (endSeries) {
       if (repeat) series[series.length - 1].repeat = true;
@@ -275,11 +289,145 @@ const parseChordLine = (line: string): IChordSeries[] => {
     .filter((s) => !!s.chords.length);
 };
 
-export const parseChordCell = (cell: string): IChordSeries[][] => {
+// To wypadałoby przepisać, żeby działać normalnie na drzewie edytora, ale szczerze mówiąc trochę mi się nie chce
+const parseChordCell = (cell: string): IChordSeries[][] => {
   return extract(cell.replace(/<strong>|<\/strong>|<u>|<\/u>/g, ''), '<p>', '</p>').map(parseChordLine);
 };
 
-export const extractChordsFromFragment = (html: string): IChordSeries[][] => {
+const cellToText = (cell: Node): ITextRun[][] => {
+  const text: ITextRun[][] = [];
+  for (let i = 0; i < cell.childCount; ++i) {
+    const line = cell.child(i).textContent.trim();
+    text.push(line ? [{ text: line }] : []);
+  }
+  return text;
+};
+
+const cellToChords = (cell: Node, schema: Schema): IChordSeries[][] => {
+  const html = getHTMLFromFragment(cell.content, schema);
+  return parseChordCell(html);
+};
+
+const cellToRepetitions = (cell: Node): number[] => {
+  const repetitions: number[] = [];
+  for (let i = 0; i < cell.childCount; ++i) {
+    let rep = 0;
+    const str = cell.child(i).textContent.trim();
+    if (str.startsWith('|')) {
+      rep = 1;
+      if (str[1] === 'x' || str[1] === 'X') {
+        if (str[2] === '∞') {
+          rep = -1;
+        } else {
+          const i = +str[3];
+          if (!isNaN(i) && i >= 2) rep = i;
+        }
+      }
+      repetitions.push(rep);
+    }
+  }
+  return repetitions;
+};
+
+const cellToComments = (cell: Node): string[] => {
+  const comments: string[] = [];
+  for (let i = 0; i < cell.childCount; ++i) {
+    comments.push(cell.child(i).textContent.trim());
+  }
+  return comments;
+};
+
+const createVerseFromParts = (
+  indent: number,
+  text?: ITextRun[][],
+  chords?: IChordSeries[][],
+  altChords?: IChordSeries[][],
+  repetitions?: number[],
+  comments?: string[]
+): IVerse | undefined => {
+  if (!text && !chords) return;
+
+  const linesCount: number = Math.max(
+    text?.length ?? 0,
+    chords?.length ?? 0,
+    altChords?.length ?? 0,
+    repetitions?.length ?? 0,
+    comments?.length ?? 0
+  );
+  const lines: ILine[] = Array.from({ length: linesCount }, () => ({}));
+
+  for (let i = 0; i < linesCount; ++i) {
+    if (text && i < text?.length && text[i].length) lines[i].text = text[i];
+    if (chords && i < chords.length && chords[i].length) {
+      const c: IChords = { chords: chords[i] };
+      if (altChords && i < altChords.length && altChords[i].length) c.alternatives = altChords[i];
+      lines[i].chords = c;
+    }
+    if (repetitions && i < repetitions?.length) {
+      const rep = repetitions[i];
+      if (rep) {
+        lines[i].repetition = true;
+        if (rep !== 1) lines[i].repetitionEnd = rep;
+      }
+    }
+    if (comments && i < comments?.length) {
+      const comment = comments[i];
+      if (comment.length) lines[i].comment = comment;
+    }
+  }
+
+  return { lines, indent };
+};
+
+const rowToVerse = (row: Node, schema: Schema): IVerse | undefined => {
+  let indent: number = 0;
+  let text: ITextRun[][] | undefined = undefined;
+  let chords: IChordSeries[][] | undefined = undefined;
+  let altChords: IChordSeries[][] | undefined = undefined;
+  let repetitions: number[] | undefined = undefined;
+  let comments: string[] | undefined = undefined;
+
+  for (let i = 0; i < row.childCount; ++i) {
+    const cell = row.child(i);
+    if (cell.type.name === 'tableCell' && cell.attrs.cellType) {
+      const cellType = cell.attrs.cellType;
+      if (cellType === 'text' && !text) {
+        text = cellToText(cell);
+        if (cell.attrs.indent) {
+          indent = +cell.attrs.indent;
+        }
+      } else if (cellType === 'chord') {
+        if (!chords) chords = cellToChords(cell, schema);
+        else if (!altChords) altChords = cellToChords(cell, schema);
+      } else if (cellType === 'repetition' && !repetitions) {
+        repetitions = cellToRepetitions(cell);
+      } else if (cellType === 'comment' && !comments) {
+        comments = cellToComments(cell);
+      }
+    }
+  }
+  return createVerseFromParts(indent, text, chords, altChords, repetitions, comments);
+};
+
+export const rootNodeToSong = (node: Node, schema: Schema): IVerse[] => {
+  const verses: IVerse[] = [];
+  for (let i = 0; i < node.childCount; ++i) {
+    const child = node.child(i);
+    if (child.type.name === 'songTable') {
+      for (let j = 0; j < child.childCount; ++j) {
+        const row = child.child(j);
+        if (row.type.name == 'tableRow') {
+          const verse = rowToVerse(row, schema);
+          verse && verses.push(verse);
+        }
+      }
+    }
+  }
+  return verses;
+};
+
+export const extractChordsFromFragment = (fragment: Fragment, schema: Schema): IChordSeries[][] => {
+  const html = getHTMLFromFragment(fragment, schema);
   const cells = extract(html, 'cell-type="chord">', '</td>');
 
   return cells.flatMap(parseChordCell);

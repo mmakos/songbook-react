@@ -7,7 +7,7 @@ const WhiteKey = styled('div')({
   background: 'white',
   zIndex: 1,
   margin: '0 1px',
-  borderRadius: '0 0 3px 3px',
+  borderRadius: '0 0 5px 5px',
   transition: 'all 0.2s',
   cursor: 'pointer',
   ':hover': {

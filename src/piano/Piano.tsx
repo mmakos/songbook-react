@@ -11,7 +11,7 @@ import { ChordMode, defaultPianoOptions, IPianoKey, PIANO_KEYS, TInversion } fro
 import { IChord, NoteBase } from '../types/song.types.ts';
 import PianoModeIcon from './icon/PianoModeIcon.tsx';
 import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
-import ResizeableDiv from "../components/resizeable/ResizeableDiv.tsx";
+import ResizeableDiv from '../components/resizeable/ResizeableDiv.tsx';
 
 interface IPianoProps {
   setOpen: (open: boolean) => void;
@@ -146,7 +146,9 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
               </TextButtonIcon>
             </ToggleButton>
           </BasicTooltip>
-          <BasicTooltip title="Przewrót akordu">
+          <BasicTooltip
+            title={`Przewrót akordu (${pianoOptions.inversion ? `${pianoOptions.inversion} przewrót` : 'bez przewrotu'})`}
+          >
             <ToggleButton
               value="inversion"
               selected={pianoOptions.inversion !== 0}

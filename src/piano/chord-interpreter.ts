@@ -123,7 +123,7 @@ export const getChordNotesForNote = (note: number, pianoToggleOptions: IPianoTog
   if (pianoToggleOptions.sixth) notes.push(note + sixth);
   if (pianoToggleOptions.seventh) notes.push(note + seventh);
   if (pianoToggleOptions.inversion) {
-    const removed = notes.splice(notes.length - pianoToggleOptions.inversion, pianoToggleOptions.inversion);
+    const removed = notes.splice(pianoToggleOptions.inversion);
     notes.unshift(...removed.map((n) => n - 12));
   }
   if (notes[notes.length - 1] >= PIANO_KEYS) {

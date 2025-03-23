@@ -15,7 +15,7 @@ export const personAsString = (person: IPerson): string => {
     name += ' ';
   }
   if (person.nickname) {
-    name += ` "${person.nickname}"`;
+    name += `"${person.nickname}" `;
   }
   return name + person.lastName;
 };

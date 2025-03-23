@@ -1,15 +1,15 @@
 import { Table } from '@tiptap/extension-table';
 import { Command } from '@tiptap/core';
-import { EditorState, TextSelection } from '@tiptap/pm/state';
+import { EditorState, TextSelection, Transaction } from '@tiptap/pm/state';
 import { Attrs, Node, NodeType } from '@tiptap/pm/model';
 import {
-  addColSpan,
   deleteRow,
   isInTable,
   nextCell,
   removeColumn,
   selectedRect,
   selectionCell,
+  tableNodeTypes,
   TableRect,
 } from '@tiptap/pm/tables';
 
@@ -23,52 +23,54 @@ declare module '@tiptap/core' {
   }
 }
 
-interface CellAttrs {
-  colspan: number;
-  rowspan: number;
-  colwidth: number[] | null;
-}
-
-function addColumn(
+const addColumn = (
   { tr, schema }: EditorState,
   { map, tableStart, table }: TableRect,
   col: number,
   title: string,
   attrs?: Attrs,
   mergeHeader?: boolean
-) {
+) => {
   const refColumn = col > 0 ? -1 : 0;
   for (let row = 0; row < map.height; row++) {
     const index = row * map.width + col;
-    if (col > 0 && col < map.width && map.map[index - 1] == map.map[index]) {
-      const pos = map.map[index];
-      const cell = table.nodeAt(pos);
-      const cellAttrs = cell!.attrs as CellAttrs;
-      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null, addColSpan(cellAttrs, col - map.colCount(pos)));
-      row += cellAttrs.rowspan - 1;
+    const node: Node = table.nodeAt(map.map[index + refColumn])!;
+    const type: NodeType = node.type;
+    const isHeader = type.name === 'tableHeader';
+    if (isHeader && mergeHeader) {
+      const pos = map.positionAt(row, col - 1, table);
+      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null, {
+        ...node.attrs,
+        colspan: (node.attrs.colspan || 1) + 1,
+      });
     } else {
-      const node: Node = table.nodeAt(map.map[index + refColumn])!;
-      const type: NodeType = node.type;
-      const isHeader = type.name === 'tableHeader';
-      if (isHeader && mergeHeader) {
-        const pos = map.positionAt(row, col - 1, table);
-        tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null, {
-          ...node.attrs,
-          colspan: (node.attrs.colspan || 1) + 1,
-        });
-      } else {
-        const pos = map.positionAt(row, col, table);
-        tr.insert(
-          tr.mapping.map(tableStart + pos),
-          isHeader
-            ? type.create(null, schema.nodes.paragraph.create(null, schema.text(title)))!
-            : type.createAndFill({...attrs})!
-        );
-      }
+      const pos = map.positionAt(row, col, table);
+      tr.insert(
+        tr.mapping.map(tableStart + pos),
+        isHeader
+          ? type.create(null, schema.nodes.paragraph.create(null, schema.text(title)))!
+          : type.createAndFill({ ...attrs })!
+      );
     }
   }
   return tr;
-}
+};
+
+const addRow = (tr: Transaction, { map, tableStart, table }: TableRect, row: number) => {
+  let rowPos = tableStart;
+  for (let i = 0; i < row; i++) {
+    rowPos += table.child(i).nodeSize;
+  }
+  const cells = [];
+  const refRow = row > 1 ? -1 : 0;
+  for (let col = 0, index = map.width * row; col < map.width; col++, index++) {
+    const refCell = table.nodeAt(map.map[index + refRow * map.width])!;
+    const newCell = refCell.type.createAndFill(refCell.attrs)!;
+    cells.push(newCell);
+  }
+  tr.insert(rowPos, tableNodeTypes(table.type.schema).row.create(null, cells));
+  return tr;
+};
 
 const SongTable = Table.extend({
   name: 'songTable',
@@ -89,12 +91,23 @@ const SongTable = Table.extend({
           return true;
         },
 
+      addRowAfter:
+        (): Command =>
+        ({ state, dispatch }) => {
+          if (!isInTable(state)) return false;
+          const rect = selectedRect(state);
+          if (dispatch) {
+            dispatch(addRow(state.tr, rect, rect.bottom));
+          }
+          return true;
+        },
+
       deleteRow:
         (): Command =>
         ({ state, dispatch }) => {
           if (!isInTable(state)) return false;
           const rect = selectedRect(state);
-          if (rect.top == 0) return false;
+          if (rect.top == 0 || rect.table.childCount <= 2) return false;
 
           dispatch && deleteRow(state, dispatch);
           return true;
@@ -104,12 +117,14 @@ const SongTable = Table.extend({
         (position: number, title: string, attrs?: Attrs, mergeHeader?: boolean): Command =>
         ({ state, dispatch }) => {
           if (!isInTable(state)) return false;
-          const rect = selectedRect(state);
-          if (position < 0) {
-            position = rect.map.width + position + 1;
-          }
+          if (dispatch) {
+            const rect = selectedRect(state);
+            if (position < 0) {
+              position = rect.map.width + position + 1;
+            }
 
-          dispatch?.(addColumn(state, rect, position, title, attrs, mergeHeader));
+            dispatch(addColumn(state, rect, position, title, attrs, mergeHeader));
+          }
           return true;
         },
 
@@ -117,12 +132,14 @@ const SongTable = Table.extend({
         (position: number): Command =>
         ({ state, dispatch }) => {
           if (!isInTable(state)) return false;
-          const rect = selectedRect(state);
-          if (position < 0) {
-            position = rect.map.width + position;
-          }
+          if (dispatch) {
+            const rect = selectedRect(state);
+            if (position < 0) {
+              position = rect.map.width + position;
+            }
 
-          dispatch?.(removeColumn(state.tr, rect, position));
+            dispatch(removeColumn(state.tr, rect, position));
+          }
           return true;
         },
     };

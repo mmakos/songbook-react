@@ -5,11 +5,11 @@ import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { darkTheme, lightTheme } from '../theme.ts';
 import SongRepetition from './repetition/SongRepetition.tsx';
 import ScalableBox from '../components/ScalableBox.tsx';
-import {FC, useRef} from 'react';
+import { FC, useRef } from 'react';
 import { changeZoom } from '../store/songbook.reducer.ts';
-import {ISong} from "../types/song.types.ts";
+import { ISongContent } from '../types/song.types.ts';
 
-const SongContent: FC<{song?: ISong}> = ({song}) => {
+const SongContent: FC<{ song?: ISongContent }> = ({ song }) => {
   const showChords = useAppSelector((state) => state.songSettings.showChords);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const zoom = useAppSelector((state) => state.songDisplayState.zoom);

@@ -44,7 +44,7 @@ const StyledEditorContent = styled(EditorContent, {
         position: 'relative',
       },
       th: {
-        borderBottom: '1px solid',
+        borderBottom: '1px solid gray',
       },
       td: {
         verticalAlign: 'top',

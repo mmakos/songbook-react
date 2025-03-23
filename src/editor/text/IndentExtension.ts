@@ -1,8 +1,8 @@
 import { Command, Extension } from '@tiptap/core';
-import { AllSelection, TextSelection, Transaction } from 'prosemirror-state';
+import { CellSelection } from '@tiptap/pm/tables';
+import { TextSelection, Transaction } from '@tiptap/pm/state';
 
 export interface IndentOptions {
-  types: string[];
   minLevel: number;
   maxLevel: number;
 }
@@ -21,7 +21,6 @@ const Indent = Extension.create<IndentOptions>({
 
   addOptions() {
     return {
-      types: ['tableCell'],
       minLevel: 0,
       maxLevel: 3,
     };
@@ -30,7 +29,7 @@ const Indent = Extension.create<IndentOptions>({
   addGlobalAttributes() {
     return [
       {
-        types: this.options.types,
+        types: ['tableCell'],
         attributes: {
           indent: {
             renderHTML: (attributes) => {
@@ -67,16 +66,24 @@ const Indent = Extension.create<IndentOptions>({
     const updateIndentLevel = (tr: Transaction, delta: number): Transaction => {
       const { doc, selection } = tr;
 
-      if (doc && selection && (selection instanceof TextSelection || selection instanceof AllSelection)) {
-        const { from, to } = selection;
-        doc.nodesBetween(from, to, (node, pos) => {
-          if (this.options.types.includes(node.type.name)) {
-            tr = setNodeIndentMarkup(tr, pos, delta);
-            return false;
-          }
+      if (doc && selection) {
+        if (selection instanceof CellSelection) {
+          selection.forEachCell((cell, pos) => {
+            if (cell.attrs.cellType === 'text') {
+              tr = setNodeIndentMarkup(tr, pos, delta);
+            }
+          });
+        } else if (selection instanceof TextSelection) {
+          const { from, to } = selection;
+          doc.nodesBetween(from, to, (node, pos) => {
+            if (node.type.name === 'tableCell' && node.attrs.cellType === 'text') {
+              tr = setNodeIndentMarkup(tr, pos, delta);
+              return false;
+            }
 
-          return true;
-        });
+            return true;
+          });
+        }
       }
 
       return tr;

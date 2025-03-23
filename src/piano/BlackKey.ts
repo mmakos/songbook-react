@@ -9,7 +9,7 @@ const BlackKey = styled('div')({
   background: 'black',
   zIndex: 2,
   margin: `0 calc(-100% / ${PIANO_WHITE_KEYS / BLACK_TO_WHITE_KEY_RATIO * 2})`,
-  borderRadius: '0 0 3px 3px',
+  borderRadius: '0 0 5px 5px',
   boxShadow: '0px 10px 10px grey',
   transition: 'all 0.2s',
   cursor: 'pointer',

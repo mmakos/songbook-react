@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { ISong, IVerse } from '../../types/song.types.ts';
+import { ISongContent, IVerse } from '../../types/song.types.ts';
 import { Collapse, Fade, IconButton } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import VerseText from './VerseText.tsx';
@@ -9,7 +9,7 @@ import useLineHeight from '../../store/useLineHeight.hook.ts';
 
 interface ICollapsibleVerseTextProps {
   verse: IVerse;
-  song: ISong;
+  song: ISongContent;
 }
 
 const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) => {
@@ -34,7 +34,12 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
 
   if (!verseRefValid) {
     return (
-      <div style={{ marginLeft: verse.indent * (spacing?.verseIndent ?? 3) + 'ch', marginBottom: `${spacing.verseSpacing}em` }}>
+      <div
+        style={{
+          marginLeft: verse.indent * (spacing?.verseIndent ?? 3) + 'ch',
+          marginBottom: `${spacing.verseSpacing}em`,
+        }}
+      >
         <VerseText verse={verse} />
       </div>
     );

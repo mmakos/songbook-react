@@ -10,19 +10,19 @@ export const darkTheme = createTheme({
     },
     mode: 'dark',
   },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        'kbd': {
-          border: '1px solid',
-          borderRadius: 4,
-          padding: '0 2px',
-          background: '#121212',
-          fontWeight: 'bold',
-        }
-      }
-    }
-  }
+  // components: {
+  //   MuiCssBaseline: {
+  //     styleOverrides: {
+  //       'kbd': {
+  //         border: '1px solid',
+  //         borderRadius: 4,
+  //         padding: '0 2px',
+  //         background: '#121212',
+  //         fontWeight: 'bold',
+  //       }
+  //     }
+  //   }
+  // }
 });
 
 export const lightTheme = createTheme({

@@ -15,9 +15,11 @@ import SongFullTable from './song-list/SongFullTable.tsx';
 import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
 import LogIn from './user/LogIn.tsx';
-import SongEditor from './editor/SongEditor.tsx';
+import SongEditor from './editor/text/SongEditor.tsx';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import BasicLayout from './BasicLayout.tsx';
+import SongInfoEditor from "./editor/info/SongInfoEditor.tsx";
+import SongEdit from "./editor/SongEdit.tsx";
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -39,6 +41,7 @@ const router = createBrowserRouter(
       <Route path="/source/:sourceSlug" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
       <Route path="/edit" element={<SongEditor />} />
+      <Route path="/edit-info" element={<SongEdit />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

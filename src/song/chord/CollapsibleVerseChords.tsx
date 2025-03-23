@@ -1,14 +1,14 @@
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { FC, useState } from 'react';
 import { Collapse } from '@mui/material';
-import { ISong, IVerse } from '../../types/song.types.ts';
+import { ISongContent, IVerse } from '../../types/song.types.ts';
 import VerseChords from './VerseChords.tsx';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
 import useVerseSpacing from '../../store/useVerseSpacing.hook.ts';
 
 interface ICollapsibleVerseChordsProps {
   verse: IVerse;
-  song: ISong;
+  song: ISongContent;
 }
 
 const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song }) => {

@@ -28,6 +28,10 @@ export interface ISongOverview {
   category: Category;
 }
 
+export interface ISongContent {
+  verses: IVerse[];
+}
+
 export interface ISong {
   slug: string;
   title: string;
@@ -63,7 +67,7 @@ export interface IPerson {
 export interface IBand {
   slug: string;
   name: string;
-  url: string;
+  url?: string;
 }
 
 export interface ISource {
