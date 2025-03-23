@@ -86,7 +86,7 @@ interface INoteAlternatives {
   default?: Accidental;
 }
 
-const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
+export const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
   { base: NoteBase.C },
   {
     flat: { base: NoteBase.D, accidental: Accidental.FLAT },
@@ -113,7 +113,7 @@ const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
   },
 ];
 
-const minorCircleOfFifths: Array<INote | INoteAlternatives> = [
+export const minorCircleOfFifths: Array<INote | INoteAlternatives> = [
   { base: NoteBase.C },
   { base: NoteBase.C, accidental: Accidental.SHARP },
   { base: NoteBase.D },

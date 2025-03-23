@@ -1,56 +1,25 @@
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
-import { Category, IBand, IPerson, ISource, SourceType } from '../../types/song.types.ts';
+import { useEffect, useState } from 'react';
+import { Category, IBand, IPerson, ISource } from '../../types/song.types.ts';
 import { getCategoryDisplayName } from '../../category/category.utils.ts';
 import { personAsString } from '../../author/author.utils.ts';
 import Grid from '@mui/material/Grid2';
-
-const authors: IPerson[] = [
-  {
-    name: 'Michał',
-    lastName: 'Makoś',
-    nickname: 'Makoś',
-    slug: 'michal-makos',
-  },
-  {
-    name: 'Zuzanna',
-    secondName: 'Irena',
-    lastName: 'Grabowska',
-    nickname: 'Sanah',
-    forceNickname: true,
-    slug: 'sanah',
-  },
-];
-
-const bands: IBand[] = [
-  {
-    name: 'Jeleniejaja',
-    slug: 'jeleniejaja',
-    url: '',
-  },
-  {
-    name: 'Makosie',
-    slug: 'makosie',
-    url: '',
-  },
-];
-
-const sources: ISource[] = [
-  {
-    name: 'Romeo i Julia',
-    slug: 'romeo-i-julia',
-    type: SourceType.MOVIE,
-  },
-  {
-    name: 'Król Lew',
-    slug: 'krol-lew',
-    type: SourceType.MUSICAL,
-  },
-];
+import { EditedDependent, useSongEditContext } from '../SongEditContext.tsx';
+import SongInfoAutocomplete from './SongInfoAutocomplete.tsx';
+import { getBandAutocomplete, getPersonAutocomplete, getSourceAutocomplete } from './autocomplete.actions.ts';
+import { RestartAlt, Start } from '@mui/icons-material';
+import NotFound from '../../subsites/NotFound.tsx';
+import Progress from '../../components/Progress.tsx';
 
 interface ValidationErrors {
   title?: string;
   altTitle?: string;
+  lyrics?: string;
+  composer?: string;
+  translation?: string;
+  performer?: string;
+  source?: string;
+  videos?: string;
   minimal?: string;
 }
 
@@ -63,18 +32,55 @@ const extractYoutubeLink = (url: string) => {
 };
 
 const SongInfoEditor = () => {
-  const [title, setTitle] = useState('');
-  const [altTitle, setAltTitle] = useState('');
-  const [category, setCategory] = useState(Category.OTHER);
-  const [lyrics, setLyrics] = useState<(IPerson | string)[]>([]);
-  const [composer, setComposer] = useState<(IPerson | string)[]>([]);
-  const [translation, setTranslation] = useState<(IPerson | string)[]>([]);
-  const [performer, setPerformer] = useState<(IPerson | string)[]>([]);
-  const [band, setBand] = useState<IBand | string | null>(null);
-  const [source, setSource] = useState<(ISource | string)[]>([]);
-  const [videos, setVideos] = useState<string[]>([]);
+  const { song, songTimeout, songInfo, setNeedsAuthorEdit, setSongInfo, updateStep, initial, setInitial } =
+    useSongEditContext();
+
+  const [title, setTitle] = useState(songInfo?.title ?? '');
+  const [altTitle, setAltTitle] = useState(songInfo?.altTitle ?? '');
+  const [category, setCategory] = useState(songInfo?.category ?? Category.OTHER);
+  const [lyrics, setLyrics] = useState<(EditedDependent<IPerson> | string)[]>(songInfo?.lyrics ?? []);
+  const [composer, setComposer] = useState<(EditedDependent<IPerson> | string)[]>(songInfo?.composer ?? []);
+  const [translation, setTranslation] = useState<(EditedDependent<IPerson> | string)[]>(songInfo?.translation ?? []);
+  const [performer, setPerformer] = useState<(EditedDependent<IPerson> | string)[]>(songInfo?.performer ?? []);
+  const [band, setBand] = useState<EditedDependent<IBand> | string | null>(songInfo?.band ?? null);
+  const [source, setSource] = useState<(EditedDependent<ISource> | string)[]>(songInfo?.source ?? []);
+  const [videos, setVideos] = useState<string[]>(songInfo?.videos ?? []);
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+  useEffect(() => {
+    if (initial) {
+      resetFromSong();
+      setInitial(false);
+    }
+  }, [song, initial]);
+
+  useEffect(() => {
+    setNeedsAuthorEdit(
+      !!lyrics.find((v) => typeof v === 'string' || v.edited) ||
+        !!composer.find((v) => typeof v === 'string' || v.edited) ||
+        !!translation.find((v) => typeof v === 'string' || v.edited) ||
+        !!performer.find((v) => typeof v === 'string' || v.edited) ||
+        !!source.find((v) => typeof v === 'string' || v.edited) ||
+        typeof band === 'string' ||
+        !!band?.edited
+    );
+  }, [lyrics, composer, translation, performer, band, source]);
+
+  const resetFromSong = () => {
+    if (song) {
+      setTitle(song.title);
+      setAltTitle(song.altTitle ?? '');
+      setCategory(song.category);
+      setLyrics(song.lyrics ?? []);
+      setComposer(song.composer ?? []);
+      setTranslation(song.translation ?? []);
+      setPerformer(song.performer ?? []);
+      setBand(song.band ?? null);
+      setSource(song.source ?? []);
+      setVideos(song.video ?? []);
+    }
+  };
 
   const handleSongVideos = (vids: string[]) => {
     setVideos(vids.map(extractYoutubeLink).filter((v) => v !== undefined));
@@ -89,9 +95,15 @@ const SongInfoEditor = () => {
     }
     if (altTitle.length > 0 && altTitle.length < 3) {
       errors.altTitle = 'Tytuł musi mieć przynajmniej 3 znaki';
-    } else if (title.length > 50) {
+    } else if (altTitle.length > 50) {
       errors.altTitle = 'Tytuł może mieć maksymalnie 50 znaków';
     }
+    if (lyrics.length > 5) errors.source = 'Możesz podać maksymalnie 5 autorów tekstu';
+    if (composer.length > 5) errors.composer = 'Możesz podać maksymalnie 5 autorów muzyki';
+    if (translation.length > 5) errors.translation = 'Możesz podać maksymalnie 3 autorów tłumacznia';
+    if (performer.length > 5) errors.performer = 'Możesz podać maksymalnie 5 wykonawców';
+    if (source.length > 3) errors.source = 'Możesz podać maksymalnie 3 źródła piosenki';
+    if (videos.length > 3) errors.videos = 'Możesz podać maksymalnie 3 nagrania';
     if (!lyrics.length || !composer.length || !videos.length) {
       errors.minimal = 'Hmm... Może warto podać chociaż autora słów, muzyki i link do nagrania?';
     }
@@ -99,13 +111,22 @@ const SongInfoEditor = () => {
     return errors;
   };
 
-  const nextStep = () => {
+  const handleNextStep = () => {
     const errors = validate();
     const errorCount = Object.keys(errors).length;
     // Ten drugi warunek, to jak zostało już tylko ostrzeżenie, które już wcześniej było
     if (errorCount && !(errorCount === 1 && errors.minimal && validationErrors.minimal)) return;
-    console.log('NEXT');
+    setSongInfo({ altTitle, band, category, composer, lyrics, performer, source, title, translation, videos });
+    updateStep(1);
   };
+
+  if (!song) {
+    if (songTimeout) {
+      return <NotFound />;
+    } else {
+      return <Progress />;
+    }
+  }
 
   return (
     <>
@@ -149,93 +170,103 @@ const SongInfoEditor = () => {
           </FormControl>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             multiple
             value={lyrics}
-            onChange={(_, v) => setLyrics(v)}
+            setValue={setLyrics}
+            error={validationErrors.lyrics}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
-            options={authors}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Autor tekstu" placeholder="Dodaj autora..." />}
+            getOptions={getPersonAutocomplete}
+            inputLabel="Autor tekstu"
+            inputPlaceholder="Dodaj autora..."
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             multiple
             value={composer}
-            onChange={(_, v) => setComposer(v)}
+            setValue={setComposer}
+            error={validationErrors.composer}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
-            options={authors}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Autor muzyki" placeholder="Dodaj autora..." />}
+            getOptions={getPersonAutocomplete}
+            inputLabel="Autor muzyki"
+            inputPlaceholder="Dodaj autora..."
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             multiple
             value={translation}
-            onChange={(_, v) => setTranslation(v)}
+            setValue={setTranslation}
+            error={validationErrors.translation}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
-            options={authors}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Autor tłumacznia" placeholder="Dodaj autora..." />}
+            getOptions={getPersonAutocomplete}
+            inputLabel="Autor tłumacznia"
+            inputPlaceholder="Dodaj autora..."
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             value={band}
-            onChange={(_, v) => setBand(v)}
+            setValue={setBand}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
-            options={bands}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Zespół" placeholder="Dodaj zespół..." />}
+            getOptions={getBandAutocomplete}
+            inputLabel="Zespół"
+            inputPlaceholder="Dodaj zespół..."
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             multiple
             value={performer}
-            onChange={(_, v) => setPerformer(v)}
+            setValue={setPerformer}
+            error={validationErrors.performer}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
-            options={authors}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Wykonawca" placeholder="Dodaj wykonawcę..." />}
+            getOptions={getPersonAutocomplete}
+            inputLabel="Wykonawca"
+            inputPlaceholder="Dodaj wykonawcę..."
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Autocomplete
-            limitTags={2}
+          <SongInfoAutocomplete
             multiple
             value={source}
-            onChange={(_, v) => setSource(v)}
+            setValue={setSource}
+            error={validationErrors.source}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
-            options={sources}
-            freeSolo
-            renderInput={(params) => <TextField {...params} label="Źródło" placeholder="Dodaj źródło..." />}
+            getOptions={getSourceAutocomplete}
+            inputLabel="Skąd jest piosenka"
+            inputPlaceholder="Dodaj źródło..."
           />
         </Grid>
         <Grid size={12}>
           <Autocomplete
-            limitTags={2}
+            limitTags={3}
             multiple
+            clearOnBlur
+            clearOnEscape
             options={[]}
             value={videos}
             onChange={(_, v) => handleSongVideos(v)}
             freeSolo
             renderInput={(params) => (
-              <TextField {...params} label="Link do nagrania (youtube)" placeholder="Dodaj link..." />
+              <TextField
+                {...params}
+                error={!!validationErrors.videos}
+                helperText={validationErrors.videos}
+                label="Link do nagrania (youtube)"
+                placeholder="Dodaj link..."
+              />
             )}
           />
         </Grid>
       </Grid>
       {validationErrors.minimal && <Typography color="warning">{validationErrors.minimal}</Typography>}
-      <div style={{ display: 'flex', justifyContent: 'right' }}>
-        <Button variant="contained" sx={{ minWidth: '15em' }} size="large" onClick={nextStep}>
+      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+        <Button variant="outlined" size="large" onClick={resetFromSong} startIcon={<RestartAlt />}>
+          Resetuj
+        </Button>
+        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Start />}>
           Dalej
         </Button>
       </div>

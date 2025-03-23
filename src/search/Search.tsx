@@ -57,13 +57,13 @@ const Search = () => {
       value={''}
       inputValue={query}
       filterOptions={(x) => x}
-      options={query?.length >= 3 ? autocompleteItems : []}
+      options={query.length >= 3 ? autocompleteItems : []}
       groupBy={(option) => getCategoryDisplayName((option as ISearchItem).category)}
       getOptionLabel={(option: ISearchItem | string) => (option as ISearchItem).displayName ?? option}
       onChange={handleSelection}
       onInputChange={(_, value) => {
         setQuery(value);
-        setLoad(false);
+        setLoad(true);
         value.length >= 3 &&
           getAutocomplete(value, (autocomplete) => {
             setAutocomplete(autocomplete);
@@ -83,7 +83,7 @@ const Search = () => {
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {load && query?.length >= 3 ? <CircularProgress color="inherit" size="1.5em" /> : undefined}
+                  {load && query.length >= 3 ? <CircularProgress color="inherit" size="1.5em" /> : undefined}
                   {params.InputProps.endAdornment}
                 </>
               ),

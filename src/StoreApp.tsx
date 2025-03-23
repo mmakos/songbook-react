@@ -6,7 +6,6 @@ import { Route } from 'react-router';
 import { useAppSelector } from './store/songbook.store.ts';
 import { useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
-import Song from './song/Song.tsx';
 import Settings from './settings/Settings.tsx';
 import Person from './author/Person.tsx';
 import Band from './author/Band.tsx';
@@ -15,11 +14,11 @@ import SongFullTable from './song-list/SongFullTable.tsx';
 import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
 import LogIn from './user/LogIn.tsx';
-import SongEditor from './editor/text/SongEditor.tsx';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import BasicLayout from './BasicLayout.tsx';
-import SongInfoEditor from "./editor/info/SongInfoEditor.tsx";
-import SongEdit from "./editor/SongEdit.tsx";
+import SongEdit from './editor/SongEdit.tsx';
+import GlobalSong from './song/GlobalSong.tsx';
+import CircleOfFifths from './circle-of-fifths/CircleOfFifths.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -33,15 +32,16 @@ const router = createBrowserRouter(
     <Route element={<BasicLayout />}>
       <Route path="/" element={<MainPage />} />
       <Route path="/songs/:category?" element={<SongFullTable />} />
-      <Route path="/song/:songSlug" element={<Song />} />
+      <Route path="/song/:songSlug" element={<GlobalSong />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/person/:personSlug" element={<Person />} />
       <Route path="/band/:bandSlug" element={<Band />} />
       <Route path="/source/:sourceSlug" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
-      <Route path="/edit" element={<SongEditor />} />
+      <Route path="/edit/:songSlug" element={<SongEdit />} />
       <Route path="/edit-info" element={<SongEdit />} />
+      <Route path="/circle" element={<CircleOfFifths />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

@@ -231,10 +231,10 @@ const parseChordLine = (line: string): IChordSeries[] => {
         chord = chord.slice(1);
         specialStart = true;
       }
-      if (chord.startsWith('<i>') && !silent) {
+      if (chord.startsWith('<em>') && !silent) {
         silent = true;
         startSeries = true;
-        chord = chord.slice(1);
+        chord = chord.slice(4);
         specialStart = true;
       }
     } while (specialStart);
@@ -250,10 +250,10 @@ const parseChordLine = (line: string): IChordSeries[] => {
         chord = chord.substring(0, chord.length - 1);
         specialEnd = true;
       }
-      if (chord.endsWith('<i>') && silent) {
+      if (chord.endsWith('<em>') && silent) {
         endSilent = true;
         endSeries = true;
-        chord = chord.substring(0, chord.length - 3);
+        chord = chord.substring(0, chord.length - 4);
         specialEnd = true;
       }
       if (chord.endsWith('…')) {
@@ -319,13 +319,16 @@ const cellToRepetitions = (cell: Node): number[] => {
         if (str[2] === '∞') {
           rep = -1;
         } else {
-          const i = +str[3];
+          const i = +str[2];
           if (!isNaN(i) && i >= 2) rep = i;
         }
       }
       repetitions.push(rep);
+    } else {
+      repetitions.push(0);
     }
   }
+  console.log(repetitions);
   return repetitions;
 };
 
@@ -409,6 +412,34 @@ const rowToVerse = (row: Node, schema: Schema): IVerse | undefined => {
   return createVerseFromParts(indent, text, chords, altChords, repetitions, comments);
 };
 
+const joinLineText = (line: ILine) => {
+  return line.text?.map((t) => t.text).join() ?? '';
+};
+
+const proceedVerseRefs = (verses: IVerse[]) => {
+  for (let i = 1; i < verses.length; ++i) {
+    const verse = verses[i];
+    if (verse.lines.length === 1) {
+      let textLine = joinLineText(verse.lines[0]);
+      if (textLine.endsWith('...')) textLine = textLine.slice(0, textLine.length - 3);
+      else if (textLine.endsWith('…')) textLine = textLine.slice(0, textLine.length - 1);
+      else continue;
+
+      console.log(textLine)
+
+      for (let j = 0; j < i; ++j) {
+        const verseJ = verses[j];
+        if (verseJ.indent === verse.indent && verseJ.lines.length) {
+          const textLineJ = joinLineText(verseJ.lines[0]);
+          if (textLineJ.startsWith(textLine) && !textLineJ.endsWith('...') && !textLineJ.endsWith('…')) {
+            verse.verseRef = j;
+          }
+        }
+      }
+    }
+  }
+};
+
 export const rootNodeToSong = (node: Node, schema: Schema): IVerse[] => {
   const verses: IVerse[] = [];
   for (let i = 0; i < node.childCount; ++i) {
@@ -423,6 +454,7 @@ export const rootNodeToSong = (node: Node, schema: Schema): IVerse[] => {
       }
     }
   }
+  proceedVerseRefs(verses);
   return verses;
 };
 

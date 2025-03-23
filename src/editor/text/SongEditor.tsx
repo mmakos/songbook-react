@@ -8,21 +8,12 @@ import InputRules from './InputRules.ts';
 import { TableRow } from '@tiptap/extension-table-row';
 import songToHTML from '../converter/songToHTML.converter.ts';
 import Piano from '../../piano/Piano.tsx';
-import {
-  Button,
-  Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  ToggleButton,
-  Typography,
-} from '@mui/material';
+import { Button, Collapse, ToggleButton, Typography } from '@mui/material';
 import { useState } from 'react';
 import {
   Autorenew,
-  DataObject,
-  FolderZipOutlined,
+  BackspaceOutlined,
+  Check,
   FormatIndentDecrease,
   FormatIndentIncrease,
   FormatStrikethrough,
@@ -55,7 +46,6 @@ import {
   ExclusiveUnderline,
 } from './ExclusiveStyle.ts';
 import TypedTableCell from './TypedTableCell.ts';
-import { dzieciHioba } from '../test/dzieci-hioba.json.ts';
 import ParagraphRowTable from './ParagraphRowTable.ts';
 import UnmodifiableTableHeader from './UnmodifiableTableHeader.ts';
 import PreventCellDrag from './PreventTableDrag.ts';
@@ -72,15 +62,12 @@ import SongContent from '../../song/SongContent.tsx';
 import StyledSongContent from '../components/StyledSongContent.tsx';
 import StyledEditorContent from '../components/StyledEditorContent.ts';
 import SplitPane from '../../components/SplitPane.tsx';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import ReactRouterPrompt from 'react-router-prompt';
-import AlertTransition from '../../components/AlertTransition.tsx';
-import pako from 'pako';
+import { useSongEditContext } from '../SongEditContext.tsx';
 
 type TPreviewType = 'editor' | 'split' | 'preview';
 
 const SongEditor = () => {
+  const { song, updateStep, setSong } = useSongEditContext();
   const editor = useEditor({
     extensions: [
       Text,
@@ -101,7 +88,7 @@ const SongEditor = () => {
       Indent,
       PreventCellDrag,
     ],
-    content: songToHTML(dzieciHioba.verses),
+    content: songToHTML(song!.verses),
   });
   const [pianoOpen, setPianoOpen] = useState(false);
   const [reading, setReading] = useState(false);
@@ -110,7 +97,7 @@ const SongEditor = () => {
   const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
   const [commentsColumn, setCommentsColumn] = useState(false);
   const [previewType, setPreviewType] = useState<TPreviewType>('split');
-  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: dzieciHioba.verses });
+  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: song!.verses });
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -178,50 +165,18 @@ const SongEditor = () => {
     }
   };
 
-  const exportJSON = () => {
-    if (!editor) return;
-    const song: ISongContent = { verses: rootNodeToSong(editor.$doc.node, editor.schema) };
-
-    const jsonString = JSON.stringify(song);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    window.open(url, '_blank');
+  const handlePreviousStep = () => {
+    updateStep(-1);
   };
 
-  const exportTargetFormat = () => {
-    if (!editor) return;
-    const song: ISongContent = { verses: rootNodeToSong(editor.$doc.node, editor.schema) };
-    const json = JSON.stringify(song);
-    const compressed = pako.gzip(json);
-    const base64 = compressed.reduce<string>((str, byte) => str + String.fromCharCode(byte), '');
-
-    const tab = window.open('about:blank', '_blank');
-    tab?.document.write(btoa(base64));
-    tab?.document.close();
+  const handleNextStep = () => {
+    editor && setSong({ ...song!, verses: rootNodeToSong(editor.$doc.node, editor.schema) });
+    updateStep(1);
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-      <ReactRouterPrompt when={editor?.can().undo() || editor?.can().redo()}>
-        {({ isActive, onConfirm, onCancel }: { isActive: boolean; onConfirm: () => void; onCancel: () => void }) => (
-          <Dialog open={isActive} TransitionComponent={AlertTransition}>
-            <DialogTitle>Opuszczanie strony</DialogTitle>
-            <DialogContent>
-              Czy na pewno chcesz opuścić stronę bez zapisania piosenki? Wszystkie zmiany w piosence zostaną utracone!
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={onCancel} variant="contained">
-                Zostań na stronie
-              </Button>
-              <Button onClick={onConfirm} variant="outlined">
-                Opuść stronę
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-      </ReactRouterPrompt>
-      <Typography variant="caption" color="error">
+      <Typography variant="caption" color="info">
         Uwaga! Niniejszy edytor jest zwykłym edytorem tekstowym zorientowanym na edycję tekstu i akordów w formacie
         używanym w moim śpiewniku. Oznacza to, że posiada on kilka automatyzacji ułatwiających wpisywanie akordów oraz
         kilka blokad uniemożliwiających wprowadzenie danych kompletnie bez sensu. Nie gwarantuje jednak, że wszytko co
@@ -542,18 +497,6 @@ const SongEditor = () => {
           </BasicTooltip>
         </TitledToggleButtonGroup>
         <TitledToggleButtonGroupDivider />
-        <TitledToggleButtonGroup title="Exportuj">
-          <BasicTooltip title="Eksportuj do formatu json">
-            <ToggleButton value="json" onClick={exportJSON}>
-              <DataObject />
-            </ToggleButton>
-          </BasicTooltip>
-          <BasicTooltip title="Exportuj do formatu docelowego (skompresowany JSON)">
-            <ToggleButton value="json" onClick={exportTargetFormat}>
-              <FolderZipOutlined />
-            </ToggleButton>
-          </BasicTooltip>
-        </TitledToggleButtonGroup>
       </div>
       <SplitPane
         initial={65}
@@ -566,6 +509,14 @@ const SongEditor = () => {
           )
         }
       />
+      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+        <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
+          Wróć
+        </Button>
+        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
+          Dalej
+        </Button>
+      </div>
     </div>
   );
 };

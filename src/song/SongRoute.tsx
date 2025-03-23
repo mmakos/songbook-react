@@ -2,12 +2,11 @@ import RouteLink from '../components/RouteLink.tsx';
 import { Home, MusicNote } from '@mui/icons-material';
 import CategoryIcon from '../category/CategoryIcon.tsx';
 import { Breadcrumbs, Skeleton, Typography } from '@mui/material';
-import { useAppSelector } from '../store/songbook.store.ts';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
+import { FC } from 'react';
+import { ISong } from '../types/song.types.ts';
 
-const SongRoute = () => {
-  const song = useAppSelector((state) => state.song);
-
+const SongRoute: FC<{ song?: ISong }> = ({ song }) => {
   return (
     <Breadcrumbs sx={{ mb: '0.5em' }}>
       <RouteLink to="/" underline="hover" color="inherit" sx={{ display: 'flex', alignItems: 'center' }}>

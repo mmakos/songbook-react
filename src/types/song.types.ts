@@ -35,6 +35,7 @@ export interface ISongContent {
 export interface ISong {
   slug: string;
   title: string;
+  altTitle?: string;
   category: Category;
   created: IEditorInfo;
   edited?: IEditorInfo;
@@ -76,7 +77,6 @@ export interface ISource {
   url?: string;
   year?: number;
   type: SourceType;
-
 }
 
 export interface IEditorInfo {

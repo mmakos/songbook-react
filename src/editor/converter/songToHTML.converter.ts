@@ -102,8 +102,8 @@ const songToHTML = (verses: IVerse[]): string => {
         for (const chordSeries of line.chords.chords) {
           if (!firstSerie) chordsHTML += ' ';
           firstSerie = false;
-          if (chordSeries.optional) chordsHTML += '<em>';
-          if (chordSeries.silent) chordsHTML += '(';
+          if (chordSeries.silent) chordsHTML += '<em>';
+          if (chordSeries.optional) chordsHTML += '(';
 
           let firstChord = true;
           for (const complexChord of chordSeries.chords) {
@@ -114,8 +114,8 @@ const songToHTML = (verses: IVerse[]): string => {
           }
 
           if (chordSeries.repeat) chordsHTML += '…';
-          if (chordSeries.silent) chordsHTML += ')';
-          if (chordSeries.optional) chordsHTML += '</em>';
+          if (chordSeries.optional) chordsHTML += ')';
+          if (chordSeries.silent) chordsHTML += '</em>';
         }
       }
       verseHTML += '</p>';
