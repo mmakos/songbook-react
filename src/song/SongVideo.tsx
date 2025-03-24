@@ -3,10 +3,10 @@ import { Collapse, IconButton, Paper, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { setSongVideoOpen } from '../store/songbook.reducer.ts';
+import { ISong } from '../types/song.types.ts';
 
-const SongVideo: FC = () => {
+const SongVideo: FC<{ song?: ISong }> = ({ song }) => {
   const theme = useTheme();
-  const song = useAppSelector((state) => state.song);
   const open = useAppSelector((state) => state.songDisplayState.videoOpen);
   const dispatch = useAppDispatch();
 

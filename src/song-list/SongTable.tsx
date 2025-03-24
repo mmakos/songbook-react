@@ -7,7 +7,7 @@ import {
   GridToolbarContainer,
   useGridApiRef,
 } from '@mui/x-data-grid';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import muiDataGridPL from '../components/MuiDataGridPL.ts';
 import { HttpService } from '../http/http.service.ts';
@@ -16,7 +16,7 @@ import ArtistsTableCell from './ArtistsTableCell.tsx';
 import SourcesTableCell from './SourcesTableCell.tsx';
 import { Typography, useTheme } from '@mui/material';
 import { Category } from '../types/song.types.ts';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 const Title: FC<{ title?: string }> = ({ title }) => {
   return (
@@ -108,16 +108,11 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
   const page = strToNumber(params.get('p'), 0);
   const pageSize = strToNumber(params.get('s'), 25);
   const sortField = params.get('f');
-  const sort = (params.get('o') ?? 'asc') as GridSortDirection;
+  const sortDir: GridSortDirection = params.get('o') as GridSortDirection ?? 'asc';
 
-  const sortModel: GridSortModel = sortField
-    ? [
-        {
-          field: sortField,
-          sort: sort,
-        },
-      ]
-    : [];
+  const sortModel: GridSortModel = useMemo(() => {
+    return sortField ? [{ field: sortField, sort: sortDir }] : [];
+  }, [sortField, sortDir]);
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length > 0) {
@@ -170,7 +165,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, sort, category, band, source, person, query]);
+  }, [page, pageSize, sortField, sortDir, category, band, source, person, query]);
 
   useEffect(() => {
     apiRef.current.setColumnVisibility('category', !category);

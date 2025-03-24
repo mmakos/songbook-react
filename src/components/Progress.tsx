@@ -6,7 +6,7 @@ const Progress = () => {
   return (
     <LinearProgress
       color={theme.palette.mode === 'dark' ? 'primary' : 'secondary'}
-      sx={{ position: 'absolute', left: 0, width: '100%' }}
+      sx={{ position: 'absolute', left: 0, top: 64,width: '100%' }}
     />
   );
 };

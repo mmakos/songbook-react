@@ -1,3 +1,5 @@
+import {UserType} from "../user/user.types.ts";
+
 export enum Category {
   KACZMARSKI = 'kaczmarski',
   OTHER = 'other',
@@ -10,13 +12,6 @@ export enum AuthorCategory {
   SOURCE = 'source',
   PERSON = 'person',
   BAND = 'band',
-}
-
-export enum UserType {
-  OWNER = 'owner',
-  BOT = 'bot',
-  VERIFIED = 'verified',
-  NORMAL = 'user',
 }
 
 export enum SourceType {
@@ -33,9 +28,14 @@ export interface ISongOverview {
   category: Category;
 }
 
+export interface ISongContent {
+  verses: IVerse[];
+}
+
 export interface ISong {
   slug: string;
   title: string;
+  altTitle?: string;
   category: Category;
   created: IEditorInfo;
   edited?: IEditorInfo;
@@ -68,7 +68,7 @@ export interface IPerson {
 export interface IBand {
   slug: string;
   name: string;
-  url: string;
+  url?: string;
 }
 
 export interface ISource {
@@ -77,7 +77,6 @@ export interface ISource {
   url?: string;
   year?: number;
   type: SourceType;
-
 }
 
 export interface IEditorInfo {
@@ -299,15 +298,15 @@ export enum NoteBase {
   H = 'H',
 }
 
+export enum IntervalModification {
+  AUG = 'AUG',
+  DIM = 'DIM',
+}
+
 export enum ChordModification {
   AUG = 'AUG',
   DIM = 'DIM',
   CLUSTER = 'CLUSTER',
-}
-
-export enum IntervalModification {
-  AUG = 'AUG',
-  DIM = 'DIM',
 }
 
 export enum Accidental {

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { IMainMenuItemProps } from './MainMenuItem.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { ListItemButton, ListItemIcon, ListItemText, MenuItem, Typography } from '@mui/material';
 
 const MainMenuSubItem: FC<IMainMenuItemProps & { close: () => void }> = ({

@@ -15,12 +15,11 @@ import BasicTooltip from '../components/BasicTooltip.tsx';
 import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
 import { keyAsString } from '../chords/chord-display.tsx';
 import RouteLink from '../components/RouteLink.tsx';
-import { personAsString } from '../author/author.utils.ts';
-import { sourceTypeGenitive } from '../author/author.utils.ts';
+import { personAsString, sourceTypeGenitive } from '../author/author.utils.ts';
 import SourceTypeIcon from '../author/SourceTypeIcon.tsx';
+import { ISong } from '../types/song.types.ts';
 
-const SongInfo: FC = () => {
-  const song = useAppSelector((state) => state.song);
+const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
   const open = useAppSelector((state) => state.songDisplayState.infoOpen);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();

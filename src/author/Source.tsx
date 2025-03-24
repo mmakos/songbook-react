@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchAuthor } from './author.actions.ts';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Container, Divider, Link, Paper, Typography, useTheme } from '@mui/material';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import SourceTypeIcon from './SourceTypeIcon.tsx';

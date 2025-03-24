@@ -15,9 +15,42 @@ export const personAsString = (person: IPerson): string => {
     name += ' ';
   }
   if (person.nickname) {
-    name += ` "${person.nickname}"`;
+    name += `"${person.nickname}" `;
   }
   return name + person.lastName;
+};
+
+export const parsePersonName = (name: string): IPerson => {
+  const split = name.trim().split(/\s+/);
+  if (split.length < 2) {
+    return {
+      slug: '',
+      name: '',
+      lastName: '',
+      nickname: name,
+      forceNickname: true,
+    };
+  } else if (split.length === 2) {
+    return {
+      slug: '',
+      name: split[0],
+      lastName: split[1],
+    };
+  } else {
+    return {
+      slug: '',
+      name: split[0],
+      secondName: split
+        .slice(1, split.length - 1)
+        .filter((s) => !s.startsWith('"') || !s.endsWith('"'))
+        .join(' '),
+      lastName: split[split.length - 1],
+      nickname: split
+        .slice(1, split.length - 1)
+        .find((s) => s.startsWith('"') && !s.endsWith('"'))
+        ?.replace('"', ''),
+    };
+  }
 };
 
 const regex = /https:\/\/([a-z]{2})\.wikipedia\.org\/wiki\/(.*)/;

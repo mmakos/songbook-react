@@ -1,6 +1,6 @@
 import { Paper } from '@mui/material';
 import SongTable from '../song-list/SongTable.tsx';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 const FullSearch = () => {
   const [params] = useSearchParams();

@@ -1,11 +1,11 @@
 import { FC, Fragment } from 'react';
-import { ISong } from '../../types/song.types.ts';
+import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleVerseChords from './CollapsibleVerseChords.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { initialSongbookState } from '../../store/songbook.reducer.ts';
 
 interface ISongChordsProps {
-  song: ISong;
+  song: ISongContent;
 }
 
 const SongChords: FC<ISongChordsProps> = ({ song }) => {

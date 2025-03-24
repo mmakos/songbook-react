@@ -15,9 +15,9 @@ import BasicTooltip from '../components/BasicTooltip.tsx';
 import ChordTransposition from '../settings/chord/ChordTransposition.tsx';
 import ChordDifficultyPreset from '../settings/chord/ChordDifficultyPreset.tsx';
 import ChordDifficulty from '../settings/chord/ChordDifficulty.tsx';
+import { ISong } from '../types/song.types.ts';
 
-const SongSettings: FC = () => {
-  const song = useAppSelector((state) => state.song);
+const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
   const open = useAppSelector((state) => state.songDisplayState.settingsOpen);
   const { transposition, chordDifficulty, showChords } = useAppSelector((state) => state.songSettings);
   const dispatch = useAppDispatch();
@@ -32,7 +32,13 @@ const SongSettings: FC = () => {
       <Collapse in={open && !!song} collapsedSize={0}>
         {song && (
           <Paper
-            sx={{ position: 'relative', mb: '0.5em', padding: '0.5em 1em', display: 'flex', flexDirection: 'column' }}
+            sx={{
+              position: 'relative',
+              mb: '0.5em',
+              padding: '0.5em 1em',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
           >
             <FormControlLabel
               control={<Switch checked={showChords} onChange={(_, value) => dispatch(setShowChords(value))} />}

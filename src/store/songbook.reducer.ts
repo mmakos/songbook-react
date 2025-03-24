@@ -1,6 +1,6 @@
 import { Accidental, ISong } from '../types/song.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getSong } from './songbook.actions.ts';
+import { getAndSaveSong } from './songbook.actions.ts';
 import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { expert } from '../chords/chord-difficulty.tsx';
@@ -17,6 +17,7 @@ import {
   saveObjectToStorage,
   saveStringToStorage,
 } from './local-storage.utils.ts';
+import { IUser } from '../user/user.types.ts';
 
 export interface INotificationState {
   open?: boolean;
@@ -109,6 +110,10 @@ export interface ISongbookState {
    */
   songbookSettings: ISongbookSettings;
   theme?: PaletteMode;
+  /**
+   * Dane o zalogowanym użytkowniku
+   */
+  user?: IUser;
 }
 
 const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };
@@ -317,10 +322,10 @@ const songbookSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getSong.fulfilled, (state: ISongbookState, action) => {
+    builder.addCase(getAndSaveSong.fulfilled, (state: ISongbookState, action) => {
       state.song = action.payload;
     });
-    builder.addCase(getSong.rejected, (state: ISongbookState) => {
+    builder.addCase(getAndSaveSong.rejected, (state: ISongbookState) => {
       state.songTimeout = true;
     });
   },

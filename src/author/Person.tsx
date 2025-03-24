@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Container, Paper, Typography } from '@mui/material';
 import PersonInfo from './PersonInfo.tsx';
 import { personAsString } from './author.utils.ts';

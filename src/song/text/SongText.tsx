@@ -1,10 +1,10 @@
 import { FC, Fragment } from 'react';
-import { ISong } from '../../types/song.types.ts';
+import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleVerseText from './CollapsibleVerseText.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
 
 interface ISongTextProps {
-  song: ISong;
+  song: ISongContent;
 }
 
 const SongText: FC<ISongTextProps> = ({ song }) => {

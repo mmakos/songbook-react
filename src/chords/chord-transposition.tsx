@@ -60,7 +60,24 @@ export const getTranspositionBetweenNotes = (original: INote, transposed: INote)
   return { amount: diff, type: transposed.accidental };
 };
 
-const noteIndexes: { [key in NoteBase]: number } = {
+export const getPositionOnCircle = ({ note, minor }: IKey): number => {
+  const circleOfFifths = minor ? minorCircleOfFifths : majorCircleOfFifths;
+  for (let i = -7; i <= 7; ++i) {
+    const shift = minor ? 21 : 12; // Dla minor 21, bo minorCircleOfFifths zaczyna się od C, a koło w 0 ma A.
+    const index = (((i * 7) % 12) + shift) % 12;
+    const notes = circleOfFifths[index];
+    let n: INote;
+    if ('base' in notes) {
+      n = notes;
+    } else {
+      n = i >= 0 ? notes.sharp : notes.flat;
+    }
+    if (note.base === n.base && note.accidental === n.accidental) return i;
+  }
+  return 0;
+};
+
+const noteIndexes: Record<NoteBase, number> = {
   [NoteBase.C]: 0,
   [NoteBase.D]: 2,
   [NoteBase.E]: 4,
@@ -70,7 +87,7 @@ const noteIndexes: { [key in NoteBase]: number } = {
   [NoteBase.H]: 11,
 };
 
-const notesByIndex: { [key: number]: NoteBase } = {
+const notesByIndex: Record<number, NoteBase> = {
   0: NoteBase.C,
   2: NoteBase.D,
   4: NoteBase.E,
@@ -86,7 +103,7 @@ interface INoteAlternatives {
   default?: Accidental;
 }
 
-const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
+export const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
   { base: NoteBase.C },
   {
     flat: { base: NoteBase.D, accidental: Accidental.FLAT },
@@ -113,7 +130,7 @@ const majorCircleOfFifths: Array<INote | INoteAlternatives> = [
   },
 ];
 
-const minorCircleOfFifths: Array<INote | INoteAlternatives> = [
+export const minorCircleOfFifths: Array<INote | INoteAlternatives> = [
   { base: NoteBase.C },
   { base: NoteBase.C, accidental: Accidental.SHARP },
   { base: NoteBase.D },
