@@ -18,8 +18,6 @@ import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'r
 import BasicLayout from './BasicLayout.tsx';
 import SongEdit from './editor/SongEdit.tsx';
 import GlobalSong from './song/GlobalSong.tsx';
-import CircleOfFifths from './circle-of-fifths/CircleOfFifths.tsx';
-import KeyPlayground from "./circle-of-fifths/KeyPlayground.tsx";
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -41,8 +39,6 @@ const router = createBrowserRouter(
       <Route path="/source/:sourceSlug" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
       <Route path="/edit/:songSlug" element={<SongEdit />} />
-      <Route path="/edit-info" element={<SongEdit />} />
-      <Route path="/circle" element={<KeyPlayground />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

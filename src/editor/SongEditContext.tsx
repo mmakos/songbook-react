@@ -3,7 +3,6 @@ import { Category, IBand, IPerson, ISong, ISource } from '../types/song.types.ts
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { useParams } from 'react-router';
 import { getSong } from '../store/songbook.actions.ts';
-import {dzieciHioba} from "./test/dzieci-hioba.json.ts";
 
 export type EditedDependent<Dependent> = Dependent & { edited?: boolean };
 
@@ -53,13 +52,13 @@ const SongEditContextComponent = (): ISongEditContextProps => {
       setSong(globalSong);
     } else if (songSlug) {
       setSongTimeout(false);
-      // dispatch(getSong(songSlug))
-      //   .unwrap()
-      //   .then(setSong)
-      //   .catch(() => {
-          setSong(dzieciHioba);
-          // setSongTimeout(true);
-      //   });
+      dispatch(getSong(songSlug))
+        .unwrap()
+        .then(setSong)
+        .catch(() => {
+          setSong(undefined);
+          setSongTimeout(true);
+        });
     } else {
       setSongTimeout(true);
       setSong(undefined);

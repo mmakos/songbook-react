@@ -63,6 +63,7 @@ import StyledSongContent from '../components/StyledSongContent.tsx';
 import StyledEditorContent from '../components/StyledEditorContent.ts';
 import SplitPane from '../../components/SplitPane.tsx';
 import { useSongEditContext } from '../SongEditContext.tsx';
+import SongKeysChooser from './SongKeysChooser.tsx';
 
 type TPreviewType = 'editor' | 'split' | 'preview';
 
@@ -176,7 +177,7 @@ const SongEditor = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-      <Typography variant="caption" color="info">
+      <Typography variant="caption" color="info" mb='1em'>
         Uwaga! Niniejszy edytor jest zwykłym edytorem tekstowym zorientowanym na edycję tekstu i akordów w formacie
         używanym w moim śpiewniku. Oznacza to, że posiada on kilka automatyzacji ułatwiających wpisywanie akordów oraz
         kilka blokad uniemożliwiających wprowadzenie danych kompletnie bez sensu. Nie gwarantuje jednak, że wszytko co
@@ -185,6 +186,7 @@ const SongEditor = () => {
         elastyczny, więc w większości przypadków niepoprawne elementy zostaną po prostu odrzucone. Możesz również
         zaktualizować edytor na podstawie sparsowanej piosenki (edytor wyrówna się z podglądem).
       </Typography>
+      <SongKeysChooser />
       <Collapse in={pianoOpen}>
         <Piano setOpen={setPianoOpen} chordsToPlayProvider={getSelectedChords} />
       </Collapse>

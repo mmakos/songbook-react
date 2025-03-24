@@ -1,7 +1,8 @@
-import { ChosenNoteText, MajorGroup, MinorGroup, NoteText } from './StyledPaths.ts';
-import { Accidental, NoteBase } from '../types/song.types.ts';
-import { transposeNote } from '../chords/chord-transposition.tsx';
+import { MajorGroup, MinorGroup, NoteText } from './StyledPaths.ts';
+import { Accidental, IKey, NoteBase } from '../types/song.types.ts';
+import { transposeKey } from '../chords/chord-transposition.tsx';
 import { noteAsString } from '../chords/chord-display.tsx';
+import KeyStaff from './KeyStaff.tsx';
 
 const R0 = 5;
 const R1 = 30;
@@ -35,7 +36,7 @@ const createPath = (r1: number, r2: number) => {
   return `M ${xy(-15, r1)} A ${r1} ${r1} 0 0 0 ${xy(15, r1)} L ${xy(15, r2)} A ${r2} ${r2} 0 0 1 ${xy(-15, r2)} Z`;
 };
 
-const fifths = Array.from(Array(12), (_, i) => i);
+const fifths = Array.from(Array(15), (_, i) => i - 7);
 const r1r2 = createPath(R1, R2);
 const r1r11 = createPath(R1, R11);
 const r12r2 = createPath(R12, R2);
@@ -43,115 +44,102 @@ const r3r4 = createPath(R3, R4);
 const r3r31 = createPath(R3, R31);
 const r32r4 = createPath(R32, R4);
 
-const getNote = (amount: number, type: Accidental, minor?: boolean): string => {
-  // Wyjątek, bo dla tego przypadku zawsze wychodzi H
-  const note =
-    !minor && amount === 35 && type === Accidental.FLAT
-      ? {
-          base: NoteBase.C,
-          accidental: Accidental.FLAT,
-        }
-      : transposeNote({ base: minor ? NoteBase.A : NoteBase.C }, { amount, type });
-  return noteAsString(note, minor, { signAccidentals: true });
+const convertToKey = (fifths: number, type: Accidental, minor?: boolean): IKey => {
+  return transposeKey(
+    { note: { base: minor ? NoteBase.A : NoteBase.C }, minor: minor },
+    { amount: fifths * 7, type: type }
+  );
 };
-
-interface NoteFromC {
-  fifths: number;
-  type: Accidental;
-  minor?: boolean;
-}
 
 interface ICircleOfFifthsProps<Required extends boolean> {
   required?: Required;
-  chosenKey: Required extends true ? NoteFromC : NoteFromC | undefined;
-  setChosenKey: (note: Required extends true ? NoteFromC : NoteFromC | undefined) => void;
+  chosenKey: Required extends true ? IKey : IKey | undefined;
+  setChosenKey: (note: Required extends true ? IKey : IKey | undefined) => void;
+  letterAccidentals?: boolean;
 }
+
+const getShapeParams = (fifth: number) => {
+  let minorPath = r1r2;
+  let majorPath = r3r4;
+  let minorRadius = (R1 + R2) / 2;
+  let majorRadius = (R3 + R4) / 2;
+  if (fifth >= 5) {
+    minorPath = r12r2;
+    majorPath = r32r4;
+    minorRadius = (R12 + R2) / 2;
+    majorRadius = (R32 + R4) / 2;
+  } else if (fifth <= -5) {
+    minorPath = r1r11;
+    majorPath = r3r31;
+    minorRadius = (R1 + R11) / 2;
+    majorRadius = (R3 + R31) / 2;
+  }
+  return { minorPath, majorPath, minorRadius, majorRadius };
+};
 
 const CircleOfFifths = <Required extends boolean = false>({
   required,
   chosenKey,
   setChosenKey,
+  letterAccidentals,
 }: ICircleOfFifthsProps<Required>) => {
-  const isChosen = (fifths: number, type: Accidental, minor?: boolean) => {
-    return chosenKey && chosenKey.fifths === fifths && chosenKey.type === type && !minor === !chosenKey.minor;
+  const keyToString = (key: IKey): string => {
+    return noteAsString(key.note, key.minor, { signAccidentals: !letterAccidentals });
   };
 
-  const handleNoteClicked = (fifths: number, type: Accidental, minor?: boolean) => {
-    if (isChosen(fifths, type, minor)) {
-      if (!required) setChosenKey(undefined as unknown as NoteFromC);
-    }
-    else setChosenKey({ fifths, type, minor });
+  const isChosen = (key: IKey) => {
+    return (
+      chosenKey &&
+      chosenKey.note.base === key.note.base &&
+      chosenKey.note.accidental === key.note.accidental &&
+      chosenKey.minor === key.minor
+    );
+  };
+
+  const handleNoteClicked = (key: IKey) => {
+    if (required || !isChosen(key)) setChosenKey(key);
+    else setChosenKey(undefined as unknown as IKey);
   };
 
   return (
-    <svg width="400px" height="400px" viewBox={`-${R4} -${R4} ${2 * R4} ${2 * R4}`}>
-      {fifths.map((fifth) => {
-        const split = fifth >= 5 && fifth <= 7;
-        const transform = `rotate(${fifth * 30})`;
-        const basicAccidental = fifth > 7 ? Accidental.FLAT : Accidental.SHARP;
-        return (
-          <g>
-            <MinorGroup
-              selected={isChosen(fifth, basicAccidental, true)}
-              onClick={() => handleNoteClicked(fifth, basicAccidental, true)}
-            >
-              <path d={split ? r1r11 : r1r2} transform={transform} />
-              <NoteText
-                x={x(-fifth * 30, (R1 + (split ? R12 : R2)) / 2)}
-                y={y(-fifth * 30, (R1 + (split ? R12 : R2)) / 2)}
-                fontSize={split ? 12 : 16}
-              >
-                {getNote(fifth * 7, basicAccidental, true)}
-              </NoteText>
-            </MinorGroup>
-            <MajorGroup
-              selected={isChosen(fifth, basicAccidental)}
-              onClick={() => handleNoteClicked(fifth, basicAccidental)}
-            >
-              <path d={split ? r3r31 : r3r4} transform={transform} />
-              <NoteText
-                x={x(-fifth * 30, (R3 + (split ? R32 : R4)) / 2)}
-                y={y(-fifth * 30, (R3 + (split ? R32 : R4)) / 2)}
-                fontSize={split ? 12 : 16}
-              >
-                {getNote(fifth * 7, basicAccidental)}
-              </NoteText>
-            </MajorGroup>
-            {split && (
-              <>
-                <MinorGroup
-                  selected={isChosen(fifth, Accidental.FLAT, true)}
-                  onClick={() => handleNoteClicked(fifth, Accidental.FLAT, true)}
+    <div style={{ position: 'relative' }}>
+      <svg width="100%" viewBox={`-${R4} -${R4} ${2 * R4} ${2 * R4}`} style={{ position: 'relative' }}>
+        {chosenKey && <KeyStaff staffKey={chosenKey} width={50} transform="translate(-25, -100)" />}
+        {fifths.map((fifth) => {
+          const accidental = fifth >= 0 ? Accidental.SHARP : Accidental.FLAT;
+          const minor = convertToKey(fifth, accidental, true);
+          const major = convertToKey(fifth, accidental);
+
+          const transform = `rotate(${fifth * 30})`;
+          const { minorPath, majorPath, minorRadius, majorRadius } = getShapeParams(fifth);
+
+          return (
+            <g key={`f${fifth}`}>
+              <MinorGroup selected={isChosen(minor)} onClick={() => handleNoteClicked(minor)}>
+                <path d={minorPath} transform={transform} />
+                <NoteText
+                  x={x(-fifth * 30, minorRadius)}
+                  y={y(-fifth * 30, minorRadius)}
+                  fontSize={Math.abs(fifth) >= 5 ? 12 : 16}
                 >
-                  <path d={r12r2} transform={transform} />
-                  <NoteText
-                    x={x(-fifth * 30, ((split ? R12 : R1) + R2) / 2)}
-                    y={y(-fifth * 30, ((split ? R12 : R1) + R2) / 2)}
-                    fontSize={12}
-                  >
-                    {getNote(fifth * 7, Accidental.FLAT, true)}
-                  </NoteText>
-                </MinorGroup>
-                <MajorGroup
-                  selected={isChosen(fifth, Accidental.FLAT)}
-                  onClick={() => handleNoteClicked(fifth, Accidental.FLAT)}
+                  {keyToString(minor)}
+                </NoteText>
+              </MinorGroup>
+              <MajorGroup selected={isChosen(major)} onClick={() => handleNoteClicked(major)}>
+                <path d={majorPath} transform={transform} />
+                <NoteText
+                  x={x(-fifth * 30, majorRadius)}
+                  y={y(-fifth * 30, majorRadius)}
+                  fontSize={Math.abs(fifth) >= 5 ? 12 : 16}
                 >
-                  <path d={r32r4} transform={transform} />
-                  <NoteText
-                    x={x(-fifth * 30, ((split ? R32 : R3) + R4) / 2)}
-                    y={y(-fifth * 30, ((split ? R32 : R3) + R4) / 2)}
-                    fontSize={12}
-                  >
-                    {getNote(fifth * 7, Accidental.FLAT)}
-                  </NoteText>
-                </MajorGroup>
-              </>
-            )}
-          </g>
-        );
-      })}
-      {chosenKey && <ChosenNoteText>{getNote(chosenKey.fifths * 7, chosenKey.type, chosenKey.minor)}</ChosenNoteText>}
-    </svg>
+                  {keyToString(major)}
+                </NoteText>
+              </MajorGroup>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 };
 

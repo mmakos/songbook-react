@@ -33,10 +33,3 @@ export const NoteText = styled('text')(({ theme }) => ({
   textAnchor: 'middle',
   dominantBaseline: 'middle',
 }));
-
-export const ChosenNoteText = styled('text')(({ theme }) => ({
-  fill: theme.palette.text.primary,
-  textAnchor: 'middle',
-  dominantBaseline: 'middle',
-  fontSize: theme.typography.h5.fontSize,
-}));
