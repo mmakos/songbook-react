@@ -35,7 +35,7 @@ const createPath = (r1: number, r2: number) => {
   return `M ${xy(-15, r1)} A ${r1} ${r1} 0 0 0 ${xy(15, r1)} L ${xy(15, r2)} A ${r2} ${r2} 0 0 1 ${xy(-15, r2)} Z`;
 };
 
-const angles = Array.from(Array(12), (_, i) => i);
+const fifths = Array.from(Array(12), (_, i) => i);
 const r1r2 = createPath(R1, R2);
 const r1r11 = createPath(R1, R11);
 const r12r2 = createPath(R12, R2);
@@ -43,7 +43,7 @@ const r3r4 = createPath(R3, R4);
 const r3r31 = createPath(R3, R31);
 const r32r4 = createPath(R32, R4);
 
-const getNote = (amount: number, type: Accidental, minor: boolean): string => {
+const getNote = (amount: number, type: Accidental, minor?: boolean): string => {
   // Wyjątek, bo dla tego przypadku zawsze wychodzi H
   const note =
     !minor && amount === 35 && type === Accidental.FLAT
@@ -55,54 +55,94 @@ const getNote = (amount: number, type: Accidental, minor: boolean): string => {
   return noteAsString(note, minor, { signAccidentals: true });
 };
 
-const CircleOfFifths = () => {
+interface NoteFromC {
+  fifths: number;
+  type: Accidental;
+  minor?: boolean;
+}
+
+interface ICircleOfFifthsProps<Required extends boolean> {
+  required?: Required;
+  chosenKey: Required extends true ? NoteFromC : NoteFromC | undefined;
+  setChosenKey: (note: Required extends true ? NoteFromC : NoteFromC | undefined) => void;
+}
+
+const CircleOfFifths = <Required extends boolean = false>({
+  required,
+  chosenKey,
+  setChosenKey,
+}: ICircleOfFifthsProps<Required>) => {
+  const isChosen = (fifths: number, type: Accidental, minor?: boolean) => {
+    return chosenKey && chosenKey.fifths === fifths && chosenKey.type === type && !minor === !chosenKey.minor;
+  };
+
+  const handleNoteClicked = (fifths: number, type: Accidental, minor?: boolean) => {
+    if (isChosen(fifths, type, minor)) {
+      if (!required) setChosenKey(undefined as unknown as NoteFromC);
+    }
+    else setChosenKey({ fifths, type, minor });
+  };
+
   return (
     <svg width="400px" height="400px" viewBox={`-${R4} -${R4} ${2 * R4} ${2 * R4}`}>
-      {angles.map((angle) => {
-        const split = angle >= 5 && angle <= 7;
-        const transform = `rotate(${angle * 30})`;
+      {fifths.map((fifth) => {
+        const split = fifth >= 5 && fifth <= 7;
+        const transform = `rotate(${fifth * 30})`;
+        const basicAccidental = fifth > 7 ? Accidental.FLAT : Accidental.SHARP;
         return (
           <g>
-            <MinorGroup>
+            <MinorGroup
+              selected={isChosen(fifth, basicAccidental, true)}
+              onClick={() => handleNoteClicked(fifth, basicAccidental, true)}
+            >
               <path d={split ? r1r11 : r1r2} transform={transform} />
               <NoteText
-                x={x(-angle * 30, (R1 + (split ? R12 : R2)) / 2)}
-                y={y(-angle * 30, (R1 + (split ? R12 : R2)) / 2)}
+                x={x(-fifth * 30, (R1 + (split ? R12 : R2)) / 2)}
+                y={y(-fifth * 30, (R1 + (split ? R12 : R2)) / 2)}
                 fontSize={split ? 12 : 16}
               >
-                {getNote(angle * 7, angle > 7 ? Accidental.FLAT : Accidental.SHARP, true)}
+                {getNote(fifth * 7, basicAccidental, true)}
               </NoteText>
             </MinorGroup>
-            <MajorGroup>
+            <MajorGroup
+              selected={isChosen(fifth, basicAccidental)}
+              onClick={() => handleNoteClicked(fifth, basicAccidental)}
+            >
               <path d={split ? r3r31 : r3r4} transform={transform} />
               <NoteText
-                x={x(-angle * 30, (R3 + (split ? R32 : R4)) / 2)}
-                y={y(-angle * 30, (R3 + (split ? R32 : R4)) / 2)}
+                x={x(-fifth * 30, (R3 + (split ? R32 : R4)) / 2)}
+                y={y(-fifth * 30, (R3 + (split ? R32 : R4)) / 2)}
                 fontSize={split ? 12 : 16}
               >
-                {getNote(angle * 7, angle > 7 ? Accidental.FLAT : Accidental.SHARP, false)}
+                {getNote(fifth * 7, basicAccidental)}
               </NoteText>
             </MajorGroup>
             {split && (
               <>
-                <MinorGroup>
+                <MinorGroup
+                  selected={isChosen(fifth, Accidental.FLAT, true)}
+                  onClick={() => handleNoteClicked(fifth, Accidental.FLAT, true)}
+                >
                   <path d={r12r2} transform={transform} />
                   <NoteText
-                    x={x(-angle * 30, ((split ? R12 : R1) + R2) / 2)}
-                    y={y(-angle * 30, ((split ? R12 : R1) + R2) / 2)}
+                    x={x(-fifth * 30, ((split ? R12 : R1) + R2) / 2)}
+                    y={y(-fifth * 30, ((split ? R12 : R1) + R2) / 2)}
                     fontSize={12}
                   >
-                    {getNote(angle * 7, Accidental.FLAT, true)}
+                    {getNote(fifth * 7, Accidental.FLAT, true)}
                   </NoteText>
                 </MinorGroup>
-                <MajorGroup>
+                <MajorGroup
+                  selected={isChosen(fifth, Accidental.FLAT)}
+                  onClick={() => handleNoteClicked(fifth, Accidental.FLAT)}
+                >
                   <path d={r32r4} transform={transform} />
                   <NoteText
-                    x={x(-angle * 30, ((split ? R32 : R3) + R4) / 2)}
-                    y={y(-angle * 30, ((split ? R32 : R3) + R4) / 2)}
+                    x={x(-fifth * 30, ((split ? R32 : R3) + R4) / 2)}
+                    y={y(-fifth * 30, ((split ? R32 : R3) + R4) / 2)}
                     fontSize={12}
                   >
-                    {getNote(angle * 7, Accidental.FLAT, false)}
+                    {getNote(fifth * 7, Accidental.FLAT)}
                   </NoteText>
                 </MajorGroup>
               </>
@@ -110,7 +150,7 @@ const CircleOfFifths = () => {
           </g>
         );
       })}
-      <ChosenNoteText>E♭</ChosenNoteText>
+      {chosenKey && <ChosenNoteText>{getNote(chosenKey.fifths * 7, chosenKey.type, chosenKey.minor)}</ChosenNoteText>}
     </svg>
   );
 };
