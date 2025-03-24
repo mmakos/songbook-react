@@ -104,7 +104,7 @@ const CircleOfFifths = <Required extends boolean = false>({
   return (
     <div style={{ position: 'relative' }}>
       <svg width="100%" viewBox={`-${R4} -${R4} ${2 * R4} ${2 * R4}`} style={{ position: 'relative' }}>
-        {chosenKey && <KeyStaff staffKey={chosenKey} width={50} transform="translate(-25, -100)" />}
+        {chosenKey && <KeyStaff staffKey={chosenKey} width={50} x={-25} y={-100} />}
         {fifths.map((fifth) => {
           const accidental = fifth >= 0 ? Accidental.SHARP : Accidental.FLAT;
           const minor = convertToKey(fifth, accidental, true);
