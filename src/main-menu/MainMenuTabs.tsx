@@ -7,6 +7,7 @@ import { Divider } from '@mui/material';
 import { Category } from '../types/song.types.ts';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import CategoryIcon from '../category/CategoryIcon.tsx';
+import UserMenu from "../user/UserMenu.tsx";
 
 interface IMainMenuTabsProps {
   type: TMenuType;
@@ -88,6 +89,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
           close={handleExtrasClose}
         />
       </MainMenuGroup>
+      <UserMenu type={type} close={close}/>
       {/*<MainMenuItem type={type} text={'Kontakt'} icon={<Call />} close={close} routeTo="/contact"/>*/}
     </>
   );

@@ -3,8 +3,8 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
 import { Route } from 'react-router';
-import { useAppSelector } from './store/songbook.store.ts';
-import { useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from './store/songbook.store.ts';
+import { useEffect, useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
 import Settings from './settings/Settings.tsx';
 import Person from './author/Person.tsx';
@@ -13,11 +13,21 @@ import Source from './author/Source.tsx';
 import SongFullTable from './song-list/SongFullTable.tsx';
 import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
-import LogIn from './user/LogIn.tsx';
+import Login from './user/Login.tsx';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import BasicLayout from './BasicLayout.tsx';
 import SongEdit from './editor/SongEdit.tsx';
 import GlobalSong from './song/GlobalSong.tsx';
+import PersonEdit from './editor/person/PersonEdit.tsx';
+import BandEdit from './editor/band/BandEdit.tsx';
+import SourceEdit from './editor/source/SourceEdit.tsx';
+import LoginResult from './user/LoginResult.tsx';
+import AccountInfo from './user/AccountInfo.tsx';
+import ProtectedRoute from './ProtectedRoute.tsx';
+import useAuthAPI from './http/useAuthAPI.ts';
+import { AxiosResponse } from 'axios';
+import { IUserResponse, mapResponseToUser } from './user/user.types.ts';
+import { setUser } from './store/songbook.reducer.ts';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -33,12 +43,19 @@ const router = createBrowserRouter(
       <Route path="/songs/:category?" element={<SongFullTable />} />
       <Route path="/song/:songSlug" element={<GlobalSong />} />
       <Route path="/settings" element={<Settings />} />
-      <Route path="/login" element={<LogIn />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/login/:source" element={<LoginResult />} />
       <Route path="/person/:personSlug" element={<Person />} />
       <Route path="/band/:bandSlug" element={<Band />} />
       <Route path="/source/:sourceSlug" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
-      <Route path="/edit/:songSlug" element={<SongEdit />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/account" element={<AccountInfo />} />
+        <Route path="/edit/song/:songSlug" element={<SongEdit />} />
+        <Route path="/edit/person/:personSlug" element={<PersonEdit />} />
+        <Route path="/edit/band/:bandSlug" element={<BandEdit />} />
+        <Route path="/edit/source/:sourceSlug" element={<SourceEdit />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Route>
   )
@@ -47,6 +64,15 @@ const router = createBrowserRouter(
 const StoreApp = () => {
   const preferredTheme = useAppSelector((state) => state.theme);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const authAPI = useAuthAPI();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    authAPI
+      .get('auth/account/')
+      .then((response: AxiosResponse<IUserResponse>) => dispatch(setUser(mapResponseToUser(response.data))))
+      .catch(() => dispatch(setUser(null)));
+  }, []);
 
   const theme: Theme = useMemo(() => {
     if (preferredTheme) {

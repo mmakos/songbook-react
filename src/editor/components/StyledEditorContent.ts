@@ -5,6 +5,7 @@ const StyledEditorContent = styled(EditorContent, {
   shouldForwardProp: (prop) => prop !== 'showGrid',
 })<{ showGrid?: boolean }>(({ showGrid, theme }) => ({
   width: '100%',
+  height: '100%',
   '.tiptap': {
     borderRadius: theme.shape.borderRadius,
     outline: '1px solid white',

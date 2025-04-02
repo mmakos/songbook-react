@@ -1,4 +1,14 @@
-import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Category, IBand, IPerson, ISource } from '../../types/song.types.ts';
 import { getCategoryDisplayName } from '../../category/category.utils.ts';
@@ -57,13 +67,13 @@ const SongInfoEditor = () => {
 
   useEffect(() => {
     setNeedsAuthorEdit(
-      !!lyrics.find((v) => typeof v === 'string' || v.edited) ||
-        !!composer.find((v) => typeof v === 'string' || v.edited) ||
-        !!translation.find((v) => typeof v === 'string' || v.edited) ||
-        !!performer.find((v) => typeof v === 'string' || v.edited) ||
-        !!source.find((v) => typeof v === 'string' || v.edited) ||
+      !!lyrics.find((v) => typeof v === 'string' || v.editing) ||
+        !!composer.find((v) => typeof v === 'string' || v.editing) ||
+        !!translation.find((v) => typeof v === 'string' || v.editing) ||
+        !!performer.find((v) => typeof v === 'string' || v.editing) ||
+        !!source.find((v) => typeof v === 'string' || v.editing) ||
         typeof band === 'string' ||
-        !!band?.edited
+        !!band?.editing
     );
   }, [lyrics, composer, translation, performer, band, source]);
 
@@ -262,14 +272,14 @@ const SongInfoEditor = () => {
         </Grid>
       </Grid>
       {validationErrors.minimal && <Typography color="warning">{validationErrors.minimal}</Typography>}
-      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+      <Stack direction="row" justifyContent="right" gap={1}>
         <Button variant="outlined" size="large" onClick={resetFromSong} startIcon={<RestartAlt />}>
           Resetuj
         </Button>
         <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Start />}>
           Dalej
         </Button>
-      </div>
+      </Stack>
     </>
   );
 };

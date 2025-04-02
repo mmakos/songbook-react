@@ -1,13 +1,12 @@
-import { AppBar, Container, IconButton, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router';
+import { AppBar, Container, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import AppBarMenu from './AppBarMenu.tsx';
 import DrawerMenu from './DrawerMenu.tsx';
 import Search from '../search/Search.tsx';
 import RandomSong from '../song/RandomSong.tsx';
+import RouteIconButton from '../components/RouteIconButton.tsx';
 
 const MainMenu = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const downMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -18,10 +17,9 @@ const MainMenu = () => {
           {downMd ? <DrawerMenu /> : <AppBarMenu />}
           <Search />
           <RandomSong />
-          <IconButton onClick={() => navigate('settings/')} color="inherit">
+          <RouteIconButton to="settings/" color="inherit">
             <SettingsIcon />
-          </IconButton>
-          {/*<UserMenu />*/}
+          </RouteIconButton>
         </Toolbar>
       </Container>
     </AppBar>

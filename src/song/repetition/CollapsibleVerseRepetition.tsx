@@ -1,6 +1,6 @@
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { FC, useState } from 'react';
-import { Collapse } from '@mui/material';
+import {Collapse, Stack} from '@mui/material';
 import { ISongContent, IVerse } from '../../types/song.types.ts';
 import VerseRepetition from './VerseRepetition.tsx';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
@@ -50,9 +50,9 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
       onEntered={() => setShowOriginal(false)}
       onExited={() => setShowOriginal(true)}
     >
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Stack>
         <VerseRepetition verse={verse} previousVerse={previousVerse} />
-      </div>
+      </Stack>
     </Collapse>
   );
 };

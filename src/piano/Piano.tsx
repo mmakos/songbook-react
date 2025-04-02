@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from 'react';
 import { playSound } from './MidiPlayer.ts';
-import { ToggleButton } from '@mui/material';
+import { Stack, ToggleButton } from '@mui/material';
 import { DeleteForever, Done, ExpandLess, Hearing, Speaker, Stop, TouchApp } from '@mui/icons-material';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import TextButtonIcon from '../components/icon/TextButtonIcon.tsx';
@@ -187,7 +187,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
           </StyledToggleButtonGroup>
         </div>
       </div>
-      <div style={{ display: 'flex' }}>
+      <Stack direction="row">
         {keys.map((key) => (
           <PianoKey
             key={key.note}
@@ -197,7 +197,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
             disabled={playback}
           />
         ))}
-      </div>
+      </Stack>
     </ResizeableDiv>
   );
 };

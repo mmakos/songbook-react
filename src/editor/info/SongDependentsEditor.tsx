@@ -1,12 +1,12 @@
 import { EditedDependent, ISongInfo, useSongEditContext } from '../SongEditContext.tsx';
 import Grid from '@mui/material/Grid2';
-import SongBandEditor, { IBandValidationErrors, validateBand } from './SongBandEditor.tsx';
+import SongBandEditor, { IBandValidationErrors, validateBand } from '../band/SongBandEditor.tsx';
 import { IBand, IPerson, ISource, SourceType } from '../../types/song.types.ts';
 import { useState } from 'react';
 import { parsePersonName } from '../../author/author.utils.ts';
-import SongSourceEditor, { ISourceValidationErrors, validateSource } from './SongSourceEditor.tsx';
-import SongPersonEditor from './SongPersonEditor.tsx';
-import { Button, Typography } from '@mui/material';
+import SongSourceEditor, { ISourceValidationErrors, validateSource } from '../source/SongSourceEditor.tsx';
+import SongPersonEditor, { IPersonValidationErrors, validatePerson } from '../person/SongPersonEditor.tsx';
+import { Button, Stack, Typography } from '@mui/material';
 import { BackspaceOutlined, Check } from '@mui/icons-material';
 
 const mapBandDependent = (band?: string | EditedDependent<IBand> | null): EditedDependent<IBand> | undefined => {
@@ -14,9 +14,9 @@ const mapBandDependent = (band?: string | EditedDependent<IBand> | null): Edited
     return {
       name: band,
       slug: '',
-      edited: true,
+      editing: true,
     };
-  } else if (band?.edited) {
+  } else if (band?.editing) {
     return band;
   }
 };
@@ -27,8 +27,8 @@ const mapPeopleDependents = (songInfo?: ISongInfo) => {
     list?.forEach((l) => {
       if (typeof l === 'string') {
         people[l] = parsePersonName(l);
-        people[l].edited = true;
-      } else if (l?.edited) {
+        people[l].editing = true;
+      } else if (l?.editing) {
         people[l.name] = l;
       }
     })
@@ -45,9 +45,9 @@ const mapSourceDependants = (sourceDependants?: (EditedDependent<ISource> | stri
         slug: '',
         name: s,
         type: SourceType.MUSICAL,
-        edited: true,
+        editing: true,
       };
-    } else if (s?.edited) {
+    } else if (s?.editing) {
       sources[s.name] = s;
     }
   });
@@ -60,6 +60,7 @@ const SongDependentsEditor = () => {
   const [bandErrors, setBandErrors] = useState<IBandValidationErrors>();
 
   const [people, setPeople] = useState(() => mapPeopleDependents(songInfo));
+  const [personErrors, setPersonErrors] = useState<Record<string, IPersonValidationErrors>>();
 
   const [sources, setSources] = useState(() => mapSourceDependants(songInfo?.source));
   const [sourceErrors, setSourceErrors] = useState<Record<string, ISourceValidationErrors>>();
@@ -90,21 +91,34 @@ const SongDependentsEditor = () => {
     setBand(undefined);
   };
 
+  const validateList = <T extends object, R extends object>(
+    list: Record<string, EditedDependent<R>>,
+    validator: (r: R) => T | undefined
+  ) => {
+    let errors: Record<string, T> | undefined = {};
+    Object.entries(list).forEach(([name, r]) => {
+      const errs = validator(r);
+      if (errs) errors![name] = errs;
+    });
+    if (!Object.keys(errors).length) errors = undefined;
+
+    return errors;
+  };
+
   const validate = () => {
     let bandErr = undefined;
     if (band) {
       bandErr = validateBand(band);
       setBandErrors(bandErr);
     }
-    let sourceErr: Record<string, ISourceValidationErrors> | undefined = {};
-    Object.entries(sources).forEach(([name, source]) => {
-      const errs = validateSource(source);
-      if (errs) sourceErr![name] = errs;
-    });
-    if (!Object.keys(sourceErr).length) sourceErr = undefined;
+
+    const sourceErr = validateList(sources, validateSource);
     setSourceErrors(sourceErr);
 
-    return !sourceErr && !bandErr;
+    const personErr = validateList(people, validatePerson);
+    setPersonErrors(personErr);
+
+    return !personErr && !sourceErr && !bandErr;
   };
 
   const updateSongInfo = () => {
@@ -151,6 +165,7 @@ const SongDependentsEditor = () => {
               person={person}
               setPerson={(p) => setPerson(name, p)}
               deletePerson={() => deletePerson(name)}
+              errors={personErrors?.[name]}
             />
           </Grid>
         ))}
@@ -181,14 +196,14 @@ const SongDependentsEditor = () => {
         Fajnie jakbyś wprowadził jakieś dodatkowe dane (zwłaszcza linki), ale jak teraz nie masz czasu, to możesz to
         pominąć i uzupełnić kiedy indziej.
       </Typography>
-      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+      <Stack direction="row" gap={1} justifyContent="right">
         <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
         <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
           Dalej
         </Button>
-      </div>
+      </Stack>
     </>
   );
 };

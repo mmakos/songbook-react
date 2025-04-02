@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { IconButton, TextField, Typography } from '@mui/material';
+import { IconButton, Stack, TextField, Typography } from '@mui/material';
 import { IBand } from '../../types/song.types.ts';
-import { isValidHttpURL } from '../validation.utils.ts';
+import { validateHttpURL, validateString } from '../validation.utils.ts';
 import { Delete } from '@mui/icons-material';
 
 export interface IBandValidationErrors {
@@ -10,12 +10,10 @@ export interface IBandValidationErrors {
 }
 
 export const validateBand = (band: IBand): IBandValidationErrors | undefined => {
-  const nameLength = band.name.trim().length;
-  const errors: IBandValidationErrors = {};
-  if (nameLength < 3) errors.name = 'Nazwa zespołu musi mieć przynajmniej 3 znaki';
-  else if (nameLength > 50) errors.name = 'Nazwa zespołu może mieć maksymalnie 50 znaków';
-
-  if (band.url && !isValidHttpURL(band.url)) errors.url = 'Nieprawidłowy adres URL';
+  const errors: IBandValidationErrors = {
+    ...validateString(band.name, 'name', 'Nazwa zespołu', 3, 50, true),
+    ...validateHttpURL(band.url),
+  };
 
   return Object.keys(errors).length ? errors : undefined;
 };
@@ -24,7 +22,7 @@ interface ISongBandEditorProps {
   bandName: string;
   band: IBand;
   setBand: (band: IBand) => void;
-  deleteBand: () => void;
+  deleteBand?: () => void;
   errors?: IBandValidationErrors;
 }
 
@@ -33,13 +31,15 @@ const SongBandEditor: FC<ISongBandEditorProps> = ({ bandName, band, setBand, del
   const setUrl = (url: string) => setBand({ ...band, url });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-      <div style={{ display: 'flex' }}>
+    <Stack gap={2}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h6">Edytuj zespół „{bandName}”</Typography>
-        <IconButton onClick={deleteBand} sx={{ml: 'auto'}}>
-          <Delete />
-        </IconButton>
-      </div>
+        {deleteBand && (
+          <IconButton onClick={deleteBand}>
+            <Delete />
+          </IconButton>
+        )}
+      </Stack>
       <TextField
         label="Nazwa zespołu"
         required
@@ -62,7 +62,7 @@ const SongBandEditor: FC<ISongBandEditorProps> = ({ bandName, band, setBand, del
           },
         }}
       />
-    </div>
+    </Stack>
   );
 };
 

@@ -64,7 +64,7 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
       {video && (
         <SongControl type={type} icon={<YouTube />} label="Nagranie" onClick={toggleVideoOpen} selected={videoOpen} />
       )}
-      <SongControl type={type} icon={<Edit/>} label="Edytuj" onClick={() => navigate(`/edit/${songSlug}`)}/>
+      <SongControl type={type} icon={<Edit/>} label="Edytuj" onClick={() => navigate(`/edit/song/${songSlug}`)}/>
     </>
   );
 };

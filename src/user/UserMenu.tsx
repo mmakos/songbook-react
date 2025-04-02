@@ -1,17 +1,21 @@
 import { useAppSelector } from '../store/songbook.store.ts';
-import { Avatar, IconButton } from '@mui/material';
-import { useNavigate } from 'react-router';
+import MainMenuItem, { IMainMenuItemProps } from '../main-menu/item/MainMenuItem.tsx';
+import { FC } from 'react';
+import { Person } from '@mui/icons-material';
 
-const UserMenu = () => {
+const UserMenu: FC<Omit<IMainMenuItemProps, 'text'>> = ({ close, type }) => {
   const user = useAppSelector((state) => state.user);
-  const navigate = useNavigate();
 
-  return user ? (
-    <Avatar />
-  ) : (
-    <IconButton sx={{ padding: 0 }} onClick={() => navigate('/login')}>
-      <Avatar />
-    </IconButton>
+  if (user === undefined) return;
+
+  return (
+    <MainMenuItem
+      type={type}
+      text={user ? 'Konto' : 'Zaloguj'}
+      close={close}
+      routeTo={user ? '/account' : '/login'}
+      icon={<Person />}
+    />
   );
 };
 

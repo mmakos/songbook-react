@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Divider, Paper, Skeleton } from '@mui/material';
+import { Divider, Paper, Skeleton, Stack } from '@mui/material';
 import SongInfo from './SongInfo.tsx';
 import { useAppSelector } from '../store/songbook.store.ts';
 import EditorInfo from './EditorInfo.tsx';
@@ -36,10 +36,10 @@ const Song: FC<{ song?: ISong }> = ({ song }) => {
       <Paper>
         <SongContent song={song} />
         <Divider variant="middle" />
-        <div style={{ display: 'flex', flexDirection: 'column', padding: '0.5em 1em' }}>
+        <Stack padding="0.5em 1em">
           {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
           {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
-        </div>
+        </Stack>
       </Paper>
     </div>
   );

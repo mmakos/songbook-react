@@ -30,7 +30,7 @@ const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
       )}
       &nbsp;przez&nbsp;
       <UserIcon userType={editorInfo.type} color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
-      {editorInfo.name}
+      {editorInfo.name ?? 'Nieznany użytkownik'}
     </Typography>
   );
 };
