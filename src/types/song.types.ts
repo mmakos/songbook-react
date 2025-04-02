@@ -63,12 +63,16 @@ export interface IPerson {
   url?: string;
   forceNickname?: boolean;
   forceSecondName?: boolean;
+  created?: IEditorInfo;
+  edited?: IEditorInfo;
 }
 
 export interface IBand {
   slug: string;
   name: string;
   url?: string;
+  created?: IEditorInfo;
+  edited?: IEditorInfo;
 }
 
 export interface ISource {
@@ -77,10 +81,12 @@ export interface ISource {
   url?: string;
   year?: number;
   type: SourceType;
+  created?: IEditorInfo;
+  edited?: IEditorInfo;
 }
 
 export interface IEditorInfo {
-  name: string;
+  name?: string;
   type?: UserType;
   verified?: boolean;
   time: string;

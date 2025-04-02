@@ -8,7 +8,7 @@ import InputRules from './InputRules.ts';
 import { TableRow } from '@tiptap/extension-table-row';
 import songToHTML from '../converter/songToHTML.converter.ts';
 import Piano from '../../piano/Piano.tsx';
-import { Button, Collapse, ToggleButton, Typography } from '@mui/material';
+import { Button, Collapse, Stack, ToggleButton, Typography } from '@mui/material';
 import { useState } from 'react';
 import {
   Autorenew,
@@ -176,8 +176,8 @@ const SongEditor = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-      <Typography variant="caption" color="info" mb='1em'>
+    <Stack gap={1}>
+      <Typography variant="caption" color="info" mb="1em">
         Uwaga! Niniejszy edytor jest zwykłym edytorem tekstowym zorientowanym na edycję tekstu i akordów w formacie
         używanym w moim śpiewniku. Oznacza to, że posiada on kilka automatyzacji ułatwiających wpisywanie akordów oraz
         kilka blokad uniemożliwiających wprowadzenie danych kompletnie bez sensu. Nie gwarantuje jednak, że wszytko co
@@ -190,7 +190,7 @@ const SongEditor = () => {
       <Collapse in={pianoOpen}>
         <Piano setOpen={setPianoOpen} chordsToPlayProvider={getSelectedChords} />
       </Collapse>
-      <div style={{ display: 'flex' }}>
+      <Stack direction="row">
         <TitledToggleButtonGroup size="small" title="Tekst">
           <BasicTooltip
             title={
@@ -499,7 +499,7 @@ const SongEditor = () => {
           </BasicTooltip>
         </TitledToggleButtonGroup>
         <TitledToggleButtonGroupDivider />
-      </div>
+      </Stack>
       <SplitPane
         initial={65}
         left={previewType !== 'preview' && <StyledEditorContent editor={editor} showGrid={showGrid} />}
@@ -511,15 +511,15 @@ const SongEditor = () => {
           )
         }
       />
-      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+      <Stack direction="row" gap={1} justifyContent="right">
         <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
         <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
           Dalej
         </Button>
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 };
 

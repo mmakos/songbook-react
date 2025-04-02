@@ -113,7 +113,8 @@ export interface ISongbookState {
   /**
    * Dane o zalogowanym użytkowniku
    */
-  user?: IUser;
+  user?: IUser | null;
+  accessToken?: string;
 }
 
 const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };
@@ -167,6 +168,13 @@ export const initialSongbookState: ISongbookState = {
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
   },
+  // user: {
+  //   firstName: 'ala',
+  //   username: 'fiesjif',
+  //   lastName: 'fisejifj',
+  //   email: 'ksfiemf@fsie',
+  //   type: UserType.NORMAL,
+  // },
 };
 
 const songbookSlice = createSlice({
@@ -198,6 +206,13 @@ const songbookSlice = createSlice({
         open: true,
         message: action.payload,
         severity: 'success',
+      };
+    },
+    notifyError: (state: ISongbookState, action: PayloadAction<string>) => {
+      state.notification = {
+        open: true,
+        message: action.payload,
+        severity: 'error',
       };
     },
     closeNotification: (state: ISongbookState) => {
@@ -320,6 +335,13 @@ const songbookSlice = createSlice({
     resetSongTimeout: (state: ISongbookState) => {
       state.songTimeout = false;
     },
+
+    setUser: (state: ISongbookState, action: PayloadAction<IUser | null>) => {
+      state.user = action.payload;
+    },
+    setAccessToken: (state: ISongbookState, action: PayloadAction<string | undefined>) => {
+      state.accessToken = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAndSaveSong.fulfilled, (state: ISongbookState, action) => {
@@ -337,6 +359,7 @@ export const {
   setSongVideoOpen,
   closeNotification,
   notifySuccess,
+  notifyError,
   transposeUp,
   transposeDown,
   resetTransposition,
@@ -365,6 +388,8 @@ export const {
   setGlobalChordsDifficulty,
   changeZoom,
   resetSongTimeout,
+  setUser,
+  setAccessToken,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;

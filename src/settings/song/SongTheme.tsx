@@ -1,4 +1,4 @@
-import { Divider, FormControlLabel, Switch, Typography } from '@mui/material';
+import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
 import FontChooser from '../../components/font/FontChooser.tsx';
 import FontStyle from '../../components/font/FontStyle.tsx';
 import FontSpacing from '../../components/font/FontSpacing.tsx';
@@ -16,6 +16,7 @@ import {
   setSongThemeTextFontStyle,
 } from '../../store/songbook.reducer.ts';
 import ThemeChooser from '../../components/ThemeChooser.tsx';
+import SettingsSection from '../SettingsSection.tsx';
 
 const SongTheme = () => {
   const {
@@ -29,10 +30,8 @@ const SongTheme = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <div style={{ marginBottom: '2em' }}>
-      <Typography variant="h4">Wyświetlanie piosenki</Typography>
-      <Divider variant="fullWidth" sx={{ mt: '0.5em', mb: '1em' }} />
-      <Typography mb="0.5em">Motyw piosenki</Typography>
+    <SettingsSection title="Wyświetlanie piosenki">
+      <Typography>Motyw piosenki</Typography>
       <ThemeChooser
         fullWidth
         sx={{ maxWidth: '40ch' }}
@@ -40,11 +39,10 @@ const SongTheme = () => {
         theme={mode}
         systemLabel="Aplikacji"
       />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Stack spacing={1}>
         <FormControlLabel
           control={<Switch checked={!!customFont} onChange={(_, value) => dispatch(setSongThemeCustomFont(value))} />}
           label={'Własna czcionka'}
-          sx={{ mb: '0.5em', mt: '1em' }}
         />
         <FontChooser
           value={font}
@@ -57,7 +55,6 @@ const SongTheme = () => {
             <Switch checked={!!customSpacing} onChange={(_, value) => dispatch(setSongThemeCustomSpacing(value))} />
           }
           label={'Własne odstępy'}
-          sx={{ mb: '0.5em', mt: '1em' }}
         />
         <FontSpacing
           spacing={spacing}
@@ -65,43 +62,33 @@ const SongTheme = () => {
           disabled={!customSpacing}
           maxWidth="40ch"
         />
-        <Typography variant="h5" sx={{ mt: '1rem' }}>
-          Styl tekstu
-        </Typography>
-        <Divider variant="fullWidth" sx={{ mt: '0.5em', mb: '1em' }} />
-        <div
-          style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}
-        >
+      </Stack>
+      <SettingsSection titleVariant="h5" title="Styl tekstu">
+        <Stack direction="row" flexWrap="wrap" maxWidth="40ch" alignItems="center">
           <Typography variant="h6" marginRight="auto" paddingRight="11ch">
             Tekst
           </Typography>
           <FontStyle fontStyle={text} setFontStyle={(fontStyle) => dispatch(setSongThemeTextFontStyle(fontStyle))} />
-        </div>
-        <div
-          style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}
-        >
+        </Stack>
+        <Stack direction="row" flexWrap="wrap" maxWidth="40ch" alignItems="center">
           <Typography variant="h6" marginRight="auto" paddingRight="1em">
             Tekst specjalny 1
           </Typography>
           <FontStyle fontStyle={text1} setFontStyle={(fontStyle) => dispatch(setSongThemeText1FontStyle(fontStyle))} />
-        </div>
-        <div
-          style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}
-        >
+        </Stack>
+        <Stack direction="row" flexWrap="wrap" maxWidth="40ch" alignItems="center">
           <Typography variant="h6" marginRight="auto" paddingRight="1em">
             Tekst specjalny 2
           </Typography>
           <FontStyle fontStyle={text2} setFontStyle={(fontStyle) => dispatch(setSongThemeText2FontStyle(fontStyle))} />
-        </div>
-        <div
-          style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}
-        >
+        </Stack>
+        <Stack direction="row" flexWrap="wrap" maxWidth="40ch" alignItems="center">
           <Typography variant="h6" marginRight="auto" paddingRight="1em">
             Tekst specjalny 3
           </Typography>
           <FontStyle fontStyle={text3} setFontStyle={(fontStyle) => dispatch(setSongThemeText3FontStyle(fontStyle))} />
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center' }}>
+        </Stack>
+        <Stack direction="row" flexWrap="wrap" maxWidth="40ch" alignItems="center">
           <Typography variant="h6" marginRight="auto" paddingRight="5ch">
             Powtórzenia
           </Typography>
@@ -109,9 +96,9 @@ const SongTheme = () => {
             fontStyle={repetition}
             setFontStyle={(fontStyle) => dispatch(setSongThemeRepetitionFontStyle(fontStyle))}
           />
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </SettingsSection>
+    </SettingsSection>
   );
 };
 

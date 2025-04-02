@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import NumberField from '../NumberField.tsx';
-import { InputAdornment } from '@mui/material';
+import { InputAdornment, Stack } from '@mui/material';
 
 export interface ISpacing {
   lineHeight: number; // em
@@ -39,7 +39,7 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: maxWidth }}>
+    <Stack maxWidth={maxWidth}>
       <NumberField
         disabled={disabled}
         value={spacing.lineHeight}
@@ -72,8 +72,10 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Wcięcie refrenów"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
-          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
+        slotProps={{
+          htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> },
+        }}
       />
       <NumberField
         disabled={disabled}
@@ -82,8 +84,10 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         label="Odległość repetycji"
         type="number"
         sx={{ mb: '1em' }}
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
-          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
+        slotProps={{
+          htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> },
+        }}
       />
       <NumberField
         disabled={disabled}
@@ -91,10 +95,12 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         onChange={(event) => chordsSpacingChanged(+event.target.value)}
         label="Odległość akordów"
         type="number"
-        slotProps={{ htmlInput: { min: 0, max: 10, step: 0.5 },
-          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> }, }}
+        slotProps={{
+          htmlInput: { min: 0, max: 10, step: 0.5 },
+          input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> },
+        }}
       />
-    </div>
+    </Stack>
   );
 };
 

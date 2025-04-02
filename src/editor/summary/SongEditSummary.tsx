@@ -1,6 +1,6 @@
 import { useSongEditContext } from '../SongEditContext.tsx';
 import Song from '../../song/Song.tsx';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { BackspaceOutlined, DataObject } from '@mui/icons-material';
 import pako from 'pako';
 
@@ -29,7 +29,7 @@ const SongEditSummary = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1em' }}>
+      <Stack direction="row" gap={1} justifyContent="center">
         <Button variant="outlined" size="large" onClick={() => updateStep(-1)} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
@@ -39,10 +39,10 @@ const SongEditSummary = () => {
         <Button variant="contained" size="large" onClick={exportJSON} endIcon={<DataObject />}>
           Eksportuj
         </Button>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      </Stack>
+      <Stack direction="row" justifyContent="center">
         <Song song={song} />
-      </div>
+      </Stack>
     </>
   );
 };

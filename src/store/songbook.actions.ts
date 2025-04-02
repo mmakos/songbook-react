@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { HttpService } from '../http/http.service.ts';
+import { api } from '../http/api.ts';
 import { ISong } from '../types/song.types.ts';
 import pako from 'pako';
 import { resetSongTimeout } from './songbook.reducer.ts';
@@ -13,7 +13,7 @@ export const decompress = (compressedBase64: string) => {
 const createFetchSongAsyncThunk = (name: string) =>
   createAsyncThunk(name, async (slug: string, thunkAPI) => {
     thunkAPI.dispatch(resetSongTimeout());
-    return await HttpService.get(`song/${slug}/`)
+    return await api.get(`song/${slug}/`)
       .then((response) => {
         const song: ISong = response.data;
         song.verses = JSON.parse(decompress(response.data.verses));

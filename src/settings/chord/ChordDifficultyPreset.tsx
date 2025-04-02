@@ -1,7 +1,7 @@
 import StyledRating from '../../components/StyledRating.tsx';
 import { IChordDifficulty } from '../../store/songbook.reducer.ts';
 import { getDifficultyFromPreset, getDifficultyPreset, TDifficultyPreset } from '../../chords/chord-difficulty.tsx';
-import { Typography } from '@mui/material';
+import {Stack, Typography} from '@mui/material';
 import {
   SentimentNeutral,
   SentimentSatisfiedSharp,
@@ -65,7 +65,7 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Stack direction="row" alignItems="center">
         <StyledRating
           size="large"
           max={4}
@@ -82,7 +82,7 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
         <Typography style={{ marginLeft: '0.5em' }}>
           {chordDifficultyIcons[hoverPreset!]?.label ?? chordDifficultyIcons[difficultyPreset!]?.label ?? 'Własna'}
         </Typography>
-      </div>
+      </Stack>
       {showDescription && (
         <Typography variant="caption" fontStyle="italic" mt="0.5em">
           {getPresetDescription(difficultyPreset, hoverPreset)}

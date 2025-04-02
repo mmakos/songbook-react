@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { useParams } from 'react-router';
 import { getSong } from '../store/songbook.actions.ts';
 
-export type EditedDependent<Dependent> = Dependent & { edited?: boolean };
+export type EditedDependent<Dependent> = Dependent & { editing?: boolean };
 
 export interface ISongInfo {
   title: string;

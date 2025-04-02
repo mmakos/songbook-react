@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Collapse, IconButton, Paper, useTheme } from '@mui/material';
+import {Collapse, IconButton, Paper, Stack, useTheme} from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { setSongVideoOpen } from '../store/songbook.reducer.ts';
@@ -19,8 +19,8 @@ const SongVideo: FC<{ song?: ISong }> = ({ song }) => {
   return (
     <Collapse in={open} collapsedSize={0} unmountOnExit>
       <Paper sx={{ position: 'relative', mb: '0.5em', padding: '1em 1em' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {song.video.map((ytId, i) => (
+        <Stack spacing={2}>
+          {song.video.map((ytId) => (
             <iframe
               key={ytId}
               width="100%"
@@ -28,7 +28,6 @@ const SongVideo: FC<{ song?: ISong }> = ({ song }) => {
               title={'Nagranie piosenki ' + song.title}
               allowFullScreen
               style={{
-                marginBottom: song.video && i < song.video.length - 1 ? '1em' : undefined,
                 border: 0,
                 borderRadius: theme.shape.borderRadius,
                 maxWidth: '500px',
@@ -36,7 +35,7 @@ const SongVideo: FC<{ song?: ISong }> = ({ song }) => {
               }}
             />
           ))}
-        </div>
+        </Stack>
         <div
           style={{
             position: 'absolute',

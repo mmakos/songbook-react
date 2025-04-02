@@ -1,9 +1,10 @@
 import { FC } from 'react';
-import { Divider, Link, Paper, useTheme } from '@mui/material';
+import { Divider, Link, Paper, Stack, useTheme } from '@mui/material';
 import { IPerson } from '../types/song.types.ts';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import { personAsString } from './author.utils.ts';
 import PersonNames from './PersonNames.tsx';
+import EditorInfo from '../song/EditorInfo.tsx';
 
 interface IPersonInfoProps {
   person: IPerson;
@@ -15,8 +16,18 @@ const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
 
   return (
     <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: "wrap", gap: "1em" }}>
-        <PersonNames person={person} />
+      <Stack direction="row" flexWrap="wrap" spacing={1} justifyContent="space-between" useFlexGap>
+        <Stack spacing={1} justifyContent="space-between">
+          <PersonNames person={person} />
+          {person.url && (
+            <Stack direction="row" spacing={1}>
+              <InfoUrlIcon url={person.url} />
+              <Link href={person.url} color="inherit" underline="hover" target="_blank" rel="noopener">
+                Więcej informacje o osobie
+              </Link>
+            </Stack>
+          )}
+        </Stack>
         {imageUrl && (
           <a href={imageUrl} target="_blank" rel="noopener">
             <img
@@ -31,18 +42,10 @@ const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
             />
           </a>
         )}
-      </div>
-      {person.url && (
-        <>
-          <Divider sx={{ my: '0.5em' }} />
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <InfoUrlIcon url={person.url} sx={{ mr: '0.3em' }} />
-            <Link href={person.url} color="inherit" underline="hover" target="_blank" rel="noopener">
-              Więcej informacje o osobie
-            </Link>
-          </div>
-        </>
-      )}
+      </Stack>
+      <Divider sx={{ my: '0.5em' }} />
+      <EditorInfo prefix="Utworzono" editorInfo={person.created} />
+      {person.edited && <EditorInfo prefix="Edytowano" editorInfo={person.edited} />}
     </Paper>
   );
 };

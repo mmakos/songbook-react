@@ -7,15 +7,19 @@ import Progress from '../components/Progress.tsx';
 import SongTable from '../song-list/SongTable.tsx';
 import { IPerson } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
+import { Edit } from '@mui/icons-material';
+import useCanEdit from '../store/useCanEdit.hook.ts';
+import RouteIconButton from '../components/RouteIconButton.tsx';
 
 const Person = () => {
   const [person, setPerson] = useState<IPerson>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { personSlug } = useParams();
+  const canEdit = useCanEdit();
 
   const fetchPerson = () => {
     if (!personSlug) return;
-    fetchAuthor(`person/${personSlug}/`, (person) => setPerson(person as IPerson), setImageUrl);
+    fetchAuthor<IPerson>(`person/${personSlug}/`, (person) => setPerson(person), setImageUrl);
   };
 
   useEffect(() => {
@@ -32,8 +36,13 @@ const Person = () => {
         flexDirection: 'column',
       }}
     >
-      <Typography variant="h4" mb="0.5rem">
+      <Typography variant="h4" mb="0.5rem" display="flex">
         {personAsString(person)}
+        {canEdit && (
+          <RouteIconButton to={`/edit/person/${personSlug}`} sx={{ ml: 'auto' }}>
+            <Edit />
+          </RouteIconButton>
+        )}
       </Typography>
       <PersonInfo person={person} imageUrl={imageUrl} />
       <Paper>

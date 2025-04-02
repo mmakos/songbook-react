@@ -1,21 +1,26 @@
 import { useParams } from 'react-router';
-import { Container, Divider, Link, Paper, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Link, Paper, Stack, Typography, useTheme } from '@mui/material';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import Progress from '../components/Progress.tsx';
 import SongTable from '../song-list/SongTable.tsx';
 import { useEffect, useState } from 'react';
 import { IBand } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
+import EditorInfo from '../song/EditorInfo.tsx';
+import RouteIconButton from '../components/RouteIconButton.tsx';
+import { Edit } from '@mui/icons-material';
+import useCanEdit from '../store/useCanEdit.hook.ts';
 
 const Band = () => {
   const [band, setBand] = useState<IBand>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { bandSlug } = useParams();
+  const canEdit = useCanEdit();
   const theme = useTheme();
 
   const fetchBand = () => {
     if (!bandSlug) return;
-    fetchAuthor(`band/${bandSlug}/`, (band) => setBand(band as IBand), setImageUrl);
+    fetchAuthor<IBand>(`band/${bandSlug}/`, (band) => setBand(band), setImageUrl);
   };
 
   useEffect(() => {
@@ -32,34 +37,40 @@ const Band = () => {
         flexDirection: 'column',
       }}
     >
-      <Typography variant="h4" mb="0.5rem">
+      <Typography variant="h4" mb="0.5rem" display="flex">
         {band.name}
+        {canEdit && (
+          <RouteIconButton to={`/edit/band/${bandSlug}`} sx={{ ml: 'auto' }}>
+            <Edit />
+          </RouteIconButton>
+        )}
       </Typography>
       {band.url && (
         <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex' }}>
-            <InfoUrlIcon url={band.url} sx={{ mr: '0.3em' }} />
+          <Stack direction="row" spacing={1}>
+            <InfoUrlIcon url={band.url} />
             <Link href={band.url} color="inherit" underline="hover" target="_blank" rel="noopener">
               Więcej informacje o zespole
             </Link>
-          </div>
+          </Stack>
           {imageUrl && (
-            <>
-              <Divider sx={{ my: '0.5em' }} />
-              <a href={imageUrl} target="_blank" rel="noopener">
-                <img
-                  src={imageUrl}
-                  style={{
-                    height: '240px',
-                    borderRadius: theme.shape.borderRadius,
-                    border: 'solid',
-                    borderColor: theme.palette.divider,
-                  }}
-                  alt={band.name}
-                />
-              </a>
-            </>
+            <a href={imageUrl} target="_blank" rel="noopener">
+              <img
+                src={imageUrl}
+                style={{
+                  height: '240px',
+                  borderRadius: theme.shape.borderRadius,
+                  border: 'solid',
+                  borderColor: theme.palette.divider,
+                  marginTop: '1em',
+                }}
+                alt={band.name}
+              />
+            </a>
           )}
+          <Divider sx={{ my: '0.5em' }} />
+          <EditorInfo prefix="Utworzono" editorInfo={band.created} />
+          {band.edited && <EditorInfo prefix="Edytowano" editorInfo={band.edited} />}
         </Paper>
       )}
       <Paper>

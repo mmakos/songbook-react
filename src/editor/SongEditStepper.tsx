@@ -4,6 +4,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Stack,
   Step,
   StepLabel,
   Stepper,
@@ -23,7 +24,7 @@ const SongEditStepper = () => {
   const { activeStep, needsAuthorEdit } = useSongEditContext();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', width: '100%' }}>
+    <Stack gap={2} width="100%">
       <ReactRouterPrompt when={true}>
         {({ isActive, onConfirm, onCancel }: { isActive: boolean; onConfirm: () => void; onCancel: () => void }) => (
           <Dialog open={isActive} TransitionComponent={AlertTransition}>
@@ -67,7 +68,7 @@ const SongEditStepper = () => {
       {needsAuthorEdit && activeStep === 1 && <SongDependentsEditor />}
       {activeStep === (needsAuthorEdit ? 2 : 1) && <SongEditor />}
       {activeStep === (needsAuthorEdit ? 3 : 2) && <SongEditSummary />}
-    </div>
+    </Stack>
   );
 };
 
