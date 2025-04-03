@@ -15,7 +15,7 @@ const Band = () => {
   const [band, setBand] = useState<IBand>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { bandSlug } = useParams();
-  const canEdit = useCanEdit();
+  const { canEdit } = useCanEdit();
   const theme = useTheme();
 
   const fetchBand = () => {

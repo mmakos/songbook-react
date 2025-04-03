@@ -16,7 +16,7 @@ const SongEditSummary = () => {
   };
 
   const exportTargetFormat = () => {
-    const json = JSON.stringify(song?.verses);
+    const json = JSON.stringify(song.verses);
     const compressed = pako.gzip(json);
     const base64 = compressed.reduce<string>((str, byte) => str + String.fromCharCode(byte), '');
     const jsonString = JSON.stringify({ ...song, verses: btoa(base64) });

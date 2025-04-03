@@ -15,7 +15,7 @@ const Person = () => {
   const [person, setPerson] = useState<IPerson>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { personSlug } = useParams();
-  const canEdit = useCanEdit();
+  const { canEdit } = useCanEdit();
 
   const fetchPerson = () => {
     if (!personSlug) return;

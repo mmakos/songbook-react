@@ -1,8 +1,7 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import GithubLogin from './social/GithubLogin.tsx';
 import GoogleLogin from './social/GoogleLogin.tsx';
 import FacebookLogin from './social/FacebookLogin.tsx';
-import InstagramLogin from './social/InstagramLogin.tsx';
 import XLogin from './social/XLogin.tsx';
 import { useAppSelector } from '../store/songbook.store.ts';
 import { Navigate } from 'react-router-dom';
@@ -16,9 +15,9 @@ const Login = () => {
     <Stack justifyContent="center" spacing={2}>
       <GoogleLogin />
       <GithubLogin />
+      <Typography variant="caption" color="error">Tu niestety coś się zchrzaniło</Typography>
       <XLogin />
       <FacebookLogin />
-      <InstagramLogin />
     </Stack>
   );
 };

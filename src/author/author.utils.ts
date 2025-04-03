@@ -1,6 +1,6 @@
-import { IPerson, SourceType } from '../types/song.types.ts';
+import { IPersonData, SourceType } from '../types/song.types.ts';
 
-export const personAsString = (person: IPerson): string => {
+export const personAsString = (person: IPersonData): string => {
   if (person.nickname && (person.forceNickname || person.nickname.includes(' '))) {
     return person.nickname;
   }
@@ -20,11 +20,10 @@ export const personAsString = (person: IPerson): string => {
   return name + person.lastName;
 };
 
-export const parsePersonName = (name: string): IPerson => {
+export const parsePersonName = (name: string): IPersonData => {
   const split = name.trim().split(/\s+/);
   if (split.length < 2) {
     return {
-      slug: '',
       name: '',
       lastName: '',
       nickname: name,
@@ -32,13 +31,11 @@ export const parsePersonName = (name: string): IPerson => {
     };
   } else if (split.length === 2) {
     return {
-      slug: '',
       name: split[0],
       lastName: split[1],
     };
   } else {
     return {
-      slug: '',
       name: split[0],
       secondName: split
         .slice(1, split.length - 1)

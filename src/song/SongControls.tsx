@@ -1,10 +1,11 @@
-import {Edit, InfoOutlined, YouTube, ZoomIn, ZoomOut} from '@mui/icons-material';
+import { Edit, InfoOutlined, YouTube, ZoomIn, ZoomOut } from '@mui/icons-material';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { changeZoom, setSongInfoOpen, setSongSettingsOpen, setSongVideoOpen } from '../store/songbook.reducer.ts';
 import SongControl, { TSongControlType } from './SongControl.tsx';
-import {useNavigate, useParams} from "react-router";
+import { useNavigate, useParams } from 'react-router';
+import useCanEdit from '../store/useCanEdit.hook.ts';
 
 interface ISongControlsProps {
   video?: boolean;
@@ -17,6 +18,7 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { songSlug } = useParams();
+  const { canEdit } = useCanEdit();
 
   const toggleSettingsOpen = () => {
     dispatch(setSongSettingsOpen(!settingsOpen));
@@ -64,7 +66,9 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
       {video && (
         <SongControl type={type} icon={<YouTube />} label="Nagranie" onClick={toggleVideoOpen} selected={videoOpen} />
       )}
-      <SongControl type={type} icon={<Edit/>} label="Edytuj" onClick={() => navigate(`/edit/song/${songSlug}`)}/>
+      {canEdit && (
+        <SongControl type={type} icon={<Edit />} label="Edytuj" onClick={() => navigate(`/edit/song/${songSlug}`)} />
+      )}
     </>
   );
 };

@@ -6,12 +6,12 @@ const CLIENT_ID = 'THJRVGFnenpiMER3WVR3VUpkWFI6MTpjaQ';
 const XLogin = () => {
   const xLogin = () => {
     window.location.assign(
-      `https://x.com/i/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&scope=users.email&code_challenge=challenge&code_challenge_method=plain&redirect_uri=${window.location.origin}/login/x&state=abcdefgh`
+      `https://x.com/i/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&scope=users.email users.read&code_challenge=challenge&code_challenge_method=plain&redirect_uri=${window.location.origin}/login/x&state=abcdefgh`
     );
   };
 
   return (
-    <Button onClick={() => xLogin()} startIcon={<XTwitter />} size="large" variant="outlined">
+    <Button onClick={() => xLogin()} startIcon={<XTwitter />} size="large" variant="outlined" disabled>
       Zaloguj z kontem X
     </Button>
   );

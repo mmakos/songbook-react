@@ -42,7 +42,11 @@ const AccountInfo = () => {
           dispatch(setUser({ ...user, username: response.data.username }));
           dispatch(notifySuccess('Pomyślnie zaktualizowano nazwę użytkownika'));
         })
-        .catch(() => dispatch(notifyError('Nie udało się zaktualizować nazwy użytkownika')));
+        .catch(() => {
+          handleEdit();
+          setUsernameError('Nazwa użytkownika już istnieje.');
+          dispatch(notifyError('Nie udało się zaktualizować nazwy użytkownika'));
+        });
     }
   };
 
@@ -52,6 +56,7 @@ const AccountInfo = () => {
     authAPI
       .post('auth/logout/', undefined, { withCredentials: true })
       .then(() => {
+        console.log('NOTIFY SUCCESS');
         dispatch(notifySuccess('Zostałeś poprawnie wylogowany'));
         navigate('/login');
       })

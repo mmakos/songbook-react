@@ -1,15 +1,16 @@
 import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { IBand } from '../../types/song.types.ts';
+import { IBand, IBandData } from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongBandEditor, { IBandValidationErrors, validateBand } from './SongBandEditor.tsx';
 import { Button, Stack } from '@mui/material';
 import { CancelOutlined, SaveOutlined } from '@mui/icons-material';
 import Progress from '../../components/Progress.tsx';
 import RouteButton from '../../components/RouteButton.tsx';
+import {bandToBandData} from "./band.mapper.ts";
 
 const BandEdit = () => {
-  const [band, setBand] = useState<IBand>();
+  const [band, setBand] = useState<IBandData>();
   const [bandName, setBandName] = useState<string>();
   const [errors, setErrors] = useState<IBandValidationErrors>();
   const { bandSlug } = useParams();
@@ -17,7 +18,7 @@ const BandEdit = () => {
   const fetchBand = () => {
     if (!bandSlug) return;
     fetchAuthor<IBand>(`band/${bandSlug}/`, (band) => {
-      setBand(band);
+      setBand(bandToBandData(band));
       setBandName(band.name);
     });
   };

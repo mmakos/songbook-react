@@ -1,9 +1,9 @@
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { api } from '../http/api.ts';
 import { notifyError, setAccessToken, setUser } from '../store/songbook.reducer.ts';
 import { useAppDispatch } from '../store/songbook.store.ts';
-import { AxiosResponse } from 'axios';
+import {AxiosError, AxiosResponse} from 'axios';
 import { ILoginResponse, mapResponseToUser } from './user.types.ts';
 
 const LoginResult = () => {
@@ -11,7 +11,7 @@ const LoginResult = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { source } = useParams();
-  const codeRef = useRef(searchParams.get('code'));  // Zapobieganie strict mode na development
+  const codeRef = useRef(searchParams.get('code')); // Zapobieganie strict mode na development
 
   useEffect(() => {
     if (codeRef.current) {
@@ -22,8 +22,14 @@ const LoginResult = () => {
           dispatch(setUser(mapResponseToUser(res.data.user)));
           navigate('/account');
         })
-        .catch(() => {
-          dispatch(notifyError(`Nie udało się zalogować kontem ${source}`));
+        .catch((e: AxiosError<{ non_field_errors?: string[] }>) => {
+          const data = e.response?.data?.non_field_errors;
+          if (data?.length && data[0].includes("e-mail")) {
+            dispatch(notifyError("Użytkownik z takim adresem email już istnieje. " +
+                "Prawdopodobnie zalogowałeś się już wcześniej przy pomocy innego konta społecznościowego."));
+          } else {
+            dispatch(notifyError(`Nie udało się zalogować kontem ${source}`));
+          }
           navigate('/login');
         });
       codeRef.current = null;
