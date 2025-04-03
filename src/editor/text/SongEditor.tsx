@@ -68,7 +68,7 @@ import SongKeysChooser from './SongKeysChooser.tsx';
 type TPreviewType = 'editor' | 'split' | 'preview';
 
 const SongEditor = () => {
-  const { song, updateStep, setSong } = useSongEditContext();
+  const { song, updateStep } = useSongEditContext();
   const editor = useEditor({
     extensions: [
       Text,
@@ -89,7 +89,7 @@ const SongEditor = () => {
       Indent,
       PreventCellDrag,
     ],
-    content: songToHTML(song!.verses),
+    content: songToHTML(song.verses),
   });
   const [pianoOpen, setPianoOpen] = useState(false);
   const [reading, setReading] = useState(false);
@@ -98,7 +98,7 @@ const SongEditor = () => {
   const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
   const [commentsColumn, setCommentsColumn] = useState(false);
   const [previewType, setPreviewType] = useState<TPreviewType>('split');
-  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: song!.verses });
+  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: song.verses });
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -171,7 +171,7 @@ const SongEditor = () => {
   };
 
   const handleNextStep = () => {
-    editor && setSong({ ...song!, verses: rootNodeToSong(editor.$doc.node, editor.schema) });
+    // editor && setSong({ ...song, verses: rootNodeToSong(editor.$doc.node, editor.schema) }); TODO
     updateStep(1);
   };
 

@@ -28,7 +28,8 @@ const useAuthAPI = () => {
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
-        if (error?.response?.status === 401 && !prevRequest?.sent) {
+        const url = error?.config.url;
+        if (error?.response?.status === 401 && !prevRequest?.sent && url !== 'auth/refresh/') {
           prevRequest.sent = true;
           const newAccessToken = await refreshToken();
           prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

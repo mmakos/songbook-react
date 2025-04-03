@@ -1,14 +1,15 @@
 import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { ISource } from '../../types/song.types.ts';
+import { ISource, ISourceData } from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongSourceEditor, { ISourceValidationErrors, validateSource } from './SongSourceEditor.tsx';
 import { Button, Stack } from '@mui/material';
-import {CancelOutlined, SaveOutlined} from '@mui/icons-material';
+import { CancelOutlined, SaveOutlined } from '@mui/icons-material';
 import RouteButton from '../../components/RouteButton.tsx';
+import {sourceToSourceData} from "./source.mapper.ts";
 
 const SourceEdit = () => {
-  const [source, setSource] = useState<ISource>();
+  const [source, setSource] = useState<ISourceData>();
   const [sourceName, setSourceName] = useState<string>();
   const [errors, setErrors] = useState<ISourceValidationErrors>();
   const { sourceSlug } = useParams();
@@ -16,7 +17,7 @@ const SourceEdit = () => {
   const fetchSource = () => {
     if (!sourceSlug) return;
     fetchAuthor<ISource>(`source/${sourceSlug}/`, (source) => {
-      setSource(source);
+      setSource(sourceToSourceData(source));
       setSourceName(source.name);
     });
   };

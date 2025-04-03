@@ -11,7 +11,7 @@ const GoogleLogin = () => {
   };
 
   return (
-    <Button onClick={() => googleLogin()} startIcon={<Google />} size="large" variant='outlined'>
+    <Button onClick={() => googleLogin()} startIcon={<Google />} size="large" variant='contained'>
       Zaloguj z kontem Google
     </Button>
   );

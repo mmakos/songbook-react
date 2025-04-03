@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { IconButton, Stack, TextField, Typography } from '@mui/material';
-import { IBand } from '../../types/song.types.ts';
+import { IBandData } from '../../types/song.types.ts';
 import { validateHttpURL, validateString } from '../validation.utils.ts';
 import { Delete } from '@mui/icons-material';
 
@@ -9,7 +9,7 @@ export interface IBandValidationErrors {
   url?: string;
 }
 
-export const validateBand = (band: IBand): IBandValidationErrors | undefined => {
+export const validateBand = (band: IBandData): IBandValidationErrors | undefined => {
   const errors: IBandValidationErrors = {
     ...validateString(band.name, 'name', 'Nazwa zespołu', 3, 50, true),
     ...validateHttpURL(band.url),
@@ -20,8 +20,8 @@ export const validateBand = (band: IBand): IBandValidationErrors | undefined => 
 
 interface ISongBandEditorProps {
   bandName: string;
-  band: IBand;
-  setBand: (band: IBand) => void;
+  band: IBandData;
+  setBand: (band: IBandData) => void;
   deleteBand?: () => void;
   errors?: IBandValidationErrors;
 }

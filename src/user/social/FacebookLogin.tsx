@@ -9,7 +9,7 @@ const FacebookLogin = () => {
   };
 
   return (
-    <Button onClick={() => facebookLogin()} startIcon={<Facebook />} size="large" variant='outlined'>
+    <Button onClick={() => facebookLogin()} startIcon={<Facebook />} size="large" variant='outlined' disabled>
       Zaloguj z kontem Facebook
     </Button>
   );

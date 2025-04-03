@@ -16,7 +16,7 @@ const Source = () => {
   const [source, setSource] = useState<ISource>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { sourceSlug } = useParams();
-  const canEdit = useCanEdit();
+  const { canEdit } = useCanEdit();
   const theme = useTheme();
 
   const fetchSource = () => {

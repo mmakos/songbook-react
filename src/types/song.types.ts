@@ -1,4 +1,5 @@
-import {UserType} from "../user/user.types.ts";
+import { UserType } from '../user/user.types.ts';
+import {IEditedPerson} from "../editor/person/person.mapper.ts";
 
 export enum Category {
   KACZMARSKI = 'kaczmarski',
@@ -32,13 +33,16 @@ export interface ISongContent {
   verses: IVerse[];
 }
 
-export interface ISong {
+export interface IEntity {
   slug: string;
+  created: IEditorInfo;
+  edited?: IEditorInfo;
+}
+
+export interface ISong extends IEntity {
   title: string;
   altTitle?: string;
   category: Category;
-  created: IEditorInfo;
-  edited?: IEditorInfo;
   lyrics?: IPerson[];
   composer?: IPerson[];
   translation?: IPerson[];
@@ -54,8 +58,28 @@ export interface ISong {
   previous?: ISongOverview;
 }
 
-export interface IPerson {
-  slug: string;
+export interface IAuthorEdit<T, Single extends boolean = false> {
+  new?: Single extends true ? T : T[];
+  existing?: Single extends true ? string : string[];
+}
+
+export interface ISongEdit {
+  title: string;
+  altTitle?: string;
+  category: Category;
+  key?: ISongKey;
+  verses?: IVerse[];
+
+  lyrics?: IAuthorEdit<IEditedPerson>;
+  composer?: IAuthorEdit<IEditedPerson>;
+  translation?: IAuthorEdit<IEditedPerson>;
+  performer?: IAuthorEdit<IEditedPerson>;
+  source?: IAuthorEdit<ISourceData>;
+  band?: IAuthorEdit<IBandData, true>;
+  video?: string[];
+}
+
+export interface IPersonData {
   name: string;
   secondName?: string;
   lastName: string;
@@ -63,27 +87,23 @@ export interface IPerson {
   url?: string;
   forceNickname?: boolean;
   forceSecondName?: boolean;
-  created?: IEditorInfo;
-  edited?: IEditorInfo;
 }
 
-export interface IBand {
-  slug: string;
+export interface IBandData {
   name: string;
   url?: string;
-  created?: IEditorInfo;
-  edited?: IEditorInfo;
 }
 
-export interface ISource {
-  slug: string;
+export interface ISourceData {
   name: string;
   url?: string;
   year?: number;
   type: SourceType;
-  created?: IEditorInfo;
-  edited?: IEditorInfo;
 }
+
+export type IPerson = IPersonData & IEntity;
+export type IBand = IBandData & IEntity;
+export type ISource = ISourceData & IEntity;
 
 export interface IEditorInfo {
   name?: string;

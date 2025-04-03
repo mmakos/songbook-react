@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { ISource, SourceType } from '../../types/song.types.ts';
+import { ISourceData, SourceType } from '../../types/song.types.ts';
 import { sourceTypeNominative } from '../../author/author.utils.ts';
 import { validateHttpURL, validateString } from '../validation.utils.ts';
 import { Delete } from '@mui/icons-material';
@@ -12,7 +12,7 @@ export interface ISourceValidationErrors {
   url?: string;
 }
 
-export const validateSource = (source: ISource): ISourceValidationErrors | undefined => {
+export const validateSource = (source: ISourceData): ISourceValidationErrors | undefined => {
   const errors: ISourceValidationErrors = {
     ...validateString(source.name, 'name', 'Nazwa zespołu', 3, 50, true),
     ...validateHttpURL(source.url),
@@ -23,8 +23,8 @@ export const validateSource = (source: ISource): ISourceValidationErrors | undef
 
 interface ISongSourceEditorProps {
   sourceName: string;
-  source: ISource;
-  setSource: (source: ISource) => void;
+  source: ISourceData;
+  setSource: (source: ISourceData) => void;
   deleteSource?: () => void;
   errors?: ISourceValidationErrors;
 }

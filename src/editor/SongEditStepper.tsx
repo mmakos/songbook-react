@@ -10,7 +10,7 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useSongEditContext } from './SongEditContext.tsx';
+import { useOptionalSongEditContext } from './SongEditContext.tsx';
 import SongInfoEditor from './info/SongInfoEditor.tsx';
 import SongEditor from './text/SongEditor.tsx';
 import SongDependentsEditor from './info/SongDependentsEditor.tsx';
@@ -19,9 +19,19 @@ import SongEditSummary from './summary/SongEditSummary.tsx';
 // @ts-expect-error
 import ReactRouterPrompt from 'react-router-prompt';
 import AlertTransition from '../components/AlertTransition.tsx';
+import NotFound from '../subsites/NotFound.tsx';
+import Progress from '../components/Progress.tsx';
 
 const SongEditStepper = () => {
-  const { activeStep, needsAuthorEdit } = useSongEditContext();
+  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout } = useOptionalSongEditContext();
+
+  if (!song || !songEdit) {
+    if (songTimeout) {
+      return <NotFound />;
+    } else {
+      return <Progress />;
+    }
+  }
 
   return (
     <Stack gap={2} width="100%">

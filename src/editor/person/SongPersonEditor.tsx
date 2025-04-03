@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, IconButton, Stack, TextField, Typography } from '@mui/material';
-import { IPerson } from '../../types/song.types.ts';
+import { IPersonData } from '../../types/song.types.ts';
 import { personAsString } from '../../author/author.utils.ts';
 import { Delete } from '@mui/icons-material';
 import { validateHttpURL, validateString } from '../validation.utils.ts';
@@ -13,7 +13,7 @@ export interface IPersonValidationErrors {
   url?: string;
 }
 
-export const validatePerson = (person: IPerson): IPersonValidationErrors | undefined => {
+export const validatePerson = (person: IPersonData): IPersonValidationErrors | undefined => {
   const errors: IPersonValidationErrors = {
     ...validateString(person.name, 'name', 'Imię', 3, 30, true),
     ...validateString(person.secondName, 'secondName', 'Drugie imię', 3, 30),
@@ -27,8 +27,8 @@ export const validatePerson = (person: IPerson): IPersonValidationErrors | undef
 
 interface ISongPersonEditorProps {
   personName: string;
-  person: IPerson;
-  setPerson: (person: IPerson) => void;
+  person: IPersonData;
+  setPerson: (person: IPersonData) => void;
   deletePerson?: () => void;
   errors?: IPersonValidationErrors;
 }
