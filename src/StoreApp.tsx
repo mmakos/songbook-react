@@ -46,14 +46,14 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/login/:source" element={<LoginResult />} />
       <Route path="/person/:personSlug" element={<Person />} />
-      <Route path="/band/:bandSlug" element={<Band />} />
+      <Route path="/band/:bandSlug/:username?" element={<Band />} />
       <Route path="/source/:sourceSlug" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/edit/song/:songSlug" element={<SongEdit />} />
         <Route path="/edit/person/:personSlug" element={<PersonEdit />} />
-        <Route path="/edit/band/:bandSlug" element={<BandEdit />} />
+        <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
         <Route path="/edit/source/:sourceSlug" element={<SourceEdit />} />
       </Route>
       <Route path="*" element={<NotFound />} />
