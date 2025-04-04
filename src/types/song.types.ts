@@ -1,5 +1,5 @@
 import { UserType } from '../user/user.types.ts';
-import {IEditedPerson} from "../editor/person/person.mapper.ts";
+import { IEditedPerson } from '../editor/person/person.mapper.ts';
 
 export enum Category {
   KACZMARSKI = 'kaczmarski',
@@ -37,6 +37,10 @@ export interface IEntity {
   slug: string;
   created: IEditorInfo;
   edited?: IEditorInfo;
+}
+
+export interface IWaitingEdit {
+  waiting?: { username: string; editTime: number }[];
 }
 
 export interface ISong extends IEntity {
@@ -102,14 +106,14 @@ export interface ISourceData {
 }
 
 export type IPerson = IPersonData & IEntity;
-export type IBand = IBandData & IEntity;
+export type IBand = IBandData & IEntity & IWaitingEdit;
 export type ISource = ISourceData & IEntity;
 
 export interface IEditorInfo {
   name?: string;
   type?: UserType;
   verified?: boolean;
-  time: string;
+  time: number;
 }
 
 /**

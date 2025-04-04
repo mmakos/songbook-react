@@ -11,7 +11,7 @@ interface IEditorInfoProps {
 }
 
 const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
-  const date = new Date(editorInfo.time);
+  const date = new Date(editorInfo.time * 1000);
   return (
     <Typography variant="caption" color="textSecondary" sx={{ display: 'flex', alignItems: 'center' }}>
       {editorInfo.verified && (

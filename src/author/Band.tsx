@@ -10,23 +10,28 @@ import EditorInfo from '../song/EditorInfo.tsx';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import { Edit } from '@mui/icons-material';
 import useCanEdit from '../store/useCanEdit.hook.ts';
+import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 
 const Band = () => {
   const [band, setBand] = useState<IBand>();
   const [imageUrl, setImageUrl] = useState<string>();
-  const { bandSlug } = useParams();
+  const { bandSlug, username } = useParams();
   const { canEdit } = useCanEdit();
   const theme = useTheme();
 
   const fetchBand = () => {
     if (!bandSlug) return;
-    fetchAuthor<IBand>(`band/${bandSlug}/`, (band) => setBand(band), setImageUrl);
+    fetchAuthor<IBand>(`band/${bandSlug}/${username ? username + '/' : ''}`, (band) => setBand(band), setImageUrl);
   };
 
   useEffect(() => {
     setBand(undefined);
     fetchBand();
   }, [bandSlug]);
+
+  useEffect(() => {
+    fetchBand();
+  }, [username]);
 
   if (!band) return <Progress />;
 
@@ -40,7 +45,7 @@ const Band = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {band.name}
         {canEdit && (
-          <RouteIconButton to={`/edit/band/${bandSlug}`} sx={{ ml: 'auto' }}>
+          <RouteIconButton to={`/edit/band/${bandSlug}/${username ? username + '/' : ''}`} sx={{ ml: 'auto' }}>
             <Edit />
           </RouteIconButton>
         )}
@@ -71,6 +76,7 @@ const Band = () => {
           <Divider sx={{ my: '0.5em' }} />
           <EditorInfo prefix="Utworzono" editorInfo={band.created} />
           {band.edited && <EditorInfo prefix="Edytowano" editorInfo={band.edited} />}
+          <WaitingEditsInfo waiting={band} routeTo={`/band/${bandSlug}`} />
         </Paper>
       )}
       <Paper>

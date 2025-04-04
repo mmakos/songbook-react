@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { IconButton, Stack, TextField, Typography } from '@mui/material';
 import { IBandData } from '../../types/song.types.ts';
 import { validateHttpURL, validateString } from '../validation.utils.ts';
@@ -18,15 +17,21 @@ export const validateBand = (band: IBandData): IBandValidationErrors | undefined
   return Object.keys(errors).length ? errors : undefined;
 };
 
-interface ISongBandEditorProps {
+interface ISongBandEditorProps<Band extends IBandData> {
   bandName: string;
-  band: IBandData;
-  setBand: (band: IBandData) => void;
+  band: Band;
+  setBand: (band: Band) => void;
   deleteBand?: () => void;
   errors?: IBandValidationErrors;
 }
 
-const SongBandEditor: FC<ISongBandEditorProps> = ({ bandName, band, setBand, deleteBand, errors }) => {
+const SongBandEditor = <Band extends IBandData>({
+  bandName,
+  band,
+  setBand,
+  deleteBand,
+  errors,
+}: ISongBandEditorProps<Band>) => {
   const setName = (name: string) => setBand({ ...band, name });
   const setUrl = (url: string) => setBand({ ...band, url });
 
