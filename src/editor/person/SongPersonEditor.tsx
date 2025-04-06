@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { IPersonData } from '../../types/song.types.ts';
 import { personAsString } from '../../author/author.utils.ts';
@@ -16,7 +15,7 @@ export interface IPersonValidationErrors {
 export const validatePerson = (person: IPersonData): IPersonValidationErrors | undefined => {
   const errors: IPersonValidationErrors = {
     ...validateString(person.name, 'name', 'Imię', 3, 30, true),
-    ...validateString(person.secondName, 'secondName', 'Drugie imię', 3, 30),
+    ...validateString(person.secondName, 'secondName', 'Drugie imię', 3, 50),
     ...validateString(person.lastName, 'lastName', 'Nazwisko', 3, 50, true),
     ...validateString(person.nickname, 'nickname', 'Pseudonim', 3, 100),
     ...validateHttpURL(person.url),
@@ -25,15 +24,21 @@ export const validatePerson = (person: IPersonData): IPersonValidationErrors | u
   return Object.keys(errors).length ? errors : undefined;
 };
 
-interface ISongPersonEditorProps {
+interface ISongPersonEditorProps<Person extends IPersonData> {
   personName: string;
-  person: IPersonData;
-  setPerson: (person: IPersonData) => void;
+  person: Person;
+  setPerson: (person: Person) => void;
   deletePerson?: () => void;
   errors?: IPersonValidationErrors;
 }
 
-const SongPersonEditor: FC<ISongPersonEditorProps> = ({ personName, person, setPerson, deletePerson, errors }) => {
+const SongPersonEditor = <Person extends IPersonData>({
+  personName,
+  person,
+  setPerson,
+  deletePerson,
+  errors,
+}: ISongPersonEditorProps<Person>) => {
   const setName = (name: string) => setPerson({ ...person, name });
   const setLastName = (lastName: string) => setPerson({ ...person, lastName });
   const setSecondName = (secondName: string) => setPerson({ ...person, secondName });

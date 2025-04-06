@@ -11,23 +11,30 @@ import EditorInfo from '../song/EditorInfo.tsx';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import { Edit } from '@mui/icons-material';
+import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 
 const Source = () => {
   const [source, setSource] = useState<ISource>();
   const [imageUrl, setImageUrl] = useState<string>();
-  const { sourceSlug } = useParams();
+  const { sourceSlug, username } = useParams();
   const { canEdit } = useCanEdit();
   const theme = useTheme();
 
+  const slugAndUser = `${sourceSlug}${username ? '/' + username : ''}`;
+
   const fetchSource = () => {
     if (!sourceSlug) return;
-    fetchAuthor<ISource>(`source/${sourceSlug}/`, (source) => setSource(source), setImageUrl);
+    fetchAuthor<ISource>(`source/${slugAndUser}/`, (source) => setSource(source), setImageUrl);
   };
 
   useEffect(() => {
     setSource(undefined);
     fetchSource();
   }, [sourceSlug]);
+
+  useEffect(() => {
+    fetchSource();
+  }, [username]);
 
   if (!source) return <Progress />;
 
@@ -41,15 +48,15 @@ const Source = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {source.name}
         {canEdit && (
-          <RouteIconButton to={`/edit/source/${sourceSlug}`} sx={{ ml: 'auto' }}>
+          <RouteIconButton to={`/edit/source/${slugAndUser}`} sx={{ ml: 'auto' }}>
             <Edit />
           </RouteIconButton>
         )}
       </Typography>
       {source.url && (
         <Paper sx={{ padding: '0.5em 1em', marginBottom: '0.5em', display: 'flex', flexDirection: 'column' }}>
-          <Stack direction="row" spacing={1} useFlexGap justifyContent='space-between' flexWrap='wrap'>
-            <Stack spacing={1} justifyContent='space-between'>
+          <Stack direction="row" spacing={1} useFlexGap justifyContent="space-between" flexWrap="wrap">
+            <Stack spacing={1} justifyContent="space-between">
               <Typography>
                 {`${sourceTypeNominative(source.type)} "${source.name}"${source.year && ' z roku ' + source.year}`}
               </Typography>
@@ -78,6 +85,7 @@ const Source = () => {
           <Divider sx={{ my: '0.5em' }} />
           <EditorInfo prefix="Utworzono" editorInfo={source.created} />
           {source.edited && <EditorInfo prefix="Edytowano" editorInfo={source.edited} />}
+          <WaitingEditsInfo waiting={source} routeTo={`/source/${sourceSlug}`} />
         </Paper>
       )}
       <Paper>

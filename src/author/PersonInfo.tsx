@@ -5,13 +5,15 @@ import InfoUrlIcon from './InfoUrlIcon.tsx';
 import { personAsString } from './author.utils.ts';
 import PersonNames from './PersonNames.tsx';
 import EditorInfo from '../song/EditorInfo.tsx';
+import WaitingEditsInfo from "../song/WaitingEditsInfo.tsx";
 
 interface IPersonInfoProps {
+  personSlug: string;
   person: IPerson;
   imageUrl?: string;
 }
 
-const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
+const PersonInfo: FC<IPersonInfoProps> = ({ personSlug, person, imageUrl }) => {
   const theme = useTheme();
 
   return (
@@ -46,6 +48,7 @@ const PersonInfo: FC<IPersonInfoProps> = ({ person, imageUrl }) => {
       <Divider sx={{ my: '0.5em' }} />
       <EditorInfo prefix="Utworzono" editorInfo={person.created} />
       {person.edited && <EditorInfo prefix="Edytowano" editorInfo={person.edited} />}
+      <WaitingEditsInfo waiting={person} routeTo={`/person/${personSlug}`} />
     </Paper>
   );
 };

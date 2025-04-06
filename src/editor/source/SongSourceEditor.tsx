@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { ISourceData, SourceType } from '../../types/song.types.ts';
 import { sourceTypeNominative } from '../../author/author.utils.ts';
@@ -21,15 +20,21 @@ export const validateSource = (source: ISourceData): ISourceValidationErrors | u
   return Object.keys(errors).length ? errors : undefined;
 };
 
-interface ISongSourceEditorProps {
+interface ISongSourceEditorProps<Source extends ISourceData> {
   sourceName: string;
-  source: ISourceData;
-  setSource: (source: ISourceData) => void;
+  source: Source;
+  setSource: (source: Source) => void;
   deleteSource?: () => void;
   errors?: ISourceValidationErrors;
 }
 
-const SongSourceEditor: FC<ISongSourceEditorProps> = ({ sourceName, source, setSource, deleteSource, errors }) => {
+const SongSourceEditor = <Source extends ISourceData>({
+  sourceName,
+  source,
+  setSource,
+  deleteSource,
+  errors,
+}: ISongSourceEditorProps<Source>) => {
   const setName = (name: string) => setSource({ ...source, name });
   const setType = (type: string) => setSource({ ...source, type: type as SourceType });
   const setUrl = (url: string) => setSource({ ...source, url });

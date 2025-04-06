@@ -44,7 +44,7 @@ const BandEdit = () => {
       authAPI
         .post(`edit/band/${bandSlug}/`, bandToBandData(band))
         .then(() => {
-          dispatch(notifySuccess('Pomyślnie zaktualizowano zespół'));
+          dispatch(notifySuccess('Pomyślnie zaktualizowano zespół - będzie widoczny w poczekalni do czasu weryfikacji'));
           navigate(`/band/${slugAndUser}`);
         })
         .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji zespołu')));

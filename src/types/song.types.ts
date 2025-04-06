@@ -105,9 +105,9 @@ export interface ISourceData {
   type: SourceType;
 }
 
-export type IPerson = IPersonData & IEntity;
+export type IPerson = IPersonData & IEntity & IWaitingEdit;
 export type IBand = IBandData & IEntity & IWaitingEdit;
-export type ISource = ISourceData & IEntity;
+export type ISource = ISourceData & IEntity & IWaitingEdit;
 
 export interface IEditorInfo {
   name?: string;

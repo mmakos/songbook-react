@@ -45,16 +45,16 @@ const router = createBrowserRouter(
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<Login />} />
       <Route path="/login/:source" element={<LoginResult />} />
-      <Route path="/person/:personSlug" element={<Person />} />
+      <Route path="/person/:personSlug/:username?" element={<Person />} />
       <Route path="/band/:bandSlug/:username?" element={<Band />} />
-      <Route path="/source/:sourceSlug" element={<Source />} />
+      <Route path="/source/:sourceSlug/:username?" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/edit/song/:songSlug" element={<SongEdit />} />
-        <Route path="/edit/person/:personSlug" element={<PersonEdit />} />
+        <Route path="/edit/person/:personSlug/:username?" element={<PersonEdit />} />
         <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
-        <Route path="/edit/source/:sourceSlug" element={<SourceEdit />} />
+        <Route path="/edit/source/:sourceSlug/:username?" element={<SourceEdit />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Route>

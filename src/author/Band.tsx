@@ -19,9 +19,11 @@ const Band = () => {
   const { canEdit } = useCanEdit();
   const theme = useTheme();
 
+  const slugAndUser = `${bandSlug}${username ? '/' + username : ''}`;
+
   const fetchBand = () => {
     if (!bandSlug) return;
-    fetchAuthor<IBand>(`band/${bandSlug}/${username ? username + '/' : ''}`, (band) => setBand(band), setImageUrl);
+    fetchAuthor<IBand>(`band/${slugAndUser}/`, (band) => setBand(band), setImageUrl);
   };
 
   useEffect(() => {
@@ -45,7 +47,7 @@ const Band = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {band.name}
         {canEdit && (
-          <RouteIconButton to={`/edit/band/${bandSlug}/${username ? username + '/' : ''}`} sx={{ ml: 'auto' }}>
+          <RouteIconButton to={`/edit/band/${slugAndUser}`} sx={{ ml: 'auto' }}>
             <Edit />
           </RouteIconButton>
         )}
