@@ -17,7 +17,6 @@ const SplitPane: FC<ISplitPaneProps> = ({ left, right, initial }) => {
 
     const containerRect = containerRef.current.getBoundingClientRect();
     let newPosition = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-    console.log(newPosition);
 
     newPosition = Math.max(10, Math.min(90, newPosition));
 

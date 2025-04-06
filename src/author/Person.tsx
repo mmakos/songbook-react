@@ -7,15 +7,16 @@ import Progress from '../components/Progress.tsx';
 import SongTable from '../song-list/SongTable.tsx';
 import { IPerson } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
-import { Edit } from '@mui/icons-material';
+import {Edit, Verified} from '@mui/icons-material';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
+import BasicTooltip from "../components/BasicTooltip.tsx";
 
 const Person = () => {
   const [person, setPerson] = useState<IPerson>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { personSlug, username } = useParams();
-  const { canEdit } = useCanEdit();
+  const { canEdit, canVerify } = useCanEdit();
 
   const slugAndUser = `${personSlug}${username ? '/' + username : ''}`;
 
@@ -45,9 +46,18 @@ const Person = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {personAsString(person)}
         {canEdit && (
-          <RouteIconButton to={`/edit/person/${slugAndUser}`} sx={{ ml: 'auto' }}>
-            <Edit />
-          </RouteIconButton>
+          <BasicTooltip title="Edytuj osobę" style={{ marginLeft: 'auto' }}>
+            <RouteIconButton to={`/edit/person/${slugAndUser}`}>
+              <Edit />
+            </RouteIconButton>
+          </BasicTooltip>
+        )}
+        {canVerify && (person.waiting || !person.created.verified) && (
+            <BasicTooltip title="Zweryfikuj oczekujące edycje">
+              <RouteIconButton to={`/verify/person/${personSlug}`}>
+                <Verified />
+              </RouteIconButton>
+            </BasicTooltip>
         )}
       </Typography>
       <PersonInfo personSlug={personSlug} person={person} imageUrl={imageUrl} />

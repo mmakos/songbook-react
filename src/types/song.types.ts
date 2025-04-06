@@ -23,8 +23,7 @@ export enum SourceType {
   GAME = 'game',
 }
 
-export interface ISongOverview {
-  slug: string;
+export interface ISongOverview extends ISlug {
   title: string;
   category: Category;
 }
@@ -33,8 +32,11 @@ export interface ISongContent {
   verses: IVerse[];
 }
 
-export interface IEntity {
+export interface ISlug {
   slug: string;
+}
+
+export interface IEditInfo {
   created: IEditorInfo;
   edited?: IEditorInfo;
 }
@@ -43,21 +45,23 @@ export interface IWaitingEdit {
   waiting?: { username: string; editTime: number }[];
 }
 
-export interface ISong extends IEntity {
+export interface ISongData {
   title: string;
   altTitle?: string;
   category: Category;
-  lyrics?: IPerson[];
-  composer?: IPerson[];
-  translation?: IPerson[];
-  performer?: IPerson[];
-  source?: ISource[];
-  band?: IBand;
+  lyrics?: IPersonOverview[];
+  composer?: IPersonOverview[];
+  translation?: IPersonOverview[];
+  performer?: IPersonOverview[];
+  source?: ISourceOverview[];
+  band?: IBandOverview;
   video?: string[];
 
   key?: ISongKey;
   verses: IVerse[];
+}
 
+export interface ISong extends ISongData, IEditInfo, IWaitingEdit, ISlug {
   next?: ISongOverview;
   previous?: ISongOverview;
 }
@@ -72,7 +76,7 @@ export interface ISongEdit {
   altTitle?: string;
   category: Category;
   key?: ISongKey;
-  verses?: IVerse[];
+  verses: IVerse[];
 
   lyrics?: IAuthorEdit<IEditedPerson>;
   composer?: IAuthorEdit<IEditedPerson>;
@@ -105,9 +109,13 @@ export interface ISourceData {
   type: SourceType;
 }
 
-export type IPerson = IPersonData & IEntity & IWaitingEdit;
-export type IBand = IBandData & IEntity & IWaitingEdit;
-export type ISource = ISourceData & IEntity & IWaitingEdit;
+export type IPersonOverview = IPersonData & ISlug;
+export type IBandOverview = IBandData & ISlug;
+export type ISourceOverview = ISourceData & ISlug;
+
+export type IPerson = IPersonOverview & IEditInfo & IWaitingEdit;
+export type IBand = IBandOverview & IEditInfo & IWaitingEdit;
+export type ISource = ISourceOverview & IEditInfo & IWaitingEdit;
 
 export interface IEditorInfo {
   name?: string;

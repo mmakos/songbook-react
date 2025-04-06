@@ -10,14 +10,15 @@ import { ISource } from '../types/song.types.ts';
 import EditorInfo from '../song/EditorInfo.tsx';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
-import { Edit } from '@mui/icons-material';
+import { Edit, Verified } from '@mui/icons-material';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
+import BasicTooltip from '../components/BasicTooltip.tsx';
 
 const Source = () => {
   const [source, setSource] = useState<ISource>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { sourceSlug, username } = useParams();
-  const { canEdit } = useCanEdit();
+  const { canEdit, canVerify } = useCanEdit();
   const theme = useTheme();
 
   const slugAndUser = `${sourceSlug}${username ? '/' + username : ''}`;
@@ -48,9 +49,18 @@ const Source = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {source.name}
         {canEdit && (
-          <RouteIconButton to={`/edit/source/${slugAndUser}`} sx={{ ml: 'auto' }}>
-            <Edit />
-          </RouteIconButton>
+          <BasicTooltip title="Edytuj źródło" style={{ marginLeft: 'auto' }}>
+            <RouteIconButton to={`/edit/source/${slugAndUser}`}>
+              <Edit />
+            </RouteIconButton>
+          </BasicTooltip>
+        )}
+        {canVerify && (source.waiting || !source.created.verified) && (
+          <BasicTooltip title="Zweryfikuj oczekujące edycje">
+            <RouteIconButton to={`/verify/source/${sourceSlug}`}>
+              <Verified />
+            </RouteIconButton>
+          </BasicTooltip>
         )}
       </Typography>
       {source.url && (

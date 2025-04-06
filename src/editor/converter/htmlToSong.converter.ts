@@ -294,11 +294,32 @@ const parseChordCell = (cell: string): IChordSeries[][] => {
   return extract(cell.replace(/<strong>|<\/strong>|<u>|<\/u>/g, ''), '<p>', '</p>').map(parseChordLine);
 };
 
+const paragraphToText = (paragraph: Node): ITextRun[] => {
+  if (!paragraph.textContent.trim()) return [];
+  const runs: ITextRun[] = [];
+  for (let i = 0; i < paragraph.childCount; ++i) {
+    const child = paragraph.child(i);
+    const run: ITextRun = { text: child.textContent };
+    if (child.marks.find((m) => m.type.name === 'exclusiveItalic')) {
+      run.style = 1;
+    } else if (child.marks.find((m) => m.type.name === 'exclusiveUnderline')) {
+      run.style = 2;
+    } else if (child.marks.find((m) => m.type.name === 'exclusiveBold')) {
+      run.style = 3;
+    }
+    runs.push(run);
+  }
+  if (runs.length) {
+    runs[0].text = runs[0].text.trimStart();
+    runs[runs.length - 1].text = runs[runs.length - 1].text.trimEnd();
+  }
+  return runs;
+};
+
 const cellToText = (cell: Node): ITextRun[][] => {
   const text: ITextRun[][] = [];
   for (let i = 0; i < cell.childCount; ++i) {
-    const line = cell.child(i).textContent.trim();
-    text.push(line ? [{ text: line }] : []);
+    text.push(paragraphToText(cell.child(i)));
   }
   return text;
 };
@@ -328,7 +349,6 @@ const cellToRepetitions = (cell: Node): number[] => {
       repetitions.push(0);
     }
   }
-  console.log(repetitions);
   return repetitions;
 };
 
@@ -424,8 +444,6 @@ const proceedVerseRefs = (verses: IVerse[]) => {
       if (textLine.endsWith('...')) textLine = textLine.slice(0, textLine.length - 3);
       else if (textLine.endsWith('…')) textLine = textLine.slice(0, textLine.length - 1);
       else continue;
-
-      console.log(textLine)
 
       for (let j = 0; j < i; ++j) {
         const verseJ = verses[j];

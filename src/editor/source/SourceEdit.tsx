@@ -11,6 +11,7 @@ import useAuthAPI from '../../http/useAuthAPI.ts';
 import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
+import { validateChanged } from '../validation.utils.ts';
 
 const SourceEdit = () => {
   const [source, setSource] = useState<ISource>();
@@ -39,10 +40,17 @@ const SourceEdit = () => {
     const errors = validateSource(source);
     setErrors(errors);
     if (!errors) {
+      const sourceData = sourceToSourceData(source);
+      if (!validateChanged(sourceData, source)) {
+        dispatch(notifyError('Nie wprowadzono żadnych zmian'));
+        return;
+      }
       authAPI
         .post(`edit/band/${sourceSlug}/`, sourceToSourceData(source))
         .then(() => {
-          dispatch(notifySuccess('Pomyślnie zaktualizowano źródło - będzie widoczne w poczekalni do czasu weryfikacji'));
+          dispatch(
+            notifySuccess('Pomyślnie zaktualizowano źródło - będzie widoczne w poczekalni do czasu weryfikacji')
+          );
           navigate(`/band/${slugAndUser}`);
         })
         .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji źródła')));
@@ -53,7 +61,7 @@ const SourceEdit = () => {
 
   return (
     <Stack spacing={2}>
-      <SongSourceEditor sourceName={sourceName} source={source} setSource={setSource} errors={errors} />
+      <SongSourceEditor title={`Edytuj źródło „${sourceName}”`} source={source} setSource={setSource} errors={errors} />
       <Stack direction="row" spacing={1}>
         <RouteButton to={`/source/${slugAndUser}`} variant="outlined" startIcon={<CancelOutlined />} fullWidth>
           Anuluj

@@ -12,6 +12,7 @@ import useAuthAPI from '../../http/useAuthAPI.ts';
 import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
+import { validateChanged } from '../validation.utils.ts';
 
 const PersonEdit = () => {
   const [person, setPerson] = useState<IPerson>();
@@ -40,6 +41,11 @@ const PersonEdit = () => {
     const errors = validatePerson(person);
     setErrors(errors);
     if (!errors) {
+      const personData = personToPersonData(person);
+      if (!validateChanged(personData, person)) {
+        dispatch(notifyError('Nie wprowadzono żadnych zmian'));
+        return;
+      }
       authAPI
         .post(`edit/person/${personSlug}/`, personToPersonData(person))
         .then(() => {
@@ -54,7 +60,7 @@ const PersonEdit = () => {
 
   return (
     <Stack spacing={2}>
-      <SongPersonEditor personName={personName} person={person} setPerson={setPerson} errors={errors} />
+      <SongPersonEditor title={`Edytuj osobę „${personName}”`} person={person} setPerson={setPerson} errors={errors} />
       <Stack direction="row" spacing={1}>
         <RouteButton to={`/person/${slugAndUser}`} variant="outlined" startIcon={<CancelOutlined />} fullWidth>
           Anuluj

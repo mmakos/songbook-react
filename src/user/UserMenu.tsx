@@ -1,7 +1,7 @@
 import { useAppSelector } from '../store/songbook.store.ts';
 import MainMenuItem, { IMainMenuItemProps } from '../main-menu/item/MainMenuItem.tsx';
 import { FC } from 'react';
-import { Person } from '@mui/icons-material';
+import VerifiedUserIcon from '../components/icon/VerifiedUserIcon.tsx';
 
 const UserMenu: FC<Omit<IMainMenuItemProps, 'text'>> = ({ close, type }) => {
   const user = useAppSelector((state) => state.user);
@@ -14,7 +14,7 @@ const UserMenu: FC<Omit<IMainMenuItemProps, 'text'>> = ({ close, type }) => {
       text={user ? 'Konto' : 'Zaloguj'}
       close={close}
       routeTo={user ? '/account' : '/login'}
-      icon={<Person />}
+      icon={<VerifiedUserIcon userType={user?.type} neutral fontSize="inherit" />}
     />
   );
 };

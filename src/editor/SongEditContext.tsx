@@ -6,7 +6,7 @@ import { getSong } from '../store/songbook.actions.ts';
 
 export type EditedDependent<Dependent> = Dependent & { editing?: boolean };
 
-const songToSongEdit = (song: ISong): ISongEdit => {
+export const songToSongEdit = (song: ISong): ISongEdit => {
   const edit: ISongEdit = {
     title: song.title,
     altTitle: song.altTitle,
@@ -42,6 +42,8 @@ export interface ISongEditContextProps<Optional extends boolean = false> {
   // Edycja piosenki (w wersji ostatecznej, jeśli chodzi o informacje)
   songEdit: Optional extends true ? ISongEdit | undefined : ISongEdit;
   setSongEdit: (songEdit: ISongEdit) => void;
+  textEdit: boolean;
+  setTextEdit: (edit: boolean) => void;
 }
 
 const SongEditContextComponent = (): ISongEditContextProps<true> => {
@@ -52,6 +54,7 @@ const SongEditContextComponent = (): ISongEditContextProps<true> => {
   const [songTimeout, setSongTimeout] = useState(false);
   const [needsAuthorEdit, setNeedsAuthorEdit] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [textEdit, setTextEdit] = useState(false);
 
   const { songSlug } = useParams();
   const dispatch = useAppDispatch();
@@ -105,6 +108,8 @@ const SongEditContextComponent = (): ISongEditContextProps<true> => {
 
     songEdit,
     setSongEdit,
+    textEdit,
+    setTextEdit,
   };
 };
 

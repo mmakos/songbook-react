@@ -3,7 +3,11 @@ import { UserType } from '../user/user.types.ts';
 
 const useCanEdit = () => {
   const user = useAppSelector((state) => state.user);
-  return { canEdit: !!user, canRemove: user?.type !== UserType.NORMAL };
+  return {
+    canEdit: !!user,
+    canRemove: !!user?.type,
+    canVerify: user?.type === UserType.JEDI || user?.type === UserType.SITH,
+  };
 };
 
 export default useCanEdit;

@@ -8,11 +8,22 @@ import InputRules from './InputRules.ts';
 import { TableRow } from '@tiptap/extension-table-row';
 import songToHTML from '../converter/songToHTML.converter.ts';
 import Piano from '../../piano/Piano.tsx';
-import { Button, Collapse, Stack, ToggleButton, Typography } from '@mui/material';
+import {
+  Button,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  ToggleButton,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import {
   Autorenew,
   BackspaceOutlined,
+  CancelOutlined,
   Check,
   FormatIndentDecrease,
   FormatIndentIncrease,
@@ -30,6 +41,7 @@ import {
   Redo,
   Reorder,
   Report,
+  SaveOutlined,
   Sync,
   Undo,
   VerticalSplitOutlined,
@@ -68,7 +80,7 @@ import SongKeysChooser from './SongKeysChooser.tsx';
 type TPreviewType = 'editor' | 'split' | 'preview';
 
 const SongEditor = () => {
-  const { song, updateStep } = useSongEditContext();
+  const { updateStep, setSongEdit, songEdit, textEdit, setTextEdit } = useSongEditContext();
   const editor = useEditor({
     extensions: [
       Text,
@@ -89,7 +101,7 @@ const SongEditor = () => {
       Indent,
       PreventCellDrag,
     ],
-    content: songToHTML(song.verses),
+    content: songToHTML(songEdit.verses),
   });
   const [pianoOpen, setPianoOpen] = useState(false);
   const [reading, setReading] = useState(false);
@@ -98,7 +110,8 @@ const SongEditor = () => {
   const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
   const [commentsColumn, setCommentsColumn] = useState(false);
   const [previewType, setPreviewType] = useState<TPreviewType>('split');
-  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: song.verses });
+  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: songEdit.verses });
+  const [confirmTextDialog, setConfirmTextDialog] = useState(false);
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -166,13 +179,9 @@ const SongEditor = () => {
     }
   };
 
-  const handlePreviousStep = () => {
-    updateStep(-1);
-  };
-
-  const handleNextStep = () => {
-    // editor && setSong({ ...song, verses: rootNodeToSong(editor.$doc.node, editor.schema) }); TODO
-    updateStep(1);
+  const handleStepChange = (inc: number) => {
+    editor && setSongEdit({ ...songEdit, verses: rootNodeToSong(editor.$doc.node, editor.schema) });
+    updateStep(inc);
   };
 
   return (
@@ -512,13 +521,50 @@ const SongEditor = () => {
         }
       />
       <Stack direction="row" gap={1} justifyContent="right">
-        <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
+        <Button variant="outlined" size="large" onClick={() => handleStepChange(-1)} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
-        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => {
+            if (textEdit) handleStepChange(1);
+            else setConfirmTextDialog(true);
+          }}
+          endIcon={<Check />}
+        >
           Dalej
         </Button>
       </Stack>
+      <Dialog open={confirmTextDialog} onClose={() => setConfirmTextDialog(false)}>
+        <DialogTitle>Potwierdź zmiany w tekście</DialogTitle>
+        <DialogContent>
+          Jeżeli świadomie zrobiłeś/aś zmiany w tekście/akordach (nie licząc tonacji), to kliknij „Zapisz”. Jest to
+          tylko zabezpieczenie, jakbyś przypadkiem nieświadomie coś naklikał(a).
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setTextEdit(false);
+              handleStepChange(1);
+            }}
+            startIcon={<CancelOutlined />}
+          >
+            Odrzuć
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setTextEdit(true);
+              handleStepChange(1);
+            }}
+            endIcon={<SaveOutlined />}
+          >
+            Zapisz
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 };

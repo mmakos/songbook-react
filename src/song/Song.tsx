@@ -10,6 +10,7 @@ import SongContent from './SongContent.tsx';
 import SongVideo from './SongVideo.tsx';
 import SongControls from './SongControls.tsx';
 import { ISong } from '../types/song.types.ts';
+import WaitingEditsInfo from './WaitingEditsInfo.tsx';
 
 const Song: FC<{ song?: ISong }> = ({ song }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
@@ -39,6 +40,7 @@ const Song: FC<{ song?: ISong }> = ({ song }) => {
         <Stack padding="0.5em 1em">
           {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
           {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
+          {song && <WaitingEditsInfo waiting={song} routeTo={`/song/${song.slug}`} />}
         </Stack>
       </Paper>
     </div>

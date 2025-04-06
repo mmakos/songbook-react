@@ -8,15 +8,16 @@ import { IBand } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
 import EditorInfo from '../song/EditorInfo.tsx';
 import RouteIconButton from '../components/RouteIconButton.tsx';
-import { Edit } from '@mui/icons-material';
+import { Edit, Verified } from '@mui/icons-material';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
+import BasicTooltip from '../components/BasicTooltip.tsx';
 
 const Band = () => {
   const [band, setBand] = useState<IBand>();
   const [imageUrl, setImageUrl] = useState<string>();
   const { bandSlug, username } = useParams();
-  const { canEdit } = useCanEdit();
+  const { canEdit, canVerify } = useCanEdit();
   const theme = useTheme();
 
   const slugAndUser = `${bandSlug}${username ? '/' + username : ''}`;
@@ -47,9 +48,18 @@ const Band = () => {
       <Typography variant="h4" mb="0.5rem" display="flex">
         {band.name}
         {canEdit && (
-          <RouteIconButton to={`/edit/band/${slugAndUser}`} sx={{ ml: 'auto' }}>
-            <Edit />
-          </RouteIconButton>
+          <BasicTooltip title="Edytuj zespół" style={{ marginLeft: 'auto' }}>
+            <RouteIconButton to={`/edit/band/${slugAndUser}`}>
+              <Edit />
+            </RouteIconButton>
+          </BasicTooltip>
+        )}
+        {canVerify && (band.waiting || !band.created.verified) && (
+          <BasicTooltip title="Zweryfikuj oczekujące edycje">
+            <RouteIconButton to={`/verify/band/${bandSlug}`}>
+              <Verified />
+            </RouteIconButton>
+          </BasicTooltip>
         )}
       </Typography>
       {band.url && (

@@ -21,7 +21,7 @@ export const validateSource = (source: ISourceData): ISourceValidationErrors | u
 };
 
 interface ISongSourceEditorProps<Source extends ISourceData> {
-  sourceName: string;
+  title: string;
   source: Source;
   setSource: (source: Source) => void;
   deleteSource?: () => void;
@@ -29,7 +29,7 @@ interface ISongSourceEditorProps<Source extends ISourceData> {
 }
 
 const SongSourceEditor = <Source extends ISourceData>({
-  sourceName,
+  title,
   source,
   setSource,
   deleteSource,
@@ -50,7 +50,7 @@ const SongSourceEditor = <Source extends ISourceData>({
   return (
     <Stack gap={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h6">Edytuj źródło „{sourceName}”</Typography>
+        <Typography variant="h6">{title}</Typography>
         {deleteSource && (
           <IconButton onClick={deleteSource}>
             <Delete />

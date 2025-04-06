@@ -5,7 +5,6 @@ const intervalInputRule = () =>
   new InputRule({
     find: /(?:^|\s|\/)[A-Ha-h](?:is|e?s|[#b<>+])?(\d)$/,
     handler: ({ state, range, match }) => {
-      console.log(match);
       const { tr } = state;
       const char = match[1];
       const interval = +char;

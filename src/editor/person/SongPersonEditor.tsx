@@ -25,7 +25,7 @@ export const validatePerson = (person: IPersonData): IPersonValidationErrors | u
 };
 
 interface ISongPersonEditorProps<Person extends IPersonData> {
-  personName: string;
+  title: string;
   person: Person;
   setPerson: (person: Person) => void;
   deletePerson?: () => void;
@@ -33,7 +33,7 @@ interface ISongPersonEditorProps<Person extends IPersonData> {
 }
 
 const SongPersonEditor = <Person extends IPersonData>({
-  personName,
+  title,
   person,
   setPerson,
   deletePerson,
@@ -50,7 +50,7 @@ const SongPersonEditor = <Person extends IPersonData>({
   return (
     <Stack gap={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h6">Edytuj osobę „{personName}”</Typography>
+        <Typography variant="h6">{title}</Typography>
         {deletePerson && (
           <IconButton onClick={deletePerson}>
             <Delete />

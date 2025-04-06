@@ -17,7 +17,7 @@ const MainMenu = () => {
           {downMd ? <DrawerMenu /> : <AppBarMenu />}
           <Search />
           <RandomSong />
-          <RouteIconButton to="settings/" color="inherit">
+          <RouteIconButton to="/settings" color="inherit">
             <SettingsIcon />
           </RouteIconButton>
         </Toolbar>

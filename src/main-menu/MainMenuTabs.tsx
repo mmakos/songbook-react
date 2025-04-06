@@ -8,6 +8,7 @@ import { Category } from '../types/song.types.ts';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import CategoryIcon from '../category/CategoryIcon.tsx';
 import UserMenu from "../user/UserMenu.tsx";
+import useCanEdit from "../store/useCanEdit.hook.ts";
 
 interface IMainMenuTabsProps {
   type: TMenuType;
@@ -17,6 +18,7 @@ interface IMainMenuTabsProps {
 const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
   const [songsExpanded, setSongsExpanded] = useState(false);
   const [extrasExpanded, setExtrasExpanded] = useState(false);
+  const {canVerify} = useCanEdit();
 
   const handleSongsClose = () => {
     close();
@@ -39,6 +41,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         setExpanded={setSongsExpanded}
       >
         <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
+        {canVerify && <MainMenuSubItem type={type} text="Poczekalnia" routeTo="/songs/?w=1" close={handleSongsClose} />}
         <Divider variant="middle" />
         {Object.values(Category).map((category: Category) => (
           <MainMenuSubItem
@@ -90,7 +93,6 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         />
       </MainMenuGroup>
       <UserMenu type={type} close={close}/>
-      {/*<MainMenuItem type={type} text={'Kontakt'} icon={<Call />} close={close} routeTo="/contact"/>*/}
     </>
   );
 };

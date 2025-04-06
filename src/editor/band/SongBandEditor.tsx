@@ -18,7 +18,7 @@ export const validateBand = (band: IBandData): IBandValidationErrors | undefined
 };
 
 interface ISongBandEditorProps<Band extends IBandData> {
-  bandName: string;
+  title: string;
   band: Band;
   setBand: (band: Band) => void;
   deleteBand?: () => void;
@@ -26,7 +26,7 @@ interface ISongBandEditorProps<Band extends IBandData> {
 }
 
 const SongBandEditor = <Band extends IBandData>({
-  bandName,
+  title,
   band,
   setBand,
   deleteBand,
@@ -38,7 +38,7 @@ const SongBandEditor = <Band extends IBandData>({
   return (
     <Stack gap={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h6">Edytuj zespół „{bandName}”</Typography>
+        <Typography variant="h6">{title}</Typography>
         {deleteBand && (
           <IconButton onClick={deleteBand}>
             <Delete />

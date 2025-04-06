@@ -56,7 +56,6 @@ const AccountInfo = () => {
     authAPI
       .post('auth/logout/', undefined, { withCredentials: true })
       .then(() => {
-        console.log('NOTIFY SUCCESS');
         dispatch(notifySuccess('Zostałeś poprawnie wylogowany'));
         navigate('/login');
       })

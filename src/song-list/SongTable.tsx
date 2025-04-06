@@ -108,6 +108,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
   const page = strToNumber(params.get('p'), 0);
   const pageSize = strToNumber(params.get('s'), 25);
   const sortField = params.get('f');
+  const waiting = params.get('w');
   const sortDir: GridSortDirection = (params.get('o') as GridSortDirection) ?? 'asc';
 
   const sortModel: GridSortModel = useMemo(() => {
@@ -150,6 +151,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
               band__slug: band,
               person: person,
               source: source,
+              waiting: waiting,
             },
       });
       setSongs(response.data.results);

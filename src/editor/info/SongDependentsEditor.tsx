@@ -120,8 +120,6 @@ const SongDependentsEditor = () => {
     updatePeople(songEdit.translation?.new, people);
     updatePeople(songEdit.performer?.new, people);
 
-    console.log(songEdit)
-
     setSongEdit({ ...songEdit });
   };
 
@@ -144,7 +142,7 @@ const SongDependentsEditor = () => {
         {Object.entries(people).map(([id, person]) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`person-${id}`}>
             <SongPersonEditor
-              personName={id}
+              title={`Edytuj osobę „${id}”`}
               person={person}
               setPerson={(p) => setPerson(id, p)}
               deletePerson={() => deletePerson(id)}
@@ -155,7 +153,7 @@ const SongDependentsEditor = () => {
         {Object.entries(sources).map(([name, source]) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`source-${name}`}>
             <SongSourceEditor
-              sourceName={name}
+              title={`Edytuj źródło „${name}”`}
               source={source}
               setSource={(s) => setSource(name, s)}
               deleteSource={() => deleteSource(name)}
@@ -166,7 +164,7 @@ const SongDependentsEditor = () => {
         {band && (
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <SongBandEditor
-              bandName={'' + songEdit.band?.new?.name}
+              title={`Edytuj zespół „${songEdit.band?.new?.name}”`}
               band={band}
               setBand={setBand}
               deleteBand={deleteBand}

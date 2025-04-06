@@ -38,3 +38,14 @@ export const validateHttpURL = (url?: string): { url?: string } => {
   }
   return {};
 };
+
+export const validateChanged = (entityData: object, originalEntity: object): boolean => {
+  for (const data in entityData) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    if (entityData[data] !== originalEntity[data]) {
+      return true;
+    }
+  }
+  return false;
+};

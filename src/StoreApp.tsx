@@ -26,8 +26,11 @@ import AccountInfo from './user/AccountInfo.tsx';
 import ProtectedRoute from './ProtectedRoute.tsx';
 import useAuthAPI from './http/useAuthAPI.ts';
 import { AxiosResponse } from 'axios';
-import { IUserResponse, mapResponseToUser } from './user/user.types.ts';
+import { IUser, UserType } from './user/user.types.ts';
 import { setUser } from './store/songbook.reducer.ts';
+import VerifyBand from './verify/VerifyBand.tsx';
+import VerifySource from './verify/VerifySource.tsx';
+import VerifyPerson from './verify/VerifyPerson.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -56,6 +59,11 @@ const router = createBrowserRouter(
         <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
         <Route path="/edit/source/:sourceSlug/:username?" element={<SourceEdit />} />
       </Route>
+      <Route element={<ProtectedRoute types={[UserType.SITH, UserType.JEDI]} />}>
+        <Route path="/verify/band/:slug" element={<VerifyBand />} />
+        <Route path="/verify/person/:slug" element={<VerifyPerson />} />
+        <Route path="/verify/source/:slug" element={<VerifySource />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Route>
   )
@@ -70,7 +78,7 @@ const StoreApp = () => {
   useEffect(() => {
     authAPI
       .get('auth/account/')
-      .then((response: AxiosResponse<IUserResponse>) => dispatch(setUser(mapResponseToUser(response.data))))
+      .then((response: AxiosResponse<IUser>) => dispatch(setUser(response.data)))
       .catch(() => dispatch(setUser(null)));
   }, []);
 
