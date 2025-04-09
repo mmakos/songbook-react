@@ -27,10 +27,10 @@ jobs:
       - name: Deploy via SFTP
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
+          host: ${{ vars.SSH_HOST }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist/*"
-          target: ${{ secrets.SSH_TARGET }}
+          target: ${{ vars.SSH_TARGET }}
           strip_components: 1
