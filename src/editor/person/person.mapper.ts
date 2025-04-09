@@ -1,9 +1,9 @@
-import { IAuthorEdit, IPerson, IPersonData } from '../../types/song.types.ts';
+import { IAuthorEdit, IPersonData, IPersonOverview } from '../../types/song.types.ts';
 import { parsePersonName } from '../../author/author.utils.ts';
 
 export type IEditedPerson = IPersonData & { id: string };
 
-export const personToPersonData = (person: IPerson): IPersonData => ({
+export const personToPersonData = (person: IPersonData): IPersonData => ({
   name: person.name,
   secondName: person.secondName,
   lastName: person.lastName,
@@ -14,7 +14,7 @@ export const personToPersonData = (person: IPerson): IPersonData => ({
 });
 
 export const splitToNewAndExistingPerson = (
-  people: (IPerson | string)[],
+  people: (IPersonOverview | string)[],
   current?: IAuthorEdit<IEditedPerson>
 ): IAuthorEdit<IEditedPerson> | undefined => {
   const news: IEditedPerson[] = [];
@@ -22,7 +22,7 @@ export const splitToNewAndExistingPerson = (
   for (const person of people) {
     if (typeof person === 'string') {
       const currentNew = current?.new?.find((e) => e.id === person);
-      news.push(currentNew ?? {...parsePersonName(person), id: person});
+      news.push(currentNew ?? { ...parsePersonName(person), id: person });
     } else {
       existing.push(person.slug);
     }
@@ -36,9 +36,9 @@ export const splitToNewAndExistingPerson = (
 
 export const getPersonFromSongEdit = (
   personEdit?: IAuthorEdit<IEditedPerson>,
-  songPerson?: IPerson[]
-): (IPerson | string)[] => {
-  const result: (IPerson | string)[] = [];
+  songPerson?: IPersonOverview[]
+): (IPersonOverview | string)[] => {
+  const result: (IPersonOverview | string)[] = [];
   personEdit?.existing?.forEach((e) => {
     const found = songPerson?.find((s) => s.slug === e);
     found && result.push(found);

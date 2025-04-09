@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Category, IBand, IPerson, ISongEdit, ISource } from '../../types/song.types.ts';
+import { Category, IBandOverview, IPersonOverview, ISongEdit, ISourceOverview } from '../../types/song.types.ts';
 import { getCategoryDisplayName } from '../../category/category.utils.ts';
 import { personAsString } from '../../author/author.utils.ts';
 import Grid from '@mui/material/Grid2';
@@ -51,18 +51,22 @@ const SongInfoEditor = () => {
   const [title, setTitle] = useState(songEdit.title);
   const [altTitle, setAltTitle] = useState(songEdit?.altTitle ?? '');
   const [category, setCategory] = useState(songEdit.category);
-  const [lyrics, setLyrics] = useState<(IPerson | string)[]>(getPersonFromSongEdit(songEdit.lyrics, song.lyrics));
-  const [composer, setComposer] = useState<(IPerson | string)[]>(
+  const [lyrics, setLyrics] = useState<(IPersonOverview | string)[]>(
+    getPersonFromSongEdit(songEdit.lyrics, song.lyrics)
+  );
+  const [composer, setComposer] = useState<(IPersonOverview | string)[]>(
     getPersonFromSongEdit(songEdit.composer, song.composer)
   );
-  const [translation, setTranslation] = useState<(IPerson | string)[]>(
+  const [translation, setTranslation] = useState<(IPersonOverview | string)[]>(
     getPersonFromSongEdit(songEdit.translation, song.translation)
   );
-  const [performer, setPerformer] = useState<(IPerson | string)[]>(
+  const [performer, setPerformer] = useState<(IPersonOverview | string)[]>(
     getPersonFromSongEdit(songEdit.performer, song.performer)
   );
-  const [band, setBand] = useState<IBand | string | null>(() => getBandFromSongEdit(songEdit.band, song.band));
-  const [source, setSource] = useState<(ISource | string)[]>(getSourceFromSongEdit(songEdit.source, song.source));
+  const [band, setBand] = useState<IBandOverview | string | null>(() => getBandFromSongEdit(songEdit.band, song.band));
+  const [source, setSource] = useState<(ISourceOverview | string)[]>(
+    getSourceFromSongEdit(songEdit.source, song.source)
+  );
   const [videos, setVideos] = useState<string[]>(songEdit.video ?? []);
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});

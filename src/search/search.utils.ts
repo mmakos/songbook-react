@@ -1,4 +1,11 @@
-import { AuthorCategory, Category, IBand, IPerson, ISongOverview, ISource } from '../types/song.types.ts';
+import {
+  AuthorCategory,
+  Category,
+  IBandOverview,
+  IPersonOverview,
+  ISongOverview,
+  ISourceOverview,
+} from '../types/song.types.ts';
 import { personAsString } from '../author/author.utils.ts';
 import { compareCategory } from '../category/category.utils.ts';
 import { IFastSearch } from './search.types.ts';
@@ -32,7 +39,7 @@ export const getSearchItemUrl = (searchItem: ISearchItem): string => {
   }
 };
 
-const bandToSearchItem = (band: IBand): ISearchItem => {
+const bandToSearchItem = (band: IBandOverview): ISearchItem => {
   return {
     displayName: band.name,
     slug: band.slug,
@@ -40,7 +47,7 @@ const bandToSearchItem = (band: IBand): ISearchItem => {
   };
 };
 
-const sourceToSearchItem = (source: ISource): ISearchItem => {
+const sourceToSearchItem = (source: ISourceOverview): ISearchItem => {
   return {
     displayName: source.name,
     slug: source.slug,
@@ -48,7 +55,7 @@ const sourceToSearchItem = (source: ISource): ISearchItem => {
   };
 };
 
-const personToSearchItem = (person: IPerson): ISearchItem => {
+const personToSearchItem = (person: IPersonOverview): ISearchItem => {
   return {
     displayName: personAsString(person),
     slug: person.slug,
@@ -66,8 +73,8 @@ const songToSearchItem = (song: ISongOverview): ISearchItem => {
 
 const compare = (a: ISearchItem, b: ISearchItem) => {
   return a.displayName.localeCompare(b.displayName);
-}
+};
 
 const compareWithCategory = (a: ISearchItem, b: ISearchItem) => {
   return compareCategory(a.category as Category, b.category as Category) ?? compare(a, b);
-}
+};

@@ -1,6 +1,6 @@
-import { IAuthorEdit, ISource, ISourceData, SourceType } from '../../types/song.types.ts';
+import { IAuthorEdit, ISourceData, ISourceOverview, SourceType } from '../../types/song.types.ts';
 
-export const sourceToSourceData = (source: ISource): ISourceData => ({
+export const sourceToSourceData = (source: ISourceData): ISourceData => ({
   name: source.name,
   url: source.url,
   year: source.year,
@@ -8,7 +8,7 @@ export const sourceToSourceData = (source: ISource): ISourceData => ({
 });
 
 export const splitToNewAndExistingSource = (
-  sources: (ISource | string)[],
+  sources: (ISourceOverview | string)[],
   current?: IAuthorEdit<ISourceData>
 ): IAuthorEdit<ISourceData> | undefined => {
   const news: ISourceData[] = [];
@@ -35,9 +35,9 @@ export const splitToNewAndExistingSource = (
 
 export const getSourceFromSongEdit = (
   sourceEdit?: IAuthorEdit<ISourceData>,
-  songSource?: ISource[]
-): (ISource | string)[] => {
-  const result: (ISource | string)[] = [];
+  songSource?: ISourceOverview[]
+): (ISourceOverview | string)[] => {
+  const result: (ISourceOverview | string)[] = [];
   sourceEdit?.existing?.forEach((e) => {
     const found = songSource?.find((s) => s.slug === e);
     found && result.push(found);
