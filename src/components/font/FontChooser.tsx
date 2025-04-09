@@ -1,4 +1,4 @@
-import { FormControl, InputAdornment, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { FormControl, InputAdornment, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { FC } from 'react';
 import NumberField from '../NumberField.tsx';
 
@@ -40,7 +40,7 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
   };
 
   return (
-    <div style={{ display: 'flex', maxWidth: maxWidth }}>
+    <Stack direction="row" maxWidth={maxWidth}>
       <FormControl fullWidth>
         <InputLabel id="font-select-label">Czcionka</InputLabel>
         <Select
@@ -68,7 +68,7 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
           input: { endAdornment: <InputAdornment position="end">px</InputAdornment> },
         }}
       />
-    </div>
+    </Stack>
   );
 };
 

@@ -1,29 +1,35 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
-import { Category, IBand, IPerson, ISong, ISource } from '../types/song.types.ts';
+import { ISong, ISongEdit } from '../types/song.types.ts';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { useParams } from 'react-router';
 import { getSong } from '../store/songbook.actions.ts';
 
-export type EditedDependent<Dependent> = Dependent & { edited?: boolean };
+export type EditedDependent<Dependent> = Dependent & { editing?: boolean };
 
-export interface ISongInfo {
-  title: string;
-  altTitle: string;
-  category: Category;
-  lyrics: (EditedDependent<IPerson> | string)[];
-  composer: (EditedDependent<IPerson> | string)[];
-  translation: (EditedDependent<IPerson> | string)[];
-  performer: (EditedDependent<IPerson> | string)[];
-  band: EditedDependent<IBand> | string | null;
-  source: (EditedDependent<ISource> | string)[];
-  videos: string[];
-}
+export const songToSongEdit = (song: ISong): ISongEdit => {
+  const edit: ISongEdit = {
+    title: song.title,
+    altTitle: song.altTitle,
+    category: song.category,
+    key: song.key,
+    verses: song.verses,
+    video: song.video,
+  };
+  if (song.lyrics?.length) edit.lyrics = { existing: song.lyrics.map((p) => p.slug) };
+  if (song.composer?.length) edit.composer = { existing: song.composer.map((p) => p.slug) };
+  if (song.translation?.length) edit.translation = { existing: song.translation.map((p) => p.slug) };
+  if (song.performer?.length) edit.performer = { existing: song.performer.map((p) => p.slug) };
+  if (song.source?.length) edit.source = { existing: song.source.map((s) => s.slug) };
+  if (song.band) edit.band = { existing: song.band.slug };
 
-export interface ISongEditContextProps {
-  song?: ISong;
+  return edit;
+};
+
+export interface ISongEditContextProps<Optional extends boolean = false> {
+  // Oryginalna piosenka
+  song: Optional extends true ? ISong | undefined : ISong;
   songTimeout: boolean;
   songSlug?: string;
-  setSong: (song: ISong) => void;
   needsAuthorEdit: boolean;
   setNeedsAuthorEdit: (needs: boolean) => void;
   activeStep: number;
@@ -31,37 +37,53 @@ export interface ISongEditContextProps {
   initial: boolean;
   setInitial: (initial: boolean) => void;
 
-  songInfo?: ISongInfo;
-  setSongInfo: (info: ISongInfo) => void;
+  resetSongInfo: () => void;
+
+  // Edycja piosenki (w wersji ostatecznej, jeśli chodzi o informacje)
+  songEdit: Optional extends true ? ISongEdit | undefined : ISongEdit;
+  setSongEdit: (songEdit: ISongEdit) => void;
+  textEdit: boolean;
+  setTextEdit: (edit: boolean) => void;
 }
 
-const SongEditContextComponent = (): ISongEditContextProps => {
+const SongEditContextComponent = (): ISongEditContextProps<true> => {
   const globalSong = useAppSelector((state) => state.song);
   const [initial, setInitial] = useState(true);
   const [song, setSong] = useState<ISong>();
+  const [songEdit, setSongEdit] = useState<ISongEdit>();
   const [songTimeout, setSongTimeout] = useState(false);
   const [needsAuthorEdit, setNeedsAuthorEdit] = useState(false);
-  const [songInfo, setSongInfo] = useState<ISongInfo>();
   const [activeStep, setActiveStep] = useState(0);
+  const [textEdit, setTextEdit] = useState(false);
 
   const { songSlug } = useParams();
   const dispatch = useAppDispatch();
 
+  const handleSetSong = (song?: ISong) => {
+    setSong(song);
+    setSongTimeout(song === undefined);
+    setSongEdit(song && songToSongEdit(song));
+  };
+
+  const resetSongInfo = () => {
+    if (song && songEdit) {
+      const newEdit = songToSongEdit(song);
+      newEdit.verses = songEdit.verses;
+      setSongEdit(newEdit);
+    }
+  };
+
   useEffect(() => {
     if (globalSong?.slug === songSlug) {
-      setSong(globalSong);
+      handleSetSong(globalSong);
     } else if (songSlug) {
       setSongTimeout(false);
       dispatch(getSong(songSlug))
         .unwrap()
-        .then(setSong)
-        .catch(() => {
-          setSong(undefined);
-          setSongTimeout(true);
-        });
+        .then(handleSetSong)
+        .catch(() => handleSetSong());
     } else {
-      setSongTimeout(true);
-      setSong(undefined);
+      handleSetSong();
     }
     setInitial(true);
     setActiveStep(0);
@@ -75,7 +97,6 @@ const SongEditContextComponent = (): ISongEditContextProps => {
     song,
     songTimeout,
     songSlug,
-    setSong,
     activeStep,
     updateStep,
     needsAuthorEdit,
@@ -83,15 +104,20 @@ const SongEditContextComponent = (): ISongEditContextProps => {
     initial,
     setInitial,
 
-    songInfo,
-    setSongInfo,
+    resetSongInfo,
+
+    songEdit,
+    setSongEdit,
+    textEdit,
+    setTextEdit,
   };
 };
 
-const SongEditContext = createContext({} as ISongEditContextProps);
+const SongEditContext = createContext({} as ISongEditContextProps<true>);
 
 export const SongEditContextProvider = ({ children }: PropsWithChildren) => {
   return <SongEditContext.Provider value={SongEditContextComponent()}>{children}</SongEditContext.Provider>;
 };
 
-export const useSongEditContext = () => useContext(SongEditContext);
+export const useOptionalSongEditContext = () => useContext(SongEditContext);
+export const useSongEditContext = useOptionalSongEditContext as unknown as () => ISongEditContextProps;

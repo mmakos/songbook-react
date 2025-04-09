@@ -1,9 +1,11 @@
-import { Autocomplete, CircularProgress, TextField } from '@mui/material';
+import { Autocomplete, Chip, CircularProgress, TextField } from '@mui/material';
 import { useState } from 'react';
+import useCanEdit from '../../store/useCanEdit.hook.ts';
 
 interface ISongInfoAutocompleteProps<Info extends { slug: string }, Multiple extends boolean | undefined> {
   value: Multiple extends true ? (Info | string)[] : Info | string | null;
   setValue: (value: Multiple extends true ? (Info | string)[] : Info | string | null) => void;
+  fixedValues: Multiple extends true ? Info[] : Info | undefined;
   getOptionLabel: (option: Info | string) => string;
   multiple?: Multiple;
   inputLabel: string;
@@ -15,6 +17,7 @@ interface ISongInfoAutocompleteProps<Info extends { slug: string }, Multiple ext
 const SongInfoAutocomplete = <Info extends { slug: string }, Multiple extends boolean | undefined = false>({
   value,
   setValue,
+  fixedValues,
   getOptionLabel,
   multiple,
   inputLabel,
@@ -25,9 +28,11 @@ const SongInfoAutocomplete = <Info extends { slug: string }, Multiple extends bo
   const [options, setOptions] = useState<Info[]>();
   const [load, setLoad] = useState(false);
   const [query, setQuery] = useState<string>('');
+  const { canRemove } = useCanEdit();
 
   return (
     <Autocomplete
+      disabled={!canRemove && !multiple && !!fixedValues}
       limitTags={1}
       multiple={multiple}
       clearOnBlur
@@ -54,6 +59,23 @@ const SongInfoAutocomplete = <Info extends { slug: string }, Multiple extends bo
             setLoad(false);
           });
       }}
+      renderTags={(tagValue, getTagProps) =>
+        tagValue.map((option, index) => {
+          const { key, ...tagProps } = getTagProps({ index });
+          return (
+            <Chip
+              key={key}
+              label={getOptionLabel(option)}
+              {...tagProps}
+              disabled={
+                !canRemove &&
+                typeof option !== 'string' &&
+                !!(fixedValues as Info[]).find((o) => o.slug === option.slug)
+              }
+            />
+          );
+        })
+      }
       renderInput={(params) => (
         <TextField
           {...params}

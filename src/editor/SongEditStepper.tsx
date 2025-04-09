@@ -4,12 +4,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Stack,
   Step,
   StepLabel,
   Stepper,
   Typography,
 } from '@mui/material';
-import { useSongEditContext } from './SongEditContext.tsx';
+import { useOptionalSongEditContext } from './SongEditContext.tsx';
 import SongInfoEditor from './info/SongInfoEditor.tsx';
 import SongEditor from './text/SongEditor.tsx';
 import SongDependentsEditor from './info/SongDependentsEditor.tsx';
@@ -18,12 +19,22 @@ import SongEditSummary from './summary/SongEditSummary.tsx';
 // @ts-expect-error
 import ReactRouterPrompt from 'react-router-prompt';
 import AlertTransition from '../components/AlertTransition.tsx';
+import NotFound from '../subsites/NotFound.tsx';
+import Progress from '../components/Progress.tsx';
 
 const SongEditStepper = () => {
-  const { activeStep, needsAuthorEdit } = useSongEditContext();
+  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout } = useOptionalSongEditContext();
+
+  if (!song || !songEdit) {
+    if (songTimeout) {
+      return <NotFound />;
+    } else {
+      return <Progress />;
+    }
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', width: '100%' }}>
+    <Stack gap={2} width="100%">
       <ReactRouterPrompt when={true}>
         {({ isActive, onConfirm, onCancel }: { isActive: boolean; onConfirm: () => void; onCancel: () => void }) => (
           <Dialog open={isActive} TransitionComponent={AlertTransition}>
@@ -67,7 +78,7 @@ const SongEditStepper = () => {
       {needsAuthorEdit && activeStep === 1 && <SongDependentsEditor />}
       {activeStep === (needsAuthorEdit ? 2 : 1) && <SongEditor />}
       {activeStep === (needsAuthorEdit ? 3 : 2) && <SongEditSummary />}
-    </div>
+    </Stack>
   );
 };
 

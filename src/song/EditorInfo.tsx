@@ -3,7 +3,8 @@ import { Typography } from '@mui/material';
 import { FC } from 'react';
 import { IEditorInfo } from '../types/song.types.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import UserIcon from '../user/VerifiedUser.tsx';
+import VerifiedUserTooltip from '../user/VerifiedUserTooltip.tsx';
+import VerifiedUserIcon from '../components/icon/VerifiedUserIcon.tsx';
 
 interface IEditorInfoProps {
   prefix: string;
@@ -11,7 +12,7 @@ interface IEditorInfoProps {
 }
 
 const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
-  const date = new Date(editorInfo.time);
+  const date = new Date(editorInfo.time * 1000);
   return (
     <Typography variant="caption" color="textSecondary" sx={{ display: 'flex', alignItems: 'center' }}>
       {editorInfo.verified && (
@@ -29,8 +30,10 @@ const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
         </>
       )}
       &nbsp;przez&nbsp;
-      <UserIcon userType={editorInfo.type} color="success" sx={{ mr: '0.3em' }} fontSize="inherit" />
-      {editorInfo.name}
+      <VerifiedUserTooltip userType={editorInfo.type} style={{ marginRight: '0.3em' }}>
+        <VerifiedUserIcon userType={editorInfo.type} color="success" fontSize="inherit" />
+      </VerifiedUserTooltip>
+      {editorInfo.name ?? 'Nieznany użytkownik'}
     </Typography>
   );
 };

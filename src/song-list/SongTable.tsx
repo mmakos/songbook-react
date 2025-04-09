@@ -10,7 +10,7 @@ import {
 import { FC, useEffect, useMemo, useState } from 'react';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import muiDataGridPL from '../components/MuiDataGridPL.ts';
-import { HttpService } from '../http/http.service.ts';
+import { api } from '../http/api.ts';
 import RouteLink from '../components/RouteLink.tsx';
 import ArtistsTableCell from './ArtistsTableCell.tsx';
 import SourcesTableCell from './SourcesTableCell.tsx';
@@ -108,7 +108,8 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
   const page = strToNumber(params.get('p'), 0);
   const pageSize = strToNumber(params.get('s'), 25);
   const sortField = params.get('f');
-  const sortDir: GridSortDirection = params.get('o') as GridSortDirection ?? 'asc';
+  const waiting = params.get('w');
+  const sortDir: GridSortDirection = (params.get('o') as GridSortDirection) ?? 'asc';
 
   const sortModel: GridSortModel = useMemo(() => {
     return sortField ? [{ field: sortField, sort: sortDir }] : [];
@@ -139,9 +140,8 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
         }
       }
       const url = query ? `search/` : 'songs/';
-      const response = await HttpService.get(
-        url,
-        query
+      const response = await api.get(url, {
+        params: query
           ? { q: query }
           : {
               page: page + 1,
@@ -151,8 +151,9 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
               band__slug: band,
               person: person,
               source: source,
-            }
-      );
+              waiting: waiting,
+            },
+      });
       setSongs(response.data.results);
       setRowCount(response.data.count ?? 0);
       await apiRef.current.autosizeColumns({ expand: true });

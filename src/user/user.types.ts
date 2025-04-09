@@ -1,11 +1,26 @@
 export interface IUser {
   username: string;
-  type: UserType;
+  email: string;
+  firstName: string;
+  lastName: string;
+  type?: UserType;
 }
 
 export enum UserType {
-  OWNER = 'owner',
-  BOT = 'bot',
-  VERIFIED = 'verified',
-  NORMAL = 'user',
+  SITH = 'Sith',
+  JEDI = 'Jedi',
+  DROID = 'Droid',
+  CLONE = 'Clone',
+}
+
+export interface ILoginResponse {
+  access: string;
+  user: IUser;
+}
+
+export interface IUserResponse {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
 }

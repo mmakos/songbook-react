@@ -1,4 +1,4 @@
-import { ClickAwayListener, Collapse, FormControlLabel, IconButton, Paper, Switch } from '@mui/material';
+import { ClickAwayListener, Collapse, FormControlLabel, IconButton, Paper, Stack, Switch } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { Close, ExpandMore, SaveOutlined } from '@mui/icons-material';
 import { FC, useState } from 'react';
@@ -53,12 +53,12 @@ const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
                 onReset={() => dispatch(resetTransposition())}
               />
             )}
-            <div style={{ display: 'flex', margin: '0.5em 0' }}>
+            <Stack direction="row" my="0.5em" justifyContent="space-between">
               <ChordDifficultyPreset
                 chordDifficulty={chordDifficulty}
                 changeDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}
               />
-              <IconButton sx={{ ml: 'auto' }} onClick={() => setMoreSettings(!moreSettings)} size="small">
+              <IconButton onClick={() => setMoreSettings(!moreSettings)} size="small">
                 <ExpandMore
                   sx={{
                     rotate: moreSettings ? '180deg' : 0,
@@ -67,14 +67,13 @@ const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
                   }}
                 />
               </IconButton>
-            </div>
+            </Stack>
             <Collapse in={moreSettings}>
               <ChordDifficulty
                 chordDifficulty={chordDifficulty}
                 changeDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}
               />
             </Collapse>
-
             <div style={{ position: 'absolute', top: '0.2em', right: '0.2em' }}>
               <BasicTooltip title="Zapisz ustawienia globalnie">
                 <IconButton onClick={() => dispatch(updateGlobalSettingsWithSongSettings())} size="small">

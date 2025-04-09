@@ -1,13 +1,15 @@
 import KeyChooser from '../../circle-of-fifths/KeyChooser.tsx';
-import { useState } from 'react';
-import { IKey } from '../../types/song.types.ts';
 import Grid from '@mui/material/Grid2';
+import { useSongEditContext } from '../SongEditContext.tsx';
+import { IKey, ISongKey } from '../../types/song.types.ts';
 
 const SongKeysChooser = () => {
-  const [songbookKey, setSongbookKey] = useState<IKey>();
-  const [originalKey, setOriginalKey] = useState<IKey>();
-  const [comfortKey, setComfortKey] = useState<IKey>();
-  const [maxComfortKey, setMaxComfortKey] = useState<IKey>();
+  const { songEdit, setSongEdit } = useSongEditContext();
+
+  const changeKey = (name: string) => (key?: IKey) => {
+    const editKey: ISongKey = songEdit.key ?? ({} as ISongKey);
+    setSongEdit({ ...songEdit, key: { ...editKey, [name]: key } });
+  };
 
   return (
     <div>
@@ -18,8 +20,8 @@ const SongKeysChooser = () => {
             label="Tonacja w śpiewniku"
             helperText="W jakiej tonacji wpisałeś akordy"
             required
-            chosenKey={songbookKey}
-            setChosenKey={setSongbookKey}
+            chosenKey={songEdit.key?.songbook}
+            setChosenKey={changeKey("songbook")}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -27,17 +29,17 @@ const SongKeysChooser = () => {
             fullWidth
             label="Tonacja oryginalna"
             helperText="Najlepiej z nagrania, które załączyłeś"
-            chosenKey={originalKey}
-            setChosenKey={setOriginalKey}
+            chosenKey={songEdit.key?.original}
+            setChosenKey={changeKey("original")}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <KeyChooser
             fullWidth
-            label={maxComfortKey ? 'Minimalna tonacja' : 'Tonacja komfortowa'}
-            helperText={`${maxComfortKey ? 'Minimalna p' : 'P'}roponowana przez ciebie tonacja`}
-            chosenKey={comfortKey}
-            setChosenKey={setComfortKey}
+            label={songEdit.key?.maxComfort ? 'Minimalna tonacja' : 'Tonacja komfortowa'}
+            helperText={`${songEdit.key?.maxComfort ? 'Minimalna p' : 'P'}roponowana przez ciebie tonacja`}
+            chosenKey={songEdit.key?.comfort}
+            setChosenKey={changeKey("comfort")}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -45,8 +47,8 @@ const SongKeysChooser = () => {
             fullWidth
             label="Maksymalna tonacja"
             helperText="Maksymalna proponowana przez ciebie tonacja"
-            chosenKey={maxComfortKey}
-            setChosenKey={setMaxComfortKey}
+            chosenKey={songEdit.key?.maxComfort}
+            setChosenKey={changeKey("maxComfort")}
           />
         </Grid>
       </Grid>

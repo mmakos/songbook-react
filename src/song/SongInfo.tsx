@@ -145,7 +145,7 @@ const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
                   sx={{ textTransform: 'none', padding: '0 4px', ml: '0.3em' }}
                   onClick={() => dispatch(transposeToComfort())}
                 >
-                  {keyAsString(song.key.comfort)}
+                  {keyAsString(song.key.comfort)}{song.key.maxComfort && " - " + keyAsString(song.key.maxComfort)}
                 </Button>
               </BasicTooltip>
             </>

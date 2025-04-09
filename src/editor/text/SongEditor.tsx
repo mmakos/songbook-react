@@ -8,11 +8,22 @@ import InputRules from './InputRules.ts';
 import { TableRow } from '@tiptap/extension-table-row';
 import songToHTML from '../converter/songToHTML.converter.ts';
 import Piano from '../../piano/Piano.tsx';
-import { Button, Collapse, ToggleButton, Typography } from '@mui/material';
+import {
+  Button,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  ToggleButton,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import {
   Autorenew,
   BackspaceOutlined,
+  CancelOutlined,
   Check,
   FormatIndentDecrease,
   FormatIndentIncrease,
@@ -30,6 +41,7 @@ import {
   Redo,
   Reorder,
   Report,
+  SaveOutlined,
   Sync,
   Undo,
   VerticalSplitOutlined,
@@ -68,7 +80,7 @@ import SongKeysChooser from './SongKeysChooser.tsx';
 type TPreviewType = 'editor' | 'split' | 'preview';
 
 const SongEditor = () => {
-  const { song, updateStep, setSong } = useSongEditContext();
+  const { updateStep, setSongEdit, songEdit, textEdit, setTextEdit } = useSongEditContext();
   const editor = useEditor({
     extensions: [
       Text,
@@ -89,7 +101,7 @@ const SongEditor = () => {
       Indent,
       PreventCellDrag,
     ],
-    content: songToHTML(song!.verses),
+    content: songToHTML(songEdit.verses),
   });
   const [pianoOpen, setPianoOpen] = useState(false);
   const [reading, setReading] = useState(false);
@@ -98,7 +110,8 @@ const SongEditor = () => {
   const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
   const [commentsColumn, setCommentsColumn] = useState(false);
   const [previewType, setPreviewType] = useState<TPreviewType>('split');
-  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: song!.verses });
+  const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: songEdit.verses });
+  const [confirmTextDialog, setConfirmTextDialog] = useState(false);
 
   const getSelectedChords = (): IChord[] | undefined => {
     if (!editor) return;
@@ -166,18 +179,14 @@ const SongEditor = () => {
     }
   };
 
-  const handlePreviousStep = () => {
-    updateStep(-1);
-  };
-
-  const handleNextStep = () => {
-    editor && setSong({ ...song!, verses: rootNodeToSong(editor.$doc.node, editor.schema) });
-    updateStep(1);
+  const handleStepChange = (inc: number) => {
+    editor && setSongEdit({ ...songEdit, verses: rootNodeToSong(editor.$doc.node, editor.schema) });
+    updateStep(inc);
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-      <Typography variant="caption" color="info" mb='1em'>
+    <Stack gap={1}>
+      <Typography variant="caption" color="info" mb="1em">
         Uwaga! Niniejszy edytor jest zwykłym edytorem tekstowym zorientowanym na edycję tekstu i akordów w formacie
         używanym w moim śpiewniku. Oznacza to, że posiada on kilka automatyzacji ułatwiających wpisywanie akordów oraz
         kilka blokad uniemożliwiających wprowadzenie danych kompletnie bez sensu. Nie gwarantuje jednak, że wszytko co
@@ -190,7 +199,7 @@ const SongEditor = () => {
       <Collapse in={pianoOpen}>
         <Piano setOpen={setPianoOpen} chordsToPlayProvider={getSelectedChords} />
       </Collapse>
-      <div style={{ display: 'flex' }}>
+      <Stack direction="row">
         <TitledToggleButtonGroup size="small" title="Tekst">
           <BasicTooltip
             title={
@@ -499,7 +508,7 @@ const SongEditor = () => {
           </BasicTooltip>
         </TitledToggleButtonGroup>
         <TitledToggleButtonGroupDivider />
-      </div>
+      </Stack>
       <SplitPane
         initial={65}
         left={previewType !== 'preview' && <StyledEditorContent editor={editor} showGrid={showGrid} />}
@@ -511,15 +520,52 @@ const SongEditor = () => {
           )
         }
       />
-      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
-        <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
+      <Stack direction="row" gap={1} justifyContent="right">
+        <Button variant="outlined" size="large" onClick={() => handleStepChange(-1)} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
-        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => {
+            if (textEdit) handleStepChange(1);
+            else setConfirmTextDialog(true);
+          }}
+          endIcon={<Check />}
+        >
           Dalej
         </Button>
-      </div>
-    </div>
+      </Stack>
+      <Dialog open={confirmTextDialog} onClose={() => setConfirmTextDialog(false)}>
+        <DialogTitle>Potwierdź zmiany w tekście</DialogTitle>
+        <DialogContent>
+          Jeżeli świadomie zrobiłeś/aś zmiany w tekście/akordach (nie licząc tonacji), to kliknij „Zapisz”. Jest to
+          tylko zabezpieczenie, jakbyś przypadkiem nieświadomie coś naklikał(a).
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setTextEdit(false);
+              handleStepChange(1);
+            }}
+            startIcon={<CancelOutlined />}
+          >
+            Odrzuć
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setTextEdit(true);
+              handleStepChange(1);
+            }}
+            endIcon={<SaveOutlined />}
+          >
+            Zapisz
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Stack>
   );
 };
 

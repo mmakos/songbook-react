@@ -1,4 +1,5 @@
-import {UserType} from "../user/user.types.ts";
+import { UserType } from '../user/user.types.ts';
+import { IEditedPerson } from '../editor/person/person.mapper.ts';
 
 export enum Category {
   KACZMARSKI = 'kaczmarski',
@@ -22,8 +23,7 @@ export enum SourceType {
   GAME = 'game',
 }
 
-export interface ISongOverview {
-  slug: string;
+export interface ISongOverview extends ISlug {
   title: string;
   category: Category;
 }
@@ -32,30 +32,62 @@ export interface ISongContent {
   verses: IVerse[];
 }
 
-export interface ISong {
+export interface ISlug {
   slug: string;
+}
+
+export interface IEditInfo {
+  created: IEditorInfo;
+  edited?: IEditorInfo;
+}
+
+export interface IWaitingEdit {
+  waiting?: { username: string; editTime: number }[];
+}
+
+export interface ISongData {
   title: string;
   altTitle?: string;
   category: Category;
-  created: IEditorInfo;
-  edited?: IEditorInfo;
-  lyrics?: IPerson[];
-  composer?: IPerson[];
-  translation?: IPerson[];
-  performer?: IPerson[];
-  source?: ISource[];
-  band?: IBand;
+  lyrics?: IPersonOverview[];
+  composer?: IPersonOverview[];
+  translation?: IPersonOverview[];
+  performer?: IPersonOverview[];
+  source?: ISourceOverview[];
+  band?: IBandOverview;
   video?: string[];
 
   key?: ISongKey;
   verses: IVerse[];
+}
 
+export interface ISong extends ISongData, IEditInfo, IWaitingEdit, ISlug {
   next?: ISongOverview;
   previous?: ISongOverview;
 }
 
-export interface IPerson {
-  slug: string;
+export interface IAuthorEdit<T, Single extends boolean = false> {
+  new?: Single extends true ? T : T[];
+  existing?: Single extends true ? string : string[];
+}
+
+export interface ISongEdit {
+  title: string;
+  altTitle?: string;
+  category: Category;
+  key?: ISongKey;
+  verses: IVerse[];
+
+  lyrics?: IAuthorEdit<IEditedPerson>;
+  composer?: IAuthorEdit<IEditedPerson>;
+  translation?: IAuthorEdit<IEditedPerson>;
+  performer?: IAuthorEdit<IEditedPerson>;
+  source?: IAuthorEdit<ISourceData>;
+  band?: IAuthorEdit<IBandData, true>;
+  video?: string[];
+}
+
+export interface IPersonData {
   name: string;
   secondName?: string;
   lastName: string;
@@ -65,25 +97,31 @@ export interface IPerson {
   forceSecondName?: boolean;
 }
 
-export interface IBand {
-  slug: string;
+export interface IBandData {
   name: string;
   url?: string;
 }
 
-export interface ISource {
-  slug: string;
+export interface ISourceData {
   name: string;
   url?: string;
   year?: number;
   type: SourceType;
 }
 
+export type IPersonOverview = IPersonData & ISlug;
+export type IBandOverview = IBandData & ISlug;
+export type ISourceOverview = ISourceData & ISlug;
+
+export type IPerson = IPersonOverview & IEditInfo & IWaitingEdit;
+export type IBand = IBandOverview & IEditInfo & IWaitingEdit;
+export type ISource = ISourceOverview & IEditInfo & IWaitingEdit;
+
 export interface IEditorInfo {
-  name: string;
+  name?: string;
   type?: UserType;
   verified?: boolean;
-  time: string;
+  time: number;
 }
 
 /**

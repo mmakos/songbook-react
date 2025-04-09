@@ -1,80 +1,65 @@
-import { EditedDependent, ISongInfo, useSongEditContext } from '../SongEditContext.tsx';
+import { EditedDependent, useSongEditContext } from '../SongEditContext.tsx';
 import Grid from '@mui/material/Grid2';
-import SongBandEditor, { IBandValidationErrors, validateBand } from './SongBandEditor.tsx';
-import { IBand, IPerson, ISource, SourceType } from '../../types/song.types.ts';
+import SongBandEditor, { IBandValidationErrors, validateBand } from '../band/SongBandEditor.tsx';
+import { IPersonData, ISongEdit, ISourceData } from '../../types/song.types.ts';
 import { useState } from 'react';
-import { parsePersonName } from '../../author/author.utils.ts';
-import SongSourceEditor, { ISourceValidationErrors, validateSource } from './SongSourceEditor.tsx';
-import SongPersonEditor from './SongPersonEditor.tsx';
-import { Button, Typography } from '@mui/material';
+import SongSourceEditor, { ISourceValidationErrors, validateSource } from '../source/SongSourceEditor.tsx';
+import SongPersonEditor, { IPersonValidationErrors, validatePerson } from '../person/SongPersonEditor.tsx';
+import { Button, Stack, Typography } from '@mui/material';
 import { BackspaceOutlined, Check } from '@mui/icons-material';
+import { IEditedPerson } from '../person/person.mapper.ts';
 
-const mapBandDependent = (band?: string | EditedDependent<IBand> | null): EditedDependent<IBand> | undefined => {
-  if (typeof band === 'string') {
-    return {
-      name: band,
-      slug: '',
-      edited: true,
-    };
-  } else if (band?.edited) {
-    return band;
-  }
-};
-
-const mapPeopleDependents = (songInfo?: ISongInfo) => {
-  const people: Record<string, EditedDependent<IPerson>> = {};
-  [songInfo?.lyrics, songInfo?.composer, songInfo?.performer, songInfo?.translation].forEach((list) =>
-    list?.forEach((l) => {
-      if (typeof l === 'string') {
-        people[l] = parsePersonName(l);
-        people[l].edited = true;
-      } else if (l?.edited) {
-        people[l.name] = l;
-      }
+const mapPeopleDependents = (songEdit: ISongEdit) => {
+  const people: Record<string, IPersonData> = {};
+  [songEdit.lyrics?.new, songEdit.composer?.new, songEdit.performer?.new, songEdit.translation?.new].forEach((list) =>
+    list?.forEach((p) => {
+      people[p.id] = p;
     })
   );
 
   return people;
 };
 
-const mapSourceDependants = (sourceDependants?: (EditedDependent<ISource> | string)[]) => {
-  const sources: Record<string, EditedDependent<ISource>> = {};
-  sourceDependants?.forEach((s) => {
-    if (typeof s === 'string') {
-      sources[s] = {
-        slug: '',
-        name: s,
-        type: SourceType.MUSICAL,
-        edited: true,
-      };
-    } else if (s?.edited) {
-      sources[s.name] = s;
-    }
+const mapSourceDependants = (sourcesEdit?: ISourceData[]) => {
+  const sources: Record<string, ISourceData> = {};
+  sourcesEdit?.forEach((s) => {
+    sources[s.name] = s;
   });
   return sources;
 };
 
+const updatePeople = (listToUpdate: IEditedPerson[] | undefined, people: Record<string, IPersonData>) => {
+  if (!listToUpdate) return;
+  for (let i = listToUpdate.length - 1; i >= 0; --i) {
+    const id = listToUpdate[i].id;
+    const newPerson = people[id];
+    if (newPerson) listToUpdate[i] = { ...newPerson, id };
+    else listToUpdate.splice(i, 1);
+  }
+};
+
 const SongDependentsEditor = () => {
-  const { songInfo, setSongInfo, updateStep } = useSongEditContext();
-  const [band, setBand] = useState(() => mapBandDependent(songInfo?.band));
+  const { songEdit, setSongEdit, updateStep } = useSongEditContext();
+  const [band, setBand] = useState(songEdit.band?.new);
   const [bandErrors, setBandErrors] = useState<IBandValidationErrors>();
 
-  const [people, setPeople] = useState(() => mapPeopleDependents(songInfo));
+  const [people, setPeople] = useState(() => mapPeopleDependents(songEdit));
+  const [personErrors, setPersonErrors] = useState<Record<string, IPersonValidationErrors>>();
 
-  const [sources, setSources] = useState(() => mapSourceDependants(songInfo?.source));
+  const [sources, setSources] = useState(() => mapSourceDependants(songEdit.source?.new));
   const [sourceErrors, setSourceErrors] = useState<Record<string, ISourceValidationErrors>>();
 
-  const setSource = (name: string, source: ISource) => {
+  const setSource = (name: string, source: ISourceData) => {
     setSources({ ...sources, [name]: source });
   };
 
-  const setPerson = (name: string, person: IPerson) => {
-    setPeople({ ...people, [name]: person });
+  const setPerson = (id: string, person: IPersonData) => {
+    setPeople({ ...people, [id]: person });
   };
 
-  const deletePerson = (name: string) => {
+  const deletePerson = (id: string) => {
     if (people) {
-      delete people[name];
+      delete people[id];
       setPeople({ ...people });
     }
   };
@@ -90,74 +75,85 @@ const SongDependentsEditor = () => {
     setBand(undefined);
   };
 
+  const validateList = <T extends object, R extends object>(
+    list: Record<string, EditedDependent<R>>,
+    validator: (r: R) => T | undefined
+  ) => {
+    let errors: Record<string, T> | undefined = {};
+    Object.entries(list).forEach(([name, r]) => {
+      const errs = validator(r);
+      if (errs) errors![name] = errs;
+    });
+    if (!Object.keys(errors).length) errors = undefined;
+
+    return errors;
+  };
+
   const validate = () => {
     let bandErr = undefined;
     if (band) {
       bandErr = validateBand(band);
       setBandErrors(bandErr);
     }
-    let sourceErr: Record<string, ISourceValidationErrors> | undefined = {};
-    Object.entries(sources).forEach(([name, source]) => {
-      const errs = validateSource(source);
-      if (errs) sourceErr![name] = errs;
-    });
-    if (!Object.keys(sourceErr).length) sourceErr = undefined;
+
+    const sourceErr = validateList(sources, validateSource);
     setSourceErrors(sourceErr);
 
-    return !sourceErr && !bandErr;
+    const personErr = validateList(people, validatePerson);
+    setPersonErrors(personErr);
+
+    return !personErr && !sourceErr && !bandErr;
   };
 
-  const updateSongInfo = () => {
-    if (songInfo) {
-      if (band) songInfo.band = band;
-      Object.entries(sources).forEach(([name, source]) => {
-        const idx = songInfo.source.indexOf(name);
-        if (idx >= 0) songInfo.source[idx] = source;
-      });
-      Object.entries(people).forEach(([name, person]) => {
-        let idx = songInfo.lyrics.indexOf(name);
-        if (idx >= 0) songInfo.lyrics[idx] = person;
-        idx = songInfo.composer.indexOf(name);
-        if (idx >= 0) songInfo.composer[idx] = person;
-        idx = songInfo.translation.indexOf(name);
-        if (idx >= 0) songInfo.translation[idx] = person;
-        idx = songInfo.performer.indexOf(name);
-        if (idx >= 0) songInfo.performer[idx] = person;
-      });
-      setSongInfo({ ...songInfo });
+  const updateSongEdit = () => {
+    if (band) songEdit.band = { new: band };
+    else delete songEdit.band;
+
+    if (Object.keys(sources).length) songEdit.source!.new = Object.values(sources);
+    else {
+      delete songEdit.source!.new;
+      if (!songEdit.source!.existing) delete songEdit.source;
     }
+
+    updatePeople(songEdit.lyrics?.new, people);
+    updatePeople(songEdit.composer?.new, people);
+    updatePeople(songEdit.translation?.new, people);
+    updatePeople(songEdit.performer?.new, people);
+
+    setSongEdit({ ...songEdit });
   };
 
   const handleNextStep = () => {
     const validationResult = validate();
     if (validationResult) {
-      updateSongInfo();
+      updateSongEdit();
     }
     updateStep(1);
   };
 
   const handlePreviousStep = () => {
-    updateSongInfo();
+    updateSongEdit();
     updateStep(-1);
   };
 
   return (
     <>
       <Grid container columnSpacing={4} rowSpacing={4}>
-        {Object.entries(people).map(([name, person]) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`person-${name}`}>
+        {Object.entries(people).map(([id, person]) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`person-${id}`}>
             <SongPersonEditor
-              personName={name}
+              title={`Edytuj osobę „${id}”`}
               person={person}
-              setPerson={(p) => setPerson(name, p)}
-              deletePerson={() => deletePerson(name)}
+              setPerson={(p) => setPerson(id, p)}
+              deletePerson={() => deletePerson(id)}
+              errors={personErrors?.[id]}
             />
           </Grid>
         ))}
         {Object.entries(sources).map(([name, source]) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`source-${name}`}>
             <SongSourceEditor
-              sourceName={name}
+              title={`Edytuj źródło „${name}”`}
               source={source}
               setSource={(s) => setSource(name, s)}
               deleteSource={() => deleteSource(name)}
@@ -168,7 +164,7 @@ const SongDependentsEditor = () => {
         {band && (
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <SongBandEditor
-              bandName={songInfo!.band as string}
+              title={`Edytuj zespół „${songEdit.band?.new?.name}”`}
               band={band}
               setBand={setBand}
               deleteBand={deleteBand}
@@ -181,14 +177,14 @@ const SongDependentsEditor = () => {
         Fajnie jakbyś wprowadził jakieś dodatkowe dane (zwłaszcza linki), ale jak teraz nie masz czasu, to możesz to
         pominąć i uzupełnić kiedy indziej.
       </Typography>
-      <div style={{ display: 'flex', justifyContent: 'right', gap: '1em' }}>
+      <Stack direction="row" gap={1} justifyContent="right">
         <Button variant="outlined" size="large" onClick={handlePreviousStep} startIcon={<BackspaceOutlined />}>
           Wróć
         </Button>
         <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
           Dalej
         </Button>
-      </div>
+      </Stack>
     </>
   );
 };
