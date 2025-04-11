@@ -40,12 +40,12 @@ const BandEdit = () => {
   }, [bandSlug, username]);
 
   const handleSave = () => {
-    if (!band) return;
+    if (!band || !originalBand.current) return;
     const errors = validateBand(band);
     setErrors(errors);
     if (!errors) {
       const bandData = bandToBandData(band);
-      if (!validateChanged(bandData, band)) {
+      if (!validateChanged(bandData, originalBand.current)) {
         dispatch(notifyError('Nie wprowadzono żadnych zmian'));
         return;
       }

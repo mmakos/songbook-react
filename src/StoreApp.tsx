@@ -44,10 +44,10 @@ const router = createBrowserRouter(
     <Route element={<BasicLayout />}>
       <Route path="/" element={<MainPage />} />
       <Route path="/songs/:category?" element={<SongFullTable />} />
-      <Route path="/song/:songSlug" element={<GlobalSong />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<Login />} />
       <Route path="/login/:source" element={<LoginResult />} />
+      <Route path="/song/:songSlug/:username?" element={<GlobalSong />} />
       <Route path="/person/:personSlug/:username?" element={<Person />} />
       <Route path="/band/:bandSlug/:username?" element={<Band />} />
       <Route path="/source/:sourceSlug/:username?" element={<Source />} />

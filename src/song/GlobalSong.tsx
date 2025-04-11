@@ -10,11 +10,11 @@ const GlobalSong: FC = () => {
   const song = useAppSelector((state) => state.song);
   const songTimeout = useAppSelector((state) => state.songTimeout);
   const dispatch = useAppDispatch();
-  const { songSlug } = useParams();
+  const { songSlug, username } = useParams();
 
   useEffect(() => {
-    songSlug && dispatch(getAndSaveSong(songSlug));
-  }, [songSlug]);
+    songSlug && dispatch(getAndSaveSong({ slug: songSlug, username }));
+  }, [songSlug, username]);
 
   useEffect(() => {
     return () => {

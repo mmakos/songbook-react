@@ -1,11 +1,14 @@
 import { songToSongEdit, useSongEditContext } from '../SongEditContext.tsx';
 import Song from '../../song/Song.tsx';
 import { Button, Stack } from '@mui/material';
-import { BackspaceOutlined, DataObject, VerticalSplitOutlined } from '@mui/icons-material';
-import pako from 'pako';
+import { BackspaceOutlined, SaveOutlined, VerticalSplitOutlined } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
 import SongCompare from './SongCompare.tsx';
-import { IAuthorEdit, ISlug, ISong } from '../../types/song.types.ts';
+import { IAuthorEdit, ISlug, ISong, ISongEdit } from '../../types/song.types.ts';
+import useAuthAPI from '../../http/useAuthAPI.ts';
+import { useAppDispatch } from '../../store/songbook.store.ts';
+import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
+import { useNavigate } from 'react-router';
 
 const mergeList = <T, U extends ISlug>(songEdit?: IAuthorEdit<T>, song?: U[]): U[] | undefined => {
   const list: U[] = [];
@@ -26,6 +29,9 @@ const mergeList = <T, U extends ISlug>(songEdit?: IAuthorEdit<T>, song?: U[]): U
 const SongEditSummary = () => {
   const { updateStep, song, songEdit, textEdit } = useSongEditContext();
   const [compare, setCompare] = useState(false);
+  const authAPI = useAuthAPI();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const songPreview: ISong = useMemo(() => {
     return {
@@ -42,24 +48,20 @@ const SongEditSummary = () => {
     };
   }, [song]);
 
-  const exportJSON = () => {
-    const jsonString = JSON.stringify(songEdit);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    window.open(url, '_blank');
-  };
-
-  const exportTargetFormat = () => {
-    const json = JSON.stringify(songEdit.verses);
-    const compressed = pako.gzip(json);
-    const base64 = compressed.reduce<string>((str, byte) => str + String.fromCharCode(byte), '');
-    const jsonString = JSON.stringify({ ...songEdit, verses: btoa(base64) });
-
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    window.open(url, '_blank');
+  const save = () => {
+    const songEditFinal: Partial<ISongEdit> = { ...songEdit };
+    if (!textEdit) {
+      delete songEditFinal.verses;
+    }
+    authAPI
+      .post(`/edit/song/${song.slug}/`, songEditFinal)
+      .then(() => {
+        dispatch(
+          notifySuccess('Pomyślnie zaktualizowano piosenkę - będzie widoczna w poczekalni do czasu weryfikacji')
+        );
+        navigate(`/song/${song.slug}`);
+      })
+      .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji piosenki')));
   };
 
   return (
@@ -76,11 +78,8 @@ const SongEditSummary = () => {
         >
           {compare ? 'Podgląd' : 'Porównaj'}
         </Button>
-        <Button variant="contained" size="large" onClick={exportTargetFormat} endIcon={<DataObject />}>
-          Eksportuj (spakowane)
-        </Button>
-        <Button variant="contained" size="large" onClick={exportJSON} endIcon={<DataObject />}>
-          Eksportuj
+        <Button variant="contained" size="large" onClick={save} endIcon={<SaveOutlined />}>
+          Zapisz
         </Button>
       </Stack>
       {compare ? (

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IPerson } from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongPersonEditor, { IPersonValidationErrors, validatePerson } from './SongPersonEditor.tsx';
@@ -15,6 +15,7 @@ import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
 
 const PersonEdit = () => {
+  const originalPerson = useRef<IPerson>();
   const [person, setPerson] = useState<IPerson>();
   const [personName, setPersonName] = useState<string>();
   const [errors, setErrors] = useState<IPersonValidationErrors>();
@@ -28,6 +29,7 @@ const PersonEdit = () => {
     if (!personSlug) return;
     fetchAuthor<IPerson>(`person/${slugAndUser}/`, (person) => {
       setPerson(person);
+      originalPerson.current = person;
       setPersonName(personAsString(person));
     });
   };
@@ -37,12 +39,12 @@ const PersonEdit = () => {
   }, [personSlug, username]);
 
   const handleSave = () => {
-    if (!person) return;
+    if (!person || !originalPerson.current) return;
     const errors = validatePerson(person);
     setErrors(errors);
     if (!errors) {
       const personData = personToPersonData(person);
-      if (!validateChanged(personData, person)) {
+      if (!validateChanged(personData, originalPerson.current)) {
         dispatch(notifyError('Nie wprowadzono żadnych zmian'));
         return;
       }

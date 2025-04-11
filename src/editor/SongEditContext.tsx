@@ -78,7 +78,7 @@ const SongEditContextComponent = (): ISongEditContextProps<true> => {
       handleSetSong(globalSong);
     } else if (songSlug) {
       setSongTimeout(false);
-      dispatch(getSong(songSlug))
+      dispatch(getSong({ slug: songSlug }))
         .unwrap()
         .then(handleSetSong)
         .catch(() => handleSetSong());
