@@ -105,6 +105,9 @@ const SongEditContextComponent = <New extends boolean>(
   const handleSetUserSong = (song?: ISong | null) => {
     if (!verification) {
       setSong(song as TSongNew<New>);
+    } else {
+      setTextEdit(!!song?.verses);
+      setKeyEdit(!!song?.key);
     }
     setSongEdit(song !== undefined ? songToSongEdit(song) : undefined);
     setSongTimeout(song === undefined);
