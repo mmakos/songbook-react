@@ -166,7 +166,7 @@ const SongTable: FC<ISongTableProps> = ({ category, person, band, source, query,
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, sortField, sortDir, category, band, source, person, query]);
+  }, [page, pageSize, sortField, sortDir, category, band, source, person, waiting, query]);
 
   useEffect(() => {
     apiRef.current.setColumnVisibility('category', !category);
