@@ -57,7 +57,7 @@ const router = createBrowserRouter(
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/add/song" element={<SongAdd />} />
-        <Route path="/edit/song/:songSlug" element={<SongEdit />} />
+        <Route path="/edit/song/:songSlug/:username?" element={<SongEdit />} />
         <Route path="/edit/person/:personSlug/:username?" element={<PersonEdit />} />
         <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
         <Route path="/edit/source/:sourceSlug/:username?" element={<SourceEdit />} />
