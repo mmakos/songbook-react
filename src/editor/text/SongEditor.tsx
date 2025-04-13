@@ -71,6 +71,9 @@ type TPreviewType = 'editor' | 'split' | 'preview';
 const SongEditor = () => {
   const { updateStep, setSongEdit, songEdit, textEdit, setTextEdit, keyEdit, setKeyEdit, newSong } =
     useSongEditContext();
+
+  const [songEditContent, repetitions, alternatives, comments] = useMemo(() => songToHTML(songEdit.verses), []);
+
   const editor = useEditor({
     extensions: [
       Text,
@@ -91,14 +94,14 @@ const SongEditor = () => {
       Indent,
       PreventCellDrag,
     ],
-    content: songToHTML(songEdit.verses),
+    content: songEditContent,
   });
   const [pianoOpen, setPianoOpen] = useState(false);
   const [reading, setReading] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
-  const [repetitionColumn, setRepetitionColumn] = useState(false);
-  const [additionalChordColumn, setAdditionalChordColumn] = useState(false);
-  const [commentsColumn, setCommentsColumn] = useState(false);
+  const [repetitionColumn, setRepetitionColumn] = useState(repetitions);
+  const [additionalChordColumn, setAdditionalChordColumn] = useState(alternatives);
+  const [commentsColumn, setCommentsColumn] = useState(comments);
   const [previewType, setPreviewType] = useState<TPreviewType>('split');
   const [previewSong, setPreviewSong] = useState<ISongContent>({ verses: songEdit.verses });
   const [songbookKeyError, setSongbookKeyError] = useState(false);
@@ -574,7 +577,7 @@ const SongEditor = () => {
           }
         />
       </Collapse>
-      <Typography variant="caption" color="info" mt='2em'>
+      <Typography variant="caption" color="info" mt="2em">
         Uwaga! Niniejszy edytor jest zwykłym edytorem tekstowym zorientowanym na edycję tekstu i akordów w formacie
         używanym w moim śpiewniku. Oznacza to, że posiada on kilka automatyzacji ułatwiających wpisywanie akordów oraz
         kilka blokad uniemożliwiających wprowadzenie danych kompletnie bez sensu. Nie gwarantuje jednak, że wszytko co

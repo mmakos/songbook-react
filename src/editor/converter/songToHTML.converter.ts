@@ -2,6 +2,7 @@ import {
   ChordModification,
   IAdditionalSeries,
   IChord,
+  IChordSeries,
   IntervalModification,
   ITextRun,
   IVerse,
@@ -72,22 +73,57 @@ const chordToHTML = (chord: IChord): string => {
   return str;
 };
 
-const songToHTML = (verses: IVerse[]): string => {
+const parseChords = (chords: IChordSeries[], chordsHTML: string) => {
+  let firstSerie = true;
+  for (const chordSeries of chords) {
+    if (!firstSerie) chordsHTML += ' ';
+    firstSerie = false;
+    if (chordSeries.silent) chordsHTML += '<em>';
+    if (chordSeries.optional) chordsHTML += '(';
+
+    let firstChord = true;
+    for (const complexChord of chordSeries.chords) {
+      if (!firstChord) chordsHTML += ' ';
+      firstChord = false;
+      chordsHTML += chordToHTML(complexChord.chord);
+      if (complexChord.alternative) chordsHTML += '/' + chordToHTML(complexChord.alternative);
+    }
+
+    if (chordSeries.repeat) chordsHTML += '…';
+    if (chordSeries.optional) chordsHTML += ')';
+    if (chordSeries.silent) chordsHTML += '</em>';
+  }
+  return chordsHTML;
+};
+
+const songToHTML = (verses: IVerse[]): [string, boolean, boolean, boolean] => {
   const text = [];
+  const comments = [];
   const chords = [];
+  const alternatives = [];
   const repetitions = [];
   let hasRepetitions = false;
+  let hasComments = false;
+  let hasAlternatives = false;
   for (const verse of verses) {
     let verseHTML = verse.indent ? `<td data-indent="${verse.indent}" cell-type="text">` : '<td cell-type="text">';
+    let commentsHTML = '<td cell-type="comment">';
     let chordsHTML = '<td cell-type="chord">';
+    let alternativesHTML = '<td cell-type="chord">';
     let repetitionsHTML = '<td cell-type="repetition">';
     for (const line of verse.lines) {
       verseHTML += '<p>';
+      commentsHTML += '<p>';
       chordsHTML += '<p>';
+      alternativesHTML += '<p>';
       repetitionsHTML += '<p>';
       if (line.text) {
         for (const run of line.text) {
           verseHTML += runToHTML(run);
+        }
+        if (line.comment) {
+          commentsHTML += line.comment;
+          hasComments = true;
         }
         if (line.repetitionEnd) {
           repetitionsHTML += ` |x${line.repetitionEnd > 0 ? line.repetitionEnd : '∞'}`;
@@ -98,45 +134,42 @@ const songToHTML = (verses: IVerse[]): string => {
         }
       }
       if (line.chords) {
-        let firstSerie = true;
-        for (const chordSeries of line.chords.chords) {
-          if (!firstSerie) chordsHTML += ' ';
-          firstSerie = false;
-          if (chordSeries.silent) chordsHTML += '<em>';
-          if (chordSeries.optional) chordsHTML += '(';
-
-          let firstChord = true;
-          for (const complexChord of chordSeries.chords) {
-            if (!firstChord) chordsHTML += ' ';
-            firstChord = false;
-            chordsHTML += chordToHTML(complexChord.chord);
-            if (complexChord.alternative) chordsHTML += '/' + chordToHTML(complexChord.alternative);
-          }
-
-          if (chordSeries.repeat) chordsHTML += '…';
-          if (chordSeries.optional) chordsHTML += ')';
-          if (chordSeries.silent) chordsHTML += '</em>';
+        chordsHTML = parseChords(line.chords.chords, chordsHTML);
+        if (line.chords.alternatives) {
+          alternativesHTML = parseChords(line.chords.alternatives, alternativesHTML);
+          hasAlternatives = true;
         }
       }
       verseHTML += '</p>';
+      commentsHTML += '</p>';
       chordsHTML += '</p>';
+      alternativesHTML += '</p>';
       repetitionsHTML += '</p>';
     }
     text.push(verseHTML + '</td>');
+    comments.push(commentsHTML + '</td>');
     chords.push(chordsHTML + '</td>');
+    alternatives.push(alternativesHTML + '</td>');
     repetitions.push(repetitionsHTML + '</td>');
   }
   let html = '<table><tbody><tr><th>Słowa</th>';
-  if (hasRepetitions) html += '<th>Powtórzenia</th>';
-  html += '<th>Akordy</th></tr>';
+  if (hasRepetitions) html += '<th>|x2</th>';
+  html += '<th';
+  if (hasAlternatives) html += ' colspan="2"';
+  html += '>Akordy</th>';
+  if (hasComments) html += '<th>Komentarze</th>';
+  html += '</tr>';
 
   for (let i = 0; i < text.length; ++i) {
     html += '<tr>' + text[i];
     if (hasRepetitions) html += repetitions[i];
-    html += chords[i] + '</tr>';
+    html += chords[i];
+    if (hasAlternatives) html += alternatives[i];
+    if (hasComments) html += comments[i];
+    html += '</tr>';
   }
 
-  return html + '</tbody></table>';
+  return [html + '</tbody></table>', hasRepetitions, hasAlternatives, hasComments];
 };
 
 export default songToHTML;
