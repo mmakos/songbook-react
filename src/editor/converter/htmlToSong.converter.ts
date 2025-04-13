@@ -172,9 +172,9 @@ const parseChord = (html: string): IComplexChord | undefined => {
 const parseChordsSeries = (chords: string[], silent?: boolean, optional?: boolean, repeat?: boolean): IChordSeries => {
   return {
     chords: chords.map(parseChord).filter((c) => !!c),
-    optional: optional,
-    silent: silent,
-    repeat: repeat,
+    optional: optional ? true : undefined,
+    silent: silent ? true : undefined,
+    repeat: repeat ? true : undefined,
   };
 };
 
