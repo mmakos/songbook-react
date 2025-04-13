@@ -19,9 +19,13 @@ export const splitToNewAndExistingBand = (
 
 export const getBandFromSongEdit = (
   bandEdit?: IAuthorEdit<IBandData, true>,
+  cached?: IBandOverview,
   songBand?: IBandOverview
 ): IBandOverview | string | null => {
-  if (bandEdit?.existing && bandEdit.existing === songBand?.slug) return songBand;
+  if (bandEdit?.existing) {
+    if (bandEdit.existing === cached?.slug) return cached;
+    if (bandEdit.existing === songBand?.slug) return songBand;
+  }
   if (bandEdit?.new) return bandEdit.new.name;
   return null;
 };

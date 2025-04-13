@@ -8,7 +8,6 @@ import {
   Step,
   StepLabel,
   Stepper,
-  Typography,
 } from '@mui/material';
 import { useOptionalSongEditContext } from './SongEditContext.tsx';
 import SongInfoEditor from './info/SongInfoEditor.tsx';
@@ -23,9 +22,9 @@ import NotFound from '../subsites/NotFound.tsx';
 import Progress from '../components/Progress.tsx';
 
 const SongEditStepper = () => {
-  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout } = useOptionalSongEditContext();
+  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout, canExit } = useOptionalSongEditContext();
 
-  if (!song || !songEdit) {
+  if (song === undefined || !songEdit) {
     if (songTimeout) {
       return <NotFound />;
     } else {
@@ -35,7 +34,7 @@ const SongEditStepper = () => {
 
   return (
     <Stack gap={2} width="100%">
-      <ReactRouterPrompt when={true}>
+      <ReactRouterPrompt when={!canExit}>
         {({ isActive, onConfirm, onCancel }: { isActive: boolean; onConfirm: () => void; onCancel: () => void }) => (
           <Dialog open={isActive} TransitionComponent={AlertTransition}>
             <DialogTitle>Opuszczanie strony</DialogTitle>
@@ -53,11 +52,6 @@ const SongEditStepper = () => {
           </Dialog>
         )}
       </ReactRouterPrompt>
-
-      <Typography color="error">
-        Uwaga! To jest rozwojowy feature. Możesz przetestować, ale i tak nie będziesz w stanie zaktualizować piosenki na
-        serwerze, dopóki nie dorobię zarządzania użytkownikami.
-      </Typography>
       <Stepper activeStep={activeStep} nonLinear>
         <Step>
           <StepLabel>Informacje o piosence</StepLabel>

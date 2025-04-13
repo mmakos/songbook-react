@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { ISource } from '../../types/song.types.ts';
+import { useEffect, useRef, useState } from 'react';
+import { IEditResult, ISource } from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongSourceEditor, { ISourceValidationErrors, validateSource } from './SongSourceEditor.tsx';
 import { Button, Stack } from '@mui/material';
@@ -12,8 +12,10 @@ import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
+import { AxiosResponse } from 'axios';
 
 const SourceEdit = () => {
+  const originalSource = useRef<ISource>();
   const [source, setSource] = useState<ISource>();
   const [sourceName, setSourceName] = useState<string>();
   const [errors, setErrors] = useState<ISourceValidationErrors>();
@@ -27,31 +29,32 @@ const SourceEdit = () => {
     if (!sourceSlug) return;
     fetchAuthor<ISource>(`source/${slugAndUser}/`, (source) => {
       setSource(source);
+      originalSource.current = source;
       setSourceName(source.name);
     });
   };
 
   useEffect(() => {
     fetchSource();
-  }, [source, username]);
+  }, [sourceSlug, username]);
 
   const handleSave = () => {
-    if (!source) return;
+    if (!source || !originalSource.current) return;
     const errors = validateSource(source);
     setErrors(errors);
     if (!errors) {
       const sourceData = sourceToSourceData(source);
-      if (!validateChanged(sourceData, source)) {
+      if (!validateChanged(sourceData, originalSource.current)) {
         dispatch(notifyError('Nie wprowadzono żadnych zmian'));
         return;
       }
       authAPI
-        .post(`edit/band/${sourceSlug}/`, sourceToSourceData(source))
-        .then(() => {
+        .post(`edit/source/${sourceSlug}/`, sourceToSourceData(source))
+        .then(({ data }: AxiosResponse<IEditResult>) => {
           dispatch(
             notifySuccess('Pomyślnie zaktualizowano źródło - będzie widoczne w poczekalni do czasu weryfikacji')
           );
-          navigate(`/band/${slugAndUser}`);
+          navigate(`/source/${data.slug}/${data.editor}`);
         })
         .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji źródła')));
     }

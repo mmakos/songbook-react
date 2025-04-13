@@ -8,7 +8,7 @@ import InversionIcon from './icon/InversionIcon.tsx';
 import PianoKey from './PianoKey.tsx';
 import { getChordNotes, getChordNotesForNote } from './chord-interpreter.ts';
 import { ChordMode, defaultPianoOptions, IPianoKey, PIANO_KEYS, TInversion } from './piano.types.ts';
-import { IChord, NoteBase } from '../types/song.types.ts';
+import { IChord, IKey } from '../types/song.types.ts';
 import PianoModeIcon from './icon/PianoModeIcon.tsx';
 import StyledToggleButtonGroup, { StyledToggleButtonGroupDivider } from '../components/StyledToggleButtonGroup.tsx';
 import ResizeableDiv from '../components/resizeable/ResizeableDiv.tsx';
@@ -17,6 +17,7 @@ interface IPianoProps {
   setOpen: (open: boolean) => void;
   chordsToPlayProvider?: () => IChord[] | undefined;
   chordTypedConsumer?: (chord: IChord) => void;
+  chordsKey: IKey;
 }
 
 const isBlack = (note: number) => {
@@ -27,16 +28,14 @@ const isBlack = (note: number) => {
 
 const pianoKeys: IPianoKey[] = Array.from(Array(PIANO_KEYS), (_, i) => ({ note: i, black: isBlack(i) }));
 
-const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsumer }) => {
+const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsumer, chordsKey }) => {
   const [keys, setKeys] = useState(pianoKeys);
   const [pianoOptions, setPianoOptions] = useState(defaultPianoOptions);
   const [playback, setPlayback] = useState(false);
   const playbackTimeoutId = useRef<number>();
 
   const keyAction = (key: IPianoKey, pressed: boolean) => {
-    const notes = pianoOptions.chord
-      ? getChordNotesForNote(key.note, pianoOptions, { note: { base: NoteBase.A }, minor: true })
-      : [key.note];
+    const notes = pianoOptions.chord ? getChordNotesForNote(key.note, pianoOptions, chordsKey) : [key.note];
     notes.forEach((n) => (keys[n].selected = pressed));
     if (pressed) {
       playSound(notes.map((n) => n + 48));
@@ -77,7 +76,6 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
     const chords = chordsToPlayProvider?.();
     if (!chords?.length) return;
     setPlayback(true);
-    // const chords: IChord[] = [{ note: { base: NoteBase.F } }, { note: { base: NoteBase.C } }];
     playChord(chords);
   };
 
@@ -165,17 +163,23 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
         </StyledToggleButtonGroup>
         <div style={{ alignContent: 'center', marginLeft: 'auto' }}>
           <StyledToggleButtonGroup size="small">
-            <ToggleButton value="hearing" onClick={playSelected}>
-              <Hearing />
-            </ToggleButton>
-            {chordsToPlayProvider && (
-              <ToggleButton value="playback" selected={playback} onClick={playback ? stopPlayback : playChords}>
-                {playback ? <Stop /> : <Speaker />}
+            <BasicTooltip title="Odsłuchaj zaznaczone klawisze">
+              <ToggleButton value="hearing" onClick={playSelected}>
+                <Hearing />
               </ToggleButton>
+            </BasicTooltip>
+            {chordsToPlayProvider && (
+              <BasicTooltip title="Odsłuchaj zaznaczone akordy">
+                <ToggleButton value="playback" selected={playback} onClick={playback ? stopPlayback : playChords}>
+                  {playback ? <Stop /> : <Speaker />}
+                </ToggleButton>
+              </BasicTooltip>
             )}
-            <ToggleButton value="delete" onClick={clearSelection}>
-              <DeleteForever />
-            </ToggleButton>
+            <BasicTooltip title="Wyczyść wciśnięte klawisze">
+              <ToggleButton value="delete" onClick={clearSelection}>
+                <DeleteForever />
+              </ToggleButton>
+            </BasicTooltip>
             {chordTypedConsumer && (
               <ToggleButton value="done">
                 <Done />

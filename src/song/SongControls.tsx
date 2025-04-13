@@ -2,10 +2,19 @@ import { Edit, InfoOutlined, Verified, YouTube, ZoomIn, ZoomOut } from '@mui/ico
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { changeZoom, setSongInfoOpen, setSongSettingsOpen, setSongVideoOpen } from '../store/songbook.reducer.ts';
+import {
+  changeZoom,
+  notifyError,
+  notifySuccess,
+  setSongInfoOpen,
+  setSongSettingsOpen,
+  setSongVideoOpen,
+  updateSong,
+} from '../store/songbook.reducer.ts';
 import SongControl, { TSongControlType } from './SongControl.tsx';
 import { useNavigate, useParams } from 'react-router';
 import useCanEdit from '../store/useCanEdit.hook.ts';
+import useAuthAPI from '../http/useAuthAPI.ts';
 
 interface ISongControlsProps {
   video?: boolean;
@@ -18,8 +27,9 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
   const { videoOpen, settingsOpen, infoOpen, zoom } = useAppSelector((state) => state.songDisplayState);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { songSlug } = useParams();
+  const { songSlug, username } = useParams();
   const { canEdit, canVerify } = useCanEdit();
+  const authAPI = useAuthAPI();
 
   const toggleSettingsOpen = () => {
     dispatch(setSongSettingsOpen(!settingsOpen));
@@ -35,6 +45,16 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
 
   const toggleZoom = () => {
     dispatch(changeZoom(zoom === 'small' ? 'normal' : 'small'));
+  };
+
+  const acceptSong = () => {
+    authAPI
+      .post(`verify/song/${songSlug}/`)
+      .then(() => {
+        dispatch(notifySuccess('Zaakceptowano niezweryfikowaną piosenkę'));
+        song && dispatch(updateSong({ ...song, created: { ...song.created, verified: true } }));
+      })
+      .catch(() => dispatch(notifyError('Błąd podczas akceptowania niezweryfikowanej piosenki')));
   };
 
   return (
@@ -70,13 +90,16 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
       {canEdit && (
         <SongControl type={type} icon={<Edit />} label="Edytuj" onClick={() => navigate(`/edit/song/${songSlug}`)} />
       )}
-      {canVerify && (song?.waiting?.length || !song?.created.verified) && (
+      {canVerify && username && (
         <SongControl
           type={type}
           icon={<Verified />}
           label="Zweryfikuj"
-          onClick={() => navigate(`/verify/song/${songSlug}`)}
+          onClick={() => navigate(`/verify/song/${songSlug}/${username}`)}
         />
+      )}
+      {canVerify && !username && !song?.created.verified && (
+        <SongControl type={type} icon={<Verified />} label="Zaakceptuj" onClick={acceptSong} />
       )}
     </>
   );

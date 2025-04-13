@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import GithubLogin from './social/GithubLogin.tsx';
 import GoogleLogin from './social/GoogleLogin.tsx';
 import FacebookLogin from './social/FacebookLogin.tsx';
@@ -15,9 +15,8 @@ const Login = () => {
     <Stack justifyContent="center" spacing={2}>
       <GoogleLogin />
       <GithubLogin />
-      <Typography variant="caption" color="error">Tu niestety coś się zchrzaniło</Typography>
-      <XLogin />
       <FacebookLogin />
+      <XLogin />
     </Stack>
   );
 };

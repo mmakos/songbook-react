@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
-import { IBand } from '../../types/song.types.ts';
+import { IBand, IEditResult } from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongBandEditor, { IBandValidationErrors, validateBand } from './SongBandEditor.tsx';
 import { Button, Stack } from '@mui/material';
@@ -13,6 +13,7 @@ import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
+import { AxiosResponse } from 'axios';
 
 const BandEdit = () => {
   const originalBand = useRef<IBand>();
@@ -51,11 +52,11 @@ const BandEdit = () => {
       }
       authAPI
         .post(`edit/band/${bandSlug}/`, bandToBandData(band))
-        .then(() => {
+        .then(({ data }: AxiosResponse<IEditResult>) => {
           dispatch(
             notifySuccess('Pomyślnie zaktualizowano zespół - będzie widoczny w poczekalni do czasu weryfikacji')
           );
-          navigate(`/band/${slugAndUser}`);
+          navigate(`/band/${data.slug}/${data.editor}`);
         })
         .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji zespołu')));
     }

@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { Facebook } from '@mui/icons-material';
 
-const CLIENT_ID = '602325082617244';
+const CLIENT_ID = import.meta.env.VITE_FACEBOOK_CLIENT_ID;
 
 const FacebookLogin = () => {
   const facebookLogin = () => {
@@ -9,7 +9,7 @@ const FacebookLogin = () => {
   };
 
   return (
-    <Button onClick={() => facebookLogin()} startIcon={<Facebook />} size="large" variant='outlined' disabled>
+    <Button onClick={() => facebookLogin()} startIcon={<Facebook />} size="large" variant='outlined'>
       Zaloguj z kontem Facebook
     </Button>
   );

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
-import { IPerson } from '../../types/song.types.ts';
+import {IEditResult, IPerson} from '../../types/song.types.ts';
 import { fetchAuthor } from '../../author/author.actions.ts';
 import SongPersonEditor, { IPersonValidationErrors, validatePerson } from './SongPersonEditor.tsx';
 import { personAsString } from '../../author/author.utils.ts';
@@ -13,6 +13,7 @@ import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
+import {AxiosResponse} from "axios";
 
 const PersonEdit = () => {
   const originalPerson = useRef<IPerson>();
@@ -50,9 +51,9 @@ const PersonEdit = () => {
       }
       authAPI
         .post(`edit/person/${personSlug}/`, personToPersonData(person))
-        .then(() => {
+        .then(({ data }: AxiosResponse<IEditResult>) => {
           dispatch(notifySuccess('Pomyślnie zaktualizowano osobę - będzie widoczna w poczekalni do czasu weryfikacji'));
-          navigate(`/person/${slugAndUser}`);
+          navigate(`/person/${data.slug}/${data.editor}`);
         })
         .catch(() => dispatch(notifyError('Niespodziewany błąd podczas aktualizacji osoby')));
     }

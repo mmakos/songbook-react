@@ -71,6 +71,11 @@ export interface IAuthorEdit<T, Single extends boolean = false> {
   existing?: Single extends true ? string : string[];
 }
 
+export interface IEditResult {
+  slug: string,
+  editor: string,
+}
+
 export interface ISongEdit {
   title: string;
   altTitle?: string;

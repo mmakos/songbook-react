@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { Google } from '@mui/icons-material';
 
-const CLIENT_ID = '452813825360-bfofpierh0mq150mohjp9ecfbmtenolb.apps.googleusercontent.com';
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const GoogleLogin = () => {
   const googleLogin = () => {

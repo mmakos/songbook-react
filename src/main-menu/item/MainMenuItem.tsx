@@ -9,12 +9,13 @@ export interface IMainMenuItemProps {
   type: TMenuType;
   routeTo?: string;
   href?: string;
+  onClick?: () => void;
   text: ReactNode;
   icon?: ReactNode;
   close: () => void;
 }
 
-const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href, close }) => {
+const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href, onClick, close }) => {
   const navigate = useNavigate();
 
   const handleMenuItemClicked = () => {
@@ -22,6 +23,8 @@ const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href,
       navigate(routeTo);
     } else if (href) {
       window.open(href, '_blank');
+    } else if (onClick) {
+      onClick();
     }
     close();
   };

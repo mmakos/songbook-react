@@ -1,14 +1,15 @@
 import MainMenuGroup from './group/MainMenuGroup.tsx';
 import { FC, useState } from 'react';
 import MainMenuItem, { TMenuType } from './item/MainMenuItem.tsx';
-import { EmojiEmotions, Home, MusicNote } from '@mui/icons-material';
+import { Add, CasinoOutlined, EmojiEmotions, Home, HourglassBottom, LibraryMusic } from '@mui/icons-material';
 import MainMenuSubItem from './item/MainMenuSubItem.tsx';
 import { Divider } from '@mui/material';
 import { Category } from '../types/song.types.ts';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
 import CategoryIcon from '../category/CategoryIcon.tsx';
-import UserMenu from "../user/UserMenu.tsx";
-import useCanEdit from "../store/useCanEdit.hook.ts";
+import UserMenu from '../user/UserMenu.tsx';
+import useCanEdit from '../store/useCanEdit.hook.ts';
+import useRandomSong from '../store/useRandomSong.hook.ts';
 
 interface IMainMenuTabsProps {
   type: TMenuType;
@@ -18,7 +19,8 @@ interface IMainMenuTabsProps {
 const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
   const [songsExpanded, setSongsExpanded] = useState(false);
   const [extrasExpanded, setExtrasExpanded] = useState(false);
-  const {canVerify} = useCanEdit();
+  const drawSong = useRandomSong();
+  const { canVerify, canEdit } = useCanEdit();
 
   const handleSongsClose = () => {
     close();
@@ -36,12 +38,27 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
       <MainMenuGroup
         type={type}
         text="Piosenki"
-        icon={<MusicNote />}
+        icon={<LibraryMusic />}
         expanded={songsExpanded}
         setExpanded={setSongsExpanded}
       >
         <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
-        {canVerify && <MainMenuSubItem type={type} text="Poczekalnia" routeTo="/songs/?w=1" close={handleSongsClose} />}
+        {canVerify && (
+          <MainMenuSubItem
+            type={type}
+            text="Poczekalnia"
+            routeTo="/songs/?w=1"
+            close={handleSongsClose}
+            icon={<HourglassBottom />}
+          />
+        )}
+        <MainMenuSubItem
+          type={type}
+          text="Losowa piosenka"
+          onClick={drawSong}
+          close={handleSongsClose}
+          icon={<CasinoOutlined />}
+        />
         <Divider variant="middle" />
         {Object.values(Category).map((category: Category) => (
           <MainMenuSubItem
@@ -53,6 +70,18 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
             icon={<CategoryIcon category={category} />}
           />
         ))}
+        {canEdit && (
+          <>
+            <Divider variant="middle" />
+            <MainMenuSubItem
+              type={type}
+              text="Dodaj nową"
+              routeTo="/add/song"
+              close={handleSongsClose}
+              icon={<Add />}
+            />
+          </>
+        )}
       </MainMenuGroup>
       <MainMenuGroup
         type={type}
@@ -92,7 +121,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
           close={handleExtrasClose}
         />
       </MainMenuGroup>
-      <UserMenu type={type} close={close}/>
+      <UserMenu type={type} close={close} />
     </>
   );
 };

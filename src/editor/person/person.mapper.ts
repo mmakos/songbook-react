@@ -15,6 +15,7 @@ export const personToPersonData = (person: IPersonData): IPersonData => ({
 
 export const splitToNewAndExistingPerson = (
   people: (IPersonOverview | string)[],
+  cache: Record<string, IPersonOverview>,
   current?: IAuthorEdit<IEditedPerson>
 ): IAuthorEdit<IEditedPerson> | undefined => {
   const news: IEditedPerson[] = [];
@@ -24,6 +25,7 @@ export const splitToNewAndExistingPerson = (
       const currentNew = current?.new?.find((e) => e.id === person);
       news.push(currentNew ?? { ...parsePersonName(person), id: person });
     } else {
+      cache[person.slug] = person;
       existing.push(person.slug);
     }
   }
@@ -35,12 +37,14 @@ export const splitToNewAndExistingPerson = (
 };
 
 export const getPersonFromSongEdit = (
+  cache: Record<string, IPersonOverview>,
   personEdit?: IAuthorEdit<IEditedPerson>,
   songPerson?: IPersonOverview[]
 ): (IPersonOverview | string)[] => {
   const result: (IPersonOverview | string)[] = [];
   personEdit?.existing?.forEach((e) => {
-    const found = songPerson?.find((s) => s.slug === e);
+    let found: IPersonOverview | undefined = cache[e];
+    if (!found) found = songPerson?.find((s) => s.slug === e);
     found && result.push(found);
   });
   personEdit?.new?.forEach((n) => result.push(n.id));
