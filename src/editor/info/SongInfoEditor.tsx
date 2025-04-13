@@ -45,27 +45,30 @@ const extractYoutubeLink = (url: string) => {
 };
 
 const SongInfoEditor = () => {
-  const { song, setNeedsAuthorEdit, songEdit, setSongEdit, updateStep, resetSongInfo } = useSongEditContext();
+  const { song, setNeedsAuthorEdit, songEdit, setSongEdit, updateStep, resetSongInfo, authorsCache } =
+    useSongEditContext();
   const { canRemove } = useCanEdit();
 
   const [title, setTitle] = useState(songEdit.title);
   const [altTitle, setAltTitle] = useState(songEdit?.altTitle ?? '');
   const [category, setCategory] = useState(songEdit.category);
   const [lyrics, setLyrics] = useState<(IPersonOverview | string)[]>(
-    getPersonFromSongEdit(songEdit.lyrics, song.lyrics)
+    getPersonFromSongEdit(authorsCache.person, songEdit.lyrics, song?.lyrics)
   );
   const [composer, setComposer] = useState<(IPersonOverview | string)[]>(
-    getPersonFromSongEdit(songEdit.composer, song.composer)
+    getPersonFromSongEdit(authorsCache.person, songEdit.composer, song?.composer)
   );
   const [translation, setTranslation] = useState<(IPersonOverview | string)[]>(
-    getPersonFromSongEdit(songEdit.translation, song.translation)
+    getPersonFromSongEdit(authorsCache.person, songEdit.translation, song?.translation)
   );
   const [performer, setPerformer] = useState<(IPersonOverview | string)[]>(
-    getPersonFromSongEdit(songEdit.performer, song.performer)
+    getPersonFromSongEdit(authorsCache.person, songEdit.performer, song?.performer)
   );
-  const [band, setBand] = useState<IBandOverview | string | null>(() => getBandFromSongEdit(songEdit.band, song.band));
+  const [band, setBand] = useState<IBandOverview | string | null>(() =>
+    getBandFromSongEdit(songEdit.band, authorsCache.band, song?.band)
+  );
   const [source, setSource] = useState<(ISourceOverview | string)[]>(
-    getSourceFromSongEdit(songEdit.source, song.source)
+    getSourceFromSongEdit(authorsCache.source, songEdit.source, song?.source)
   );
   const [videos, setVideos] = useState<string[]>(songEdit.video ?? []);
 
@@ -117,23 +120,26 @@ const SongInfoEditor = () => {
     // Ten drugi warunek, to jak zostało już tylko ostrzeżenie, które już wcześniej było
     if (errorCount && !(errorCount === 1 && errors.minimal && validationErrors.minimal)) return;
 
-    const lyricsSplit = splitToNewAndExistingPerson(lyrics, songEdit.lyrics);
+    authorsCache.source = {};
+    authorsCache.person = {};
+    const lyricsSplit = splitToNewAndExistingPerson(lyrics, authorsCache.person, songEdit.lyrics);
     if (lyricsSplit) songEdit.lyrics = lyricsSplit;
     else delete songEdit.lyrics;
-    const composerSplit = splitToNewAndExistingPerson(composer, songEdit.composer);
+    const composerSplit = splitToNewAndExistingPerson(composer, authorsCache.person, songEdit.composer);
     if (composerSplit) songEdit.composer = composerSplit;
     else delete songEdit.composer;
-    const translationSplit = splitToNewAndExistingPerson(translation, songEdit.translation);
+    const translationSplit = splitToNewAndExistingPerson(translation, authorsCache.person, songEdit.translation);
     if (translationSplit) songEdit.translation = translationSplit;
     else delete songEdit.translation;
-    const performerSplit = splitToNewAndExistingPerson(performer, songEdit.performer);
+    const performerSplit = splitToNewAndExistingPerson(performer, authorsCache.person, songEdit.performer);
     if (performerSplit) songEdit.performer = performerSplit;
     else delete songEdit.performer;
 
-    const sourceSplit = splitToNewAndExistingSource(source, songEdit.source);
+    const sourceSplit = splitToNewAndExistingSource(source, authorsCache.source, songEdit.source);
     if (sourceSplit) songEdit.source = sourceSplit;
     else delete songEdit.source;
 
+    if (band && typeof band !== 'string') authorsCache.band = band;
     const bandSplit = splitToNewAndExistingBand(band, songEdit.band);
     if (bandSplit) songEdit.band = bandSplit;
     else delete songEdit.band;
@@ -169,7 +175,7 @@ const SongInfoEditor = () => {
           <TextField
             fullWidth
             label="Alternatywny tytuł"
-            disabled={!canRemove && !!song.altTitle}
+            disabled={!canRemove && !!song?.altTitle}
             error={!!validationErrors.altTitle}
             helperText={validationErrors.altTitle}
             value={altTitle}
@@ -199,7 +205,7 @@ const SongInfoEditor = () => {
             multiple
             value={lyrics}
             setValue={setLyrics}
-            fixedValues={song.lyrics ?? []}
+            fixedValues={song?.lyrics ?? []}
             error={validationErrors.lyrics}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
             getOptions={getPersonAutocomplete}
@@ -212,7 +218,7 @@ const SongInfoEditor = () => {
             multiple
             value={composer}
             setValue={setComposer}
-            fixedValues={song.composer ?? []}
+            fixedValues={song?.composer ?? []}
             error={validationErrors.composer}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
             getOptions={getPersonAutocomplete}
@@ -225,7 +231,7 @@ const SongInfoEditor = () => {
             multiple
             value={translation}
             setValue={setTranslation}
-            fixedValues={song.translation ?? []}
+            fixedValues={song?.translation ?? []}
             error={validationErrors.translation}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
             getOptions={getPersonAutocomplete}
@@ -237,7 +243,7 @@ const SongInfoEditor = () => {
           <SongInfoAutocomplete
             value={band}
             setValue={setBand}
-            fixedValues={song.band}
+            fixedValues={song?.band}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
             getOptions={getBandAutocomplete}
             inputLabel="Zespół"
@@ -249,7 +255,7 @@ const SongInfoEditor = () => {
             multiple
             value={performer}
             setValue={setPerformer}
-            fixedValues={song.performer ?? []}
+            fixedValues={song?.performer ?? []}
             error={validationErrors.performer}
             getOptionLabel={(option) => (typeof option === 'string' ? option : personAsString(option))}
             getOptions={getPersonAutocomplete}
@@ -262,7 +268,7 @@ const SongInfoEditor = () => {
             multiple
             value={source}
             setValue={setSource}
-            fixedValues={song.source ?? []}
+            fixedValues={song?.source ?? []}
             error={validationErrors.source}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
             getOptions={getSourceAutocomplete}
@@ -297,7 +303,7 @@ const SongInfoEditor = () => {
                     key={key}
                     label={option}
                     {...tagProps}
-                    disabled={!canRemove && !!song.video?.includes(option)}
+                    disabled={!canRemove && !!song?.video?.includes(option)}
                   />
                 );
               })

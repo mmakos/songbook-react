@@ -11,9 +11,12 @@ export const decompress = (compressedBase64: string) => {
 };
 
 const createFetchSongAsyncThunk = (name: string) =>
-  createAsyncThunk(name, async (slug: string, thunkAPI) => {
+  createAsyncThunk(name, async ({ slug, username }: { slug: string; username?: string }, thunkAPI) => {
     thunkAPI.dispatch(resetSongTimeout());
-    return await api.get(`song/${slug}/`)
+    let uri = `song/${slug}/`;
+    if (username) uri += `${username}/`;
+    return await api
+      .get(uri)
       .then((response) => {
         const song: ISong = response.data;
         song.verses = JSON.parse(decompress(response.data.verses));

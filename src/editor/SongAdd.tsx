@@ -3,7 +3,7 @@ import SongEditStepper from './SongEditStepper.tsx';
 
 const SongEdit = () => {
   return (
-    <SongEditContextProvider newSong={false}>
+    <SongEditContextProvider newSong={true}>
       <SongEditStepper />
     </SongEditContextProvider>
   );

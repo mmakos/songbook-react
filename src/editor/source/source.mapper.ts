@@ -9,6 +9,7 @@ export const sourceToSourceData = (source: ISourceData): ISourceData => ({
 
 export const splitToNewAndExistingSource = (
   sources: (ISourceOverview | string)[],
+  cache: Record<string, ISourceOverview>,
   current?: IAuthorEdit<ISourceData>
 ): IAuthorEdit<ISourceData> | undefined => {
   const news: ISourceData[] = [];
@@ -23,6 +24,7 @@ export const splitToNewAndExistingSource = (
         }
       );
     } else {
+      cache[source.slug] = source;
       existing.push(source.slug);
     }
   }
@@ -34,12 +36,14 @@ export const splitToNewAndExistingSource = (
 };
 
 export const getSourceFromSongEdit = (
+  cache: Record<string, ISourceOverview>,
   sourceEdit?: IAuthorEdit<ISourceData>,
   songSource?: ISourceOverview[]
 ): (ISourceOverview | string)[] => {
   const result: (ISourceOverview | string)[] = [];
   sourceEdit?.existing?.forEach((e) => {
-    const found = songSource?.find((s) => s.slug === e);
+    let found: ISourceOverview | undefined = cache[e];
+    if (!found) found = songSource?.find((s) => s.slug === e);
     found && result.push(found);
   });
   sourceEdit?.new?.forEach((n) => result.push(n.name));

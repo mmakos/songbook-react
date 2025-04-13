@@ -1,7 +1,7 @@
 import { X as XTwitter } from '@mui/icons-material';
-import { Button } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 
-const CLIENT_ID = 'THJRVGFnenpiMER3WVR3VUpkWFI6MTpjaQ';
+const CLIENT_ID = import.meta.env.VITE_X_CLIENT_ID;
 
 const XLogin = () => {
   const xLogin = () => {
@@ -11,9 +11,14 @@ const XLogin = () => {
   };
 
   return (
-    <Button onClick={() => xLogin()} startIcon={<XTwitter />} size="large" variant="outlined" disabled>
-      Zaloguj z kontem X
-    </Button>
+    <Stack>
+      <Button onClick={() => xLogin()} startIcon={<XTwitter />} size="large" variant="outlined">
+        Zaloguj z kontem X
+      </Button>
+      <Typography variant="caption" color="error">
+        To raczej nie zadziała (coś nie tak z X)
+      </Typography>
+    </Stack>
   );
 };
 

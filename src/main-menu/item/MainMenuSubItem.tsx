@@ -9,6 +9,7 @@ const MainMenuSubItem: FC<IMainMenuItemProps & { close: () => void }> = ({
   text,
   routeTo,
   href,
+  onClick,
   close,
 }) => {
   const navigate = useNavigate();
@@ -18,13 +19,15 @@ const MainMenuSubItem: FC<IMainMenuItemProps & { close: () => void }> = ({
       navigate(routeTo);
     } else if (href) {
       window.open(href, '_blank');
+    } else if (onClick) {
+      onClick();
     }
     close();
   };
 
   if (type === 'drawer') {
     return (
-      <ListItemButton onClick={handleMenuItemClicked} sx={{pl: '2em'}}>
+      <ListItemButton onClick={handleMenuItemClicked} sx={{ pl: '2em' }}>
         {icon && <ListItemIcon>{icon}</ListItemIcon>}
         <ListItemText primary={text} />
       </ListItemButton>

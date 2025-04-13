@@ -6,7 +6,6 @@ import { AxiosResponse } from 'axios';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import Grid from '@mui/material/Grid2';
-import SongBandEditor from '../editor/band/SongBandEditor.tsx';
 import Progress from '../components/Progress.tsx';
 import { Button, Stack, Typography } from '@mui/material';
 import EditorInfo from '../song/EditorInfo.tsx';
@@ -59,10 +58,10 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
   const sortedEdits = Object.entries(edits);
   if (!sortedEdits.length && entity.created.verified)
     return (
-        <Stack spacing={2}>
-          <Typography>Nie ma więcej edycji do weryfikacji</Typography>
-          <RouteButton to={`/${entityId}/${slug}`}>Wróć do strony zespołu</RouteButton>
-        </Stack>
+      <Stack spacing={2}>
+        <Typography>Nie ma więcej edycji do weryfikacji</Typography>
+        <RouteButton to={`/${entityId}/${slug}`}>Wróć do strony zespołu</RouteButton>
+      </Stack>
     );
 
   sortedEdits.sort(([, e1], [, e2]) => e2.edited!.time - e1.edited!.time);
@@ -133,11 +132,11 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
             )}
           </Stack>
         </Grid>
-        {Object.entries(edits).map(([user, edit]) => (
+        {Object.entries(edits).map(([user, entity]) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`${entityId}-${user}`}>
             <Stack spacing={2}>
-              <SongBandEditor title={`Edytowano przez ${user}`} band={edit} setBand={(b) => handleSetEdit(user, b)} />
-              <EditorInfo prefix="Edytowano" editorInfo={edit.edited!} />
+              <Editor title={`Edytowano przez ${user}`} entity={entity} setEntity={(e) => handleSetEdit(user, e)} />
+              <EditorInfo prefix="Edytowano" editorInfo={entity.edited!} />
               <Stack direction="row" spacing={1}>
                 <Button variant="outlined" startIcon={<ThumbDown />} onClick={() => handleDeleteEdit(user)} fullWidth>
                   Odrzuć

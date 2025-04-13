@@ -31,6 +31,8 @@ import { setUser } from './store/songbook.reducer.ts';
 import VerifyBand from './verify/VerifyBand.tsx';
 import VerifySource from './verify/VerifySource.tsx';
 import VerifyPerson from './verify/VerifyPerson.tsx';
+import SongAdd from "./editor/SongAdd.tsx";
+import VerifySong from "./verify/VerifySong.tsx";
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -44,16 +46,17 @@ const router = createBrowserRouter(
     <Route element={<BasicLayout />}>
       <Route path="/" element={<MainPage />} />
       <Route path="/songs/:category?" element={<SongFullTable />} />
-      <Route path="/song/:songSlug" element={<GlobalSong />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<Login />} />
       <Route path="/login/:source" element={<LoginResult />} />
+      <Route path="/song/:songSlug/:username?" element={<GlobalSong />} />
       <Route path="/person/:personSlug/:username?" element={<Person />} />
       <Route path="/band/:bandSlug/:username?" element={<Band />} />
       <Route path="/source/:sourceSlug/:username?" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
+        <Route path="/add/song" element={<SongAdd />} />
         <Route path="/edit/song/:songSlug" element={<SongEdit />} />
         <Route path="/edit/person/:personSlug/:username?" element={<PersonEdit />} />
         <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
@@ -63,7 +66,8 @@ const router = createBrowserRouter(
         <Route path="/verify/band/:slug" element={<VerifyBand />} />
         <Route path="/verify/person/:slug" element={<VerifyPerson />} />
         <Route path="/verify/source/:slug" element={<VerifySource />} />
-      </Route>
+        <Route path="/verify/song/:songSlug/:username" element={<VerifySong />} />
+      </Route>s
       <Route path="*" element={<NotFound />} />
     </Route>
   )

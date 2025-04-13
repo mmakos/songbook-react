@@ -181,6 +181,9 @@ const songbookSlice = createSlice({
   name: 'songbook',
   initialState: initialSongbookState,
   reducers: {
+    updateSong: (state: ISongbookState, action: PayloadAction<ISong>) => {
+      state.song = action.payload;
+    },
     clearSong: (state: ISongbookState) => {
       delete state.song;
       state.songSettings = {
@@ -353,6 +356,7 @@ const songbookSlice = createSlice({
   },
 });
 export const {
+  updateSong,
   clearSong,
   setSongSettingsOpen,
   setSongInfoOpen,

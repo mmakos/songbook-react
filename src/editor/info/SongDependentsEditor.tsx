@@ -109,10 +109,12 @@ const SongDependentsEditor = () => {
     if (band) songEdit.band = { new: band };
     else delete songEdit.band;
 
-    if (Object.keys(sources).length) songEdit.source!.new = Object.values(sources);
-    else {
-      delete songEdit.source!.new;
-      if (!songEdit.source!.existing) delete songEdit.source;
+    if (songEdit.source) {
+      if (Object.keys(sources).length) songEdit.source.new = Object.values(sources);
+      else {
+        delete songEdit.source.new;
+        if (!songEdit.source.existing) delete songEdit.source;
+      }
     }
 
     updatePeople(songEdit.lyrics?.new, people);

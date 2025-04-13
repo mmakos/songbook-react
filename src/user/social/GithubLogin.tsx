@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
 
-const CLIENT_ID = 'Ov23liRxVNKs0uPC6dGS';
+const CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
 const GithubLogin = () => {
   const githubLogin = () => {
