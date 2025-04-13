@@ -1,7 +1,7 @@
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { FC, useState } from 'react';
 import { Collapse } from '@mui/material';
-import { ISongContent, IVerse } from '../../types/song.types.ts';
+import {IChords, ISongContent, IVerse} from '../../types/song.types.ts';
 import VerseChords from './VerseChords.tsx';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
 import useVerseSpacing from '../../store/useVerseSpacing.hook.ts';
@@ -9,9 +9,10 @@ import useVerseSpacing from '../../store/useVerseSpacing.hook.ts';
 interface ICollapsibleVerseChordsProps {
   verse: IVerse;
   song: ISongContent;
+  chordsType: keyof IChords;
 }
 
-const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song }) => {
+const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song, chordsType }) => {
   const { expandVerses } = useAppSelector((state) => state.songDisplayState);
   const [showOriginal, setShowOriginal] = useState(!expandVerses);
   const lineHeight = useLineHeight();
@@ -26,7 +27,7 @@ const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song 
   if (!verseRefValid) {
     return (
       <div style={{ marginBottom: `${verseSpacing}em` }}>
-        <VerseChords verse={verse} />
+        <VerseChords verse={verse} chordsType={chordsType} />
       </div>
     );
   }
@@ -40,7 +41,7 @@ const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song 
         onExited={() => setShowOriginal(true)}
       >
         <div>
-          <VerseChords verse={verse} />
+          <VerseChords verse={verse} chordsType={chordsType} />
         </div>
       </Collapse>
     </div>

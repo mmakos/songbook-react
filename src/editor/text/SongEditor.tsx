@@ -177,7 +177,7 @@ const SongEditor = () => {
   };
 
   const validate = () => {
-    if (!songEdit.key?.songbook) {
+    if (!songEdit.key?.songbook && keyEdit) {
       setSongbookKeyError(true);
       return false;
     }
@@ -248,6 +248,7 @@ const SongEditor = () => {
                   <em>Tekst specjalny 1</em> <Shortcut baseKey="I" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="1"
@@ -264,6 +265,7 @@ const SongEditor = () => {
                   <u>Tekst specjalny 2</u> <Shortcut baseKey="U" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="2"
@@ -280,6 +282,7 @@ const SongEditor = () => {
                   <strong>Tekst specjalny 3</strong> <Shortcut baseKey="B" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="3"
@@ -296,6 +299,7 @@ const SongEditor = () => {
                   Zmniejsz wcięcie <Shortcut baseKey="Tab" shift />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="outdent"
@@ -311,6 +315,7 @@ const SongEditor = () => {
                   Zwiększ wcięcie <Shortcut baseKey="Tab" />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="indent"
@@ -329,6 +334,7 @@ const SongEditor = () => {
                   Dodatkowe składniki <Shortcut baseKey="." mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="additional"
@@ -347,6 +353,7 @@ const SongEditor = () => {
                   Składnik w basie <Shortcut baseKey="," mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="base"
@@ -365,6 +372,7 @@ const SongEditor = () => {
                   <em>Akordy "ciche" (harmonia a cappella)</em> <Shortcut baseKey="I" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="3"
@@ -383,6 +391,7 @@ const SongEditor = () => {
                   Dźwięki wyłączone (akord bez prymy) <Shortcut baseKey="S" mod shift />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="3"
@@ -402,6 +411,7 @@ const SongEditor = () => {
                   Dodaj zwrotkę poniżej <Shortcut baseKey="Enter" shift />, <Shortcut baseKey="Enter" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="insertRowAfter"
@@ -411,7 +421,7 @@ const SongEditor = () => {
                 <InsertRowBottom />
               </ToggleButton>
             </BasicTooltip>
-            <BasicTooltip title="Usuń zwrotkę">
+            <BasicTooltip title="Usuń zwrotkę" span>
               <ToggleButton
                 value="deleteRow"
                 onClick={() => editor?.chain().focus().deleteRow().run()}
@@ -448,6 +458,7 @@ const SongEditor = () => {
                   Cofnij <Shortcut baseKey="Z" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="undo"
@@ -463,6 +474,7 @@ const SongEditor = () => {
                   Przywróć <Shortcut baseKey="Z" mod shift />, <Shortcut baseKey="Y" mod />
                 </>
               }
+              span
             >
               <ToggleButton
                 value="redo"
@@ -532,17 +544,17 @@ const SongEditor = () => {
               </BasicTooltip>
             }
           >
-            <BasicTooltip title="Odśwież podgląd">
+            <BasicTooltip title="Odśwież podgląd" span>
               <ToggleButton value="sync" disabled={previewType === 'editor'} onClick={updatePreview}>
                 <Autorenew />
               </ToggleButton>
             </BasicTooltip>
-            <BasicTooltip title="Zaktualizuj edytor na bazie podglądu">
+            <BasicTooltip title="Zaktualizuj edytor na bazie podglądu" span>
               <ToggleButton value="update" disabled={previewType === 'editor'} onClick={updateFromPreview}>
                 <Sync />
               </ToggleButton>
             </BasicTooltip>
-            <BasicTooltip title="Parsuj i aktualizuj edytor">
+            <BasicTooltip title="Parsuj i aktualizuj edytor" span>
               <ToggleButton value="update" disabled={previewType === 'preview'} onClick={updateEditor}>
                 <PublishedWithChanges />
               </ToggleButton>

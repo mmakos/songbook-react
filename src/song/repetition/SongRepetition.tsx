@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useMemo } from 'react';
 import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleLineRepetition from './CollapsibleVerseRepetition.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
@@ -8,12 +8,25 @@ interface ISongTextProps {
   song: ISongContent;
 }
 
+const hasRepetition = (song: ISongContent) => {
+  for (const verse of song.verses) {
+    for (const line of verse.lines) {
+      if (line.repetition) return true;
+    }
+  }
+  return false;
+};
+
 const SongRepetition: FC<ISongTextProps> = ({ song }) => {
   const {
     spacing: { repetitionSpacing },
     customSpacing,
     fontStyles: { repetition: repetitionStyle },
   } = useAppSelector((state) => state.songbookSettings.songTheme);
+
+  const songHasRepetition = useMemo(() => hasRepetition(song), [song]);
+
+  if (!songHasRepetition) return;
 
   return (
     <div

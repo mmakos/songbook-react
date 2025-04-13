@@ -323,13 +323,29 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
               Nierzadko ciężko jest mi się zdecydować, który akord brzmiałby lepiej w danym momencie (szczególnie dla
               piosenek bez oryginalnych wykonań, gdzie po prostu zapisuję akordy, takie jakie są). Aby nie ograniczać
               możliwości wykonania piosenki w różnej harmonii, czasami zapisuję alternatywne akordy po ukośniku, np.{' '}
-              <b>D/h</b>. Oznacza to, że generalnie gramy D-dur, ale h-moll będzie brzmiał równie dobrze. Jeśli jednak nie
-              chcemy sobie zaprzątać głowy alternatywną harmonią, możemy ograniczyć widoczne akordy do jednej harmonii.
+              <b>D/h</b>. Oznacza to, że generalnie gramy D-dur, ale h-moll będzie brzmiał równie dobrze. Jeśli jednak
+              nie chcemy sobie zaprzątać głowy alternatywną harmonią, możemy ograniczyć widoczne akordy do jednej
+              harmonii.
             </>
           ) : undefined
         }
         checked={!!chordDifficulty.hideAlternatives}
         onChange={(value) => changeDifficulty({ hideAlternatives: value })}
+      />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Ukryj kolumnę alternatywnych akordów'}
+        description={
+          showDescription ? (
+            <>
+              Czasem dodaję inną harmonię dla całej zwrotki lub nawet piosenki. Wtedy widoczna jest dodatkowa kolumna
+              akordów z tąże harmonią. Czasem jest to inna harmonia dla np. powtórzenia refrenu (wynikająca z oryginału)
+              lub inna tonacja dla części utworu (np. opcjonalna modulacja ostatniego refrenu).
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.hideAlternativesColumn}
+        onChange={(value) => changeDifficulty({ hideAlternativesColumn: value })}
       />
       <ExpandableSwitch
         sx={{ mt: showDescription ? '1em' : undefined }}

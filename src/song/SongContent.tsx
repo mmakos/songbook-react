@@ -12,6 +12,7 @@ import { ISongContent } from '../types/song.types.ts';
 const SongContent: FC<{ song?: ISongContent }> = ({ song }) => {
   const showChords = useAppSelector((state) => state.songSettings.showChords);
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
+  const chordDifficulty = useAppSelector((state) => state.songSettings.chordDifficulty);
   const zoom = useAppSelector((state) => state.songDisplayState.zoom);
   const theme = useTheme();
   const appThemeMode = useAppSelector((state) => state.theme);
@@ -60,7 +61,10 @@ const SongContent: FC<{ song?: ISongContent }> = ({ song }) => {
             <SongRepetition song={song} />
             {!noChords && (
               <Collapse in={showChords} orientation="horizontal">
-                <SongChords song={song} />
+                <Stack direction="row">
+                  <SongChords song={song} chordsType="chords" />
+                  {!chordDifficulty.hideAlternativesColumn && <SongChords song={song} chordsType="alternatives" />}
+                </Stack>
               </Collapse>
             )}
           </ScalableBox>

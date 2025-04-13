@@ -1,17 +1,18 @@
 import { FC, Fragment } from 'react';
-import { ILine } from '../../types/song.types.ts';
+import {IChords, ILine} from '../../types/song.types.ts';
 import ChordSeries from './ChordSeries.tsx';
 import EmptyLine from '../text/EmptyLine.tsx';
 import SilentChordSeries from './SilentChordSeries.tsx';
 
 interface ILineChordsProps {
   line: ILine;
+  chordsType: keyof IChords;
 }
 
-const LineChords: FC<ILineChordsProps> = ({ line }) => {
+const LineChords: FC<ILineChordsProps> = ({ line, chordsType }) => {
   return (
     <div>
-      {line.chords?.chords.map((chordsSeries, i) => (
+      {line.chords?.[chordsType]?.map((chordsSeries, i) => (
         <Fragment key={'s' + i}>
           {chordsSeries.silent ? (
             <SilentChordSeries>
@@ -20,10 +21,10 @@ const LineChords: FC<ILineChordsProps> = ({ line }) => {
           ) : (
             <ChordSeries series={chordsSeries} />
           )}
-          {i < (line.chords?.chords.length ?? 0) - 1 && <>&nbsp;</>}
+          {i < (line.chords?.[chordsType]?.length ?? 0) - 1 && <>&nbsp;</>}
         </Fragment>
       ))}
-      {!line.chords && <EmptyLine />}
+      {!line.chords?.[chordsType] && <EmptyLine />}
     </div>
   );
 };

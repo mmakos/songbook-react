@@ -35,6 +35,7 @@ export interface IChordDifficulty {
   hideBase?: boolean;
   hideBaseAdditional?: boolean;
   hideAlternatives?: boolean;
+  hideAlternativesColumn?: boolean;
   signAccidentals?: boolean;
   hideAdditionals269?: boolean;
   hideFourths?: boolean;
