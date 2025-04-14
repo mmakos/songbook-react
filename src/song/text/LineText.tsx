@@ -14,11 +14,16 @@ interface ILineTextProps {
 const StyledChatIcon = styled(Chat)(({ theme }) => ({
   alignSelf: 'center',
   cursor: 'pointer',
+  marginLeft: '0.5em',
   transition: theme.transitions.create('color', { duration: theme.transitions.duration.shortest }),
   ['&:hover']: {
     color: theme.palette.text.primary,
   },
 }));
+
+const StyledTextSpan = styled('span')({
+  whiteSpace: 'pre',
+});
 
 const LineText: FC<ILineTextProps> = ({ line }) => {
   const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
@@ -48,12 +53,15 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
   };
 
   return (
-    <Stack direction="row" spacing={1}>
-      {line.text?.map((run, i) => (
-        <span key={'r' + i} style={getRunStyle(run)}>
-          {run.text}
-        </span>
-      ))}
+    <Stack direction="row">
+      {line.text?.map((run, i) => {
+        console.log(run);
+        return (
+          <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run) }}>
+            {run.text}
+          </StyledTextSpan>
+        );
+      })}
       {!line.text && <EmptyLine />}
 
       {line.comment && (
