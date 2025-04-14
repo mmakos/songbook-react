@@ -4,12 +4,21 @@ import EmptyLine from './EmptyLine.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { IFontStyle } from '../../components/font/FontStyle.tsx';
 import { Chat } from '@mui/icons-material';
-import { Stack } from '@mui/material';
+import { Stack, styled } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
 
 interface ILineTextProps {
   line: ILine;
 }
+
+const StyledChatIcon = styled(Chat)(({ theme }) => ({
+  alignSelf: 'center',
+  cursor: 'pointer',
+  transition: theme.transitions.create('color', { duration: theme.transitions.duration.shortest }),
+  ['&:hover']: {
+    color: theme.palette.text.primary,
+  },
+}));
 
 const LineText: FC<ILineTextProps> = ({ line }) => {
   const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
@@ -49,7 +58,7 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
 
       {line.comment && (
         <BasicTooltip title={line.comment}>
-          <Chat fontSize="inherit" color="disabled" sx={{ alignSelf: 'center', cursor: 'pointer' }} />
+          <StyledChatIcon fontSize="inherit" color="disabled" />
         </BasicTooltip>
       )}
     </Stack>
