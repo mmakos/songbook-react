@@ -55,7 +55,6 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
   return (
     <Stack direction="row">
       {line.text?.map((run, i) => {
-        console.log(run);
         return (
           <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run) }}>
             {run.text}

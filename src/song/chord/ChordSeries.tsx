@@ -17,6 +17,7 @@ const ChordSeries: FC<IChordSeriesProps> = ({ series }) => {
         </Fragment>
       ))}
       {series.optional && ')'}
+      {series.repeat && '…'}
     </>
   );
 };
