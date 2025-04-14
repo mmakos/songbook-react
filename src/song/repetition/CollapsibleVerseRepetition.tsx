@@ -1,9 +1,10 @@
 import { useAppSelector } from '../../store/songbook.store.ts';
 import { FC, useState } from 'react';
-import {Collapse, Stack} from '@mui/material';
+import { Collapse } from '@mui/material';
 import { ISongContent, IVerse } from '../../types/song.types.ts';
 import VerseRepetition from './VerseRepetition.tsx';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
+import useVerseSpacing from '../../store/useVerseSpacing.hook.ts';
 
 interface ICollapsibleVerseRepetitionProps {
   verse: IVerse;
@@ -24,6 +25,7 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
   const { expandVerses } = useAppSelector((state) => state.songDisplayState);
   const [showOriginal, setShowOriginal] = useState(!expandVerses);
   const lineHeight = useLineHeight();
+  const verseSpacing = useVerseSpacing();
 
   const verseRefValid = verse.verseRef !== undefined && verse.verseRef < song.verses.length;
 
@@ -44,16 +46,16 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
   }
 
   return (
-    <Collapse
-      in={expandVerses}
-      collapsedSize={`${lineHeight}em`}
-      onEntered={() => setShowOriginal(false)}
-      onExited={() => setShowOriginal(true)}
-    >
-      <Stack>
-        <VerseRepetition verse={verse} previousVerse={previousVerse} />
-      </Stack>
-    </Collapse>
+      <Collapse
+        in={expandVerses}
+        collapsedSize={`${lineHeight + verseSpacing}em`}
+        onEntered={() => setShowOriginal(false)}
+        onExited={() => setShowOriginal(true)}
+      >
+        <div>
+          <VerseRepetition verse={verse} previousVerse={previousVerse} />
+        </div>
+      </Collapse>
   );
 };
 
