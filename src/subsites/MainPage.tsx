@@ -134,7 +134,7 @@ const MainPage = () => {
             </Typography>
             <Typography>
               Tworzę{' '}
-              <Link href="https://spiewnik.mmakos.pl/" underline="hover" target="_blank" rel="noopener">
+              <Link href="https://spiewnik0.mmakos.pl/" underline="hover" target="_blank" rel="noopener">
                 pierwszy śpiewnik online
               </Link>
               , generowany automatycznie na podstawie śpiewnika papierowego

@@ -93,7 +93,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         <MainMenuSubItem
           type={type}
           text="Jak korzystać"
-          href="https://spiewnik.mmakos.pl/dodatki/jak-korzystac/"
+          href="https://spiewnik0.mmakos.pl/dodatki/jak-korzystac/"
           close={handleExtrasClose}
         />
         <MainMenuSubItem
@@ -105,13 +105,13 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         <MainMenuSubItem
           type={type}
           text="Tabulatury"
-          href="https://spiewnik.mmakos.pl/dodatki/tabulatury/"
+          href="https://spiewnik0.mmakos.pl/dodatki/tabulatury/"
           close={handleExtrasClose}
         />
         <MainMenuSubItem
           type={type}
           text="Tłumaczenia"
-          href="https://spiewnik.mmakos.pl/dodatki/tlumaczenia/"
+          href="https://spiewnik0.mmakos.pl/dodatki/tlumaczenia/"
           close={handleExtrasClose}
         />
         <MainMenuSubItem
