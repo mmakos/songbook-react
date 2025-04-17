@@ -16,6 +16,7 @@ const SongText: FC<ISongTextProps> = ({ song }) => {
         fontWeight: textStyle.bold ? 'bold' : 'normal',
         fontStyle: textStyle.italic ? 'italic' : 'normal',
         textDecoration: textStyle.underline ? 'underline' : 'none',
+        position: 'relative',
       }}
     >
       {song.verses.map((verse, i) => (

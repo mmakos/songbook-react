@@ -120,6 +120,14 @@ export interface ISongbookState {
 
 const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };
 
+export const initialSpacing: ISpacing = {
+  lineHeight: 1.5,
+  verseSpacing: 0.7,
+  verseIndent: 3,
+  repetitionSpacing: 1,
+  chordsSpacing: 5,
+};
+
 export const initialSongbookState: ISongbookState = {
   notification: {
     message: '',
@@ -156,11 +164,7 @@ export const initialSongbookState: ISongbookState = {
       },
       customFont: getBoolFromStorage('song-theme-custom-font'),
       spacing: {
-        lineHeight: 1.5,
-        verseSpacing: 0.7,
-        verseIndent: 3,
-        repetitionSpacing: 1,
-        chordsSpacing: 5,
+        ...initialSpacing,
         ...getObjectFromStorage('song-theme-spacing'),
       },
       mode: getStringFromStorage('song-theme-mode') as PaletteMode,
@@ -169,13 +173,6 @@ export const initialSongbookState: ISongbookState = {
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
   },
-  // user: {
-  //   firstName: 'ala',
-  //   username: 'fiesjif',
-  //   lastName: 'fisejifj',
-  //   email: 'ksfiemf@fsie',
-  //   type: UserType.NORMAL,
-  // },
 };
 
 const songbookSlice = createSlice({

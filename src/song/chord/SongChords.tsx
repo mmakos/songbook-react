@@ -2,7 +2,7 @@ import { FC, Fragment, useMemo } from 'react';
 import { IChords, ISongContent } from '../../types/song.types.ts';
 import CollapsibleVerseChords from './CollapsibleVerseChords.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
-import { initialSongbookState } from '../../store/songbook.reducer.ts';
+import { initialSpacing } from '../../store/songbook.reducer.ts';
 
 interface ISongChordsProps {
   song: ISongContent;
@@ -30,7 +30,7 @@ const SongChords: FC<ISongChordsProps> = ({ song, chordsType }) => {
   return (
     <div
       style={{
-        marginLeft: `${customSpacing ? chordsSpacing : initialSongbookState.songbookSettings.songTheme.spacing.chordsSpacing}ch`,
+        marginLeft: `${customSpacing ? chordsSpacing : initialSpacing.chordsSpacing}ch`,
         fontWeight: chordStyle.bold ? 'bold' : 'normal',
         fontStyle: chordStyle.italic ? 'italic' : 'normal',
         textDecoration: chordStyle.underline ? 'underline' : 'none',

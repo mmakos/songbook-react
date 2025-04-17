@@ -22,9 +22,9 @@ import NotFound from '../subsites/NotFound.tsx';
 import Progress from '../components/Progress.tsx';
 
 const SongEditStepper = () => {
-  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout, canExit } = useOptionalSongEditContext();
+  const { activeStep, needsAuthorEdit, song, songEdit, songTimeout, canExit, newSong } = useOptionalSongEditContext();
 
-  if (song === undefined || !songEdit) {
+  if (!newSong && (song === undefined || !songEdit)) {
     if (songTimeout) {
       return <NotFound />;
     } else {

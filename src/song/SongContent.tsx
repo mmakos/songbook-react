@@ -2,7 +2,6 @@ import SongText from './text/SongText.tsx';
 import { Box, Collapse, Skeleton, Stack, useTheme } from '@mui/material';
 import SongChords from './chord/SongChords.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { darkTheme, lightTheme } from '../theme.ts';
 import SongRepetition from './repetition/SongRepetition.tsx';
 import ScalableBox from '../components/ScalableBox.tsx';
 import { FC, useRef } from 'react';
@@ -15,24 +14,21 @@ const SongContent: FC<{ song?: ISongContent }> = ({ song }) => {
   const chordDifficulty = useAppSelector((state) => state.songSettings.chordDifficulty);
   const zoom = useAppSelector((state) => state.songDisplayState.zoom);
   const theme = useTheme();
-  const appThemeMode = useAppSelector((state) => state.theme);
   const {
-    mode,
     font,
     customFont,
     spacing,
     customSpacing,
     fontStyles: { text },
   } = useAppSelector((state) => state.songbookSettings.songTheme);
-  const songTheme = mode && (mode === appThemeMode ? undefined : mode === 'light' ? lightTheme : darkTheme);
   const outerBoxRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
 
   return (
     <Box
-      color={songTheme?.palette.text.primary}
+      color={theme?.palette.text.primary}
       borderRadius="4px 4px 0 0"
-      sx={{ background: songTheme?.palette.background.default }}
+      sx={{ background: theme?.palette.background.paper, backgroundImage: 'var(--Paper-overlay)' }}
       px={{ xs: '1em', md: '2em' }}
       pt={{ xs: '1em', md: '1.5em' }}
       pb="0.5em"

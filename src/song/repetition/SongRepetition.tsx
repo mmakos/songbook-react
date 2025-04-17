@@ -2,7 +2,7 @@ import { FC, Fragment, useMemo } from 'react';
 import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleLineRepetition from './CollapsibleVerseRepetition.tsx';
 import { useAppSelector } from '../../store/songbook.store.ts';
-import { initialSongbookState } from '../../store/songbook.reducer.ts';
+import { initialSpacing } from '../../store/songbook.reducer.ts';
 
 interface ISongTextProps {
   song: ISongContent;
@@ -33,7 +33,7 @@ const SongRepetition: FC<ISongTextProps> = ({ song }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: `${customSpacing ? repetitionSpacing : initialSongbookState.songbookSettings.songTheme.spacing.repetitionSpacing}ch`,
+        marginLeft: `${customSpacing ? repetitionSpacing : initialSpacing.repetitionSpacing}ch`,
         fontWeight: repetitionStyle.bold ? 'bold' : 'normal',
         fontStyle: repetitionStyle.italic ? 'italic' : 'normal',
         textDecoration: repetitionStyle.underline ? 'underline' : 'none',

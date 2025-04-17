@@ -11,9 +11,12 @@ import SongVideo from './SongVideo.tsx';
 import SongControls from './SongControls.tsx';
 import { ISong } from '../types/song.types.ts';
 import WaitingEditsInfo from './WaitingEditsInfo.tsx';
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
+import useSongTheme from "../store/useSongTheme.ts";
 
 const Song: FC<{ song?: ISong }> = ({ song }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
+  const songTheme = useSongTheme();
 
   return (
     <div style={{ position: 'relative', alignItems: 'center', maxWidth: '100%' }}>
@@ -35,7 +38,9 @@ const Song: FC<{ song?: ISong }> = ({ song }) => {
       <SongVideo song={song} />
       {!noChords && <SongSettings song={song} />}
       <Paper>
-        <SongContent song={song} />
+        <ThemeProvider theme={songTheme}>
+          <SongContent song={song} />
+        </ThemeProvider>
         <Divider variant="middle" />
         <Stack padding="0.5em 1em">
           {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
