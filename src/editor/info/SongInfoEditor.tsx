@@ -45,7 +45,7 @@ const extractYoutubeLink = (url: string) => {
 };
 
 const SongInfoEditor = () => {
-  const { song, setNeedsAuthorEdit, songEdit, setSongEdit, updateStep, resetSongInfo, authorsCache } =
+  const { song, setNeedsAuthorEdit, songEdit, setSongEdit, updateStep, resetSongInfo, authorsCache, newSong } =
     useSongEditContext();
   const { canRemove } = useCanEdit();
 
@@ -153,7 +153,7 @@ const SongInfoEditor = () => {
 
   return (
     <>
-      {!canRemove && (
+      {!canRemove && !newSong && (
         <Typography color="info" variant="caption">
           Tylko zweryfikowani użytkownicy mają dostęp do pełnej edycji (usuwanie autorów, zmiana tytułu itd.)
         </Typography>
@@ -164,7 +164,7 @@ const SongInfoEditor = () => {
             fullWidth
             label="Tytuł piosenki"
             required
-            disabled={!canRemove}
+            disabled={!canRemove && !newSong}
             error={!!validationErrors.title}
             helperText={validationErrors.title}
             value={title}
@@ -175,7 +175,7 @@ const SongInfoEditor = () => {
           <TextField
             fullWidth
             label="Alternatywny tytuł"
-            disabled={!canRemove && !!song?.altTitle}
+            disabled={!canRemove && !newSong && !!song?.altTitle}
             error={!!validationErrors.altTitle}
             helperText={validationErrors.altTitle}
             value={altTitle}
@@ -188,7 +188,7 @@ const SongInfoEditor = () => {
             <Select
               variant="outlined"
               label="Kategoria"
-              disabled={!canRemove}
+              disabled={!canRemove && !newSong}
               value={category}
               onChange={(e) => setCategory(e.target.value as Category)}
             >

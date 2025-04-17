@@ -65,6 +65,7 @@ import StyledEditorContent from '../components/StyledEditorContent.ts';
 import SplitPane from '../../components/SplitPane.tsx';
 import { useSongEditContext } from '../SongEditContext.tsx';
 import SongKeysChooser from './SongKeysChooser.tsx';
+import SongTablePaste from './SongTablePaste.ts';
 
 type TPreviewType = 'editor' | 'split' | 'preview';
 
@@ -93,6 +94,7 @@ const SongEditor = () => {
       InputRules,
       Indent,
       PreventCellDrag,
+      SongTablePaste,
     ],
     content: songEditContent,
   });
