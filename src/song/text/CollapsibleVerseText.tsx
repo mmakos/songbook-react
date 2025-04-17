@@ -1,16 +1,24 @@
 import { FC, useState } from 'react';
 import { ISongContent, IVerse } from '../../types/song.types.ts';
-import { Collapse, Fade, IconButton } from '@mui/material';
+import { alpha, Collapse, Fade, IconButton, styled } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import VerseText from './VerseText.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
-import { initialSongbookState, setExpandVerses, setHoverExpandVerses } from '../../store/songbook.reducer.ts';
+import { initialSpacing, setExpandVerses, setHoverExpandVerses } from '../../store/songbook.reducer.ts';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
 
 interface ICollapsibleVerseTextProps {
   verse: IVerse;
   song: ISongContent;
 }
+
+const IconBackground = styled('span')(({ theme }) => ({
+  position: 'absolute',
+  fontSize: 'unset',
+  background: alpha(theme.palette.background.paper, 0.8),
+  backgroundImage: 'var(--Paper-overlay)',
+  lineHeight: 1,
+}));
 
 const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) => {
   const { expandVerses, hoverExpandVerses } = useAppSelector((state) => state.songDisplayState);
@@ -20,7 +28,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
   const dispatch = useAppDispatch();
 
   if (!customSpacing) {
-    spacing = initialSongbookState.songbookSettings.songTheme.spacing;
+    spacing = initialSpacing;
   }
 
   const lineHeight = useLineHeight();
@@ -50,26 +58,35 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
   };
 
   return (
-    <div
+    <div // NOSONAR
       style={{
         display: 'flex',
         marginBottom: spacing?.verseSpacing ? `${spacing.verseSpacing}em` : '0.7em',
-        marginLeft: `calc(${indent * (spacing?.verseIndent ?? 3)}ch - ${lineHeight + 0.3}em)`,
-        alignItems: 'start',
+        marginLeft: `${indent * (spacing?.verseIndent ?? 3)}ch`,
+        cursor: 'pointer',
       }}
       onMouseEnter={() => dispatch(setHoverExpandVerses(true))}
       onMouseLeave={() => dispatch(setHoverExpandVerses(false))}
+      onClick={handleExpand}
     >
       <Fade in={hoverExpandVerses}>
-        <IconButton onClick={handleExpand} sx={{ padding: 0, mr: '0.3em' }} color="inherit">
-          <ExpandMore
+        <IconBackground sx={{ left: `calc(max(${indent * (spacing?.verseIndent ?? 3)}ch - ${lineHeight}em, 0em))` }}>
+          <IconButton
+            onClick={handleExpand}
             sx={{
-              rotate: expandVerses ? '0deg' : '-90deg',
-              transitionProperty: 'rotate',
-              transitionDuration: '1sec',
+              padding: 0,
             }}
-          />
-        </IconButton>
+            color="inherit"
+          >
+            <ExpandMore
+              sx={{
+                rotate: expandVerses ? '0deg' : '-90deg',
+                transitionProperty: 'rotate',
+                transitionDuration: '1sec',
+              }}
+            />
+          </IconButton>
+        </IconBackground>
       </Fade>
       <Collapse
         in={expandVerses}

@@ -12,12 +12,18 @@ interface ICollapsibleVerseRepetitionProps {
   song: ISongContent;
 }
 
-const verseHasRepetition = (verse: IVerse) => {
-  for (const line of verse.lines) {
+const verseHasMultipleRepetition = (verse: IVerse) => {
+  let hasRepetition = false;
+  for (let i = 0; i < verse.lines.length; ++i) {
+    const line = verse.lines[i];
     if (line.repetition) {
+      if (line.repetitionEnd && i < verse.lines.length - 1) return true;
+      hasRepetition = true;
+    } else if (hasRepetition) {
       return true;
     }
   }
+
   return false;
 };
 
@@ -33,7 +39,7 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
     const referencedVerse = { ...song.verses[verse.verseRef!] };
     if (verse.lines.length === 1) {
       const onlyLine = verse.lines[0];
-      if (onlyLine.repetitionEnd && !verseHasRepetition(referencedVerse)) {
+      if (onlyLine.repetitionEnd && !verseHasMultipleRepetition(referencedVerse)) {
         referencedVerse.lines = referencedVerse.lines.map((line) => ({ ...line, repetition: true }));
         referencedVerse.lines[referencedVerse.lines.length - 1].repetitionEnd = onlyLine.repetitionEnd;
       }
