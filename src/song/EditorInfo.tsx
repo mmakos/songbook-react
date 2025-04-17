@@ -24,7 +24,7 @@ const EditorInfo: FC<IEditorInfoProps> = ({ prefix, editorInfo }) => {
       {!isNaN(date.valueOf()) && (
         <>
           &nbsp;
-          <BasicTooltip title={date.toLocaleString()}>
+          <BasicTooltip title={date.toLocaleString()} span>
             <>{date.toLocaleDateString()}</>
           </BasicTooltip>
         </>
