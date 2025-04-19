@@ -41,6 +41,11 @@ export interface IChordDifficulty {
   hideFourths?: boolean;
 }
 
+export interface ITextSettings {
+  hideNonLiteral?: boolean;
+  capitalize?: boolean;
+}
+
 export interface ISongSettings {
   transposition: ITransposition;
   chordDifficulty: IChordDifficulty;
@@ -51,6 +56,7 @@ export interface ISongbookSettings {
   noChordInfo?: boolean;
   noChords?: boolean;
   chordDifficulty: IChordDifficulty;
+  textSettings: ITextSettings;
   songTheme: ISongTheme;
 }
 
@@ -147,6 +153,10 @@ export const initialSongbookState: ISongbookState = {
   },
   songbookSettings: {
     chordDifficulty: initialChordDifficulty,
+    textSettings: {
+      hideNonLiteral: getBoolFromStorage("hide-non-literal"),
+      capitalize: getBoolFromStorage("capitalize") ?? true,
+    },
     songTheme: {
       fontStyles: {
         text: getObjectFromStorage('song-theme-text-style'),

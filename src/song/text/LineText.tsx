@@ -25,6 +25,10 @@ const StyledTextSpan = styled('span')({
   whiteSpace: 'pre',
 });
 
+const capitalizeLine = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
 const LineText: FC<ILineTextProps> = ({ line }) => {
   const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
 
@@ -57,7 +61,7 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
       {line.text?.map((run, i) => {
         return (
           <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run) }}>
-            {run.text}
+            {i == 0 ? capitalizeLine(run.text) : run.text}
           </StyledTextSpan>
         );
       })}

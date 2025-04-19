@@ -29,6 +29,7 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
   const navigate = useNavigate();
   const { songSlug, username } = useParams();
   const { canEdit, canVerify } = useCanEdit();
+  const user = useAppSelector((state) => state.user);
   const authAPI = useAuthAPI();
 
   const toggleSettingsOpen = () => {
@@ -55,6 +56,15 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
         song && dispatch(updateSong({ ...song, created: { ...song.created, verified: true } }));
       })
       .catch(() => dispatch(notifyError('Błąd podczas akceptowania niezweryfikowanej piosenki')));
+  };
+
+  const getEditHref = () => {
+    const baseHref = `/edit/song/${songSlug}`;
+    if (username) return `${baseHref}/${username}`;
+    if (song?.waiting && user && song.waiting.find(w => w.username === user.username)) {
+      return `${baseHref}/${user.username}`;
+    }
+    return baseHref;
   };
 
   return (
@@ -88,7 +98,12 @@ const SongControls: FC<ISongControlsProps> = ({ video, type }) => {
         <SongControl type={type} icon={<YouTube />} label="Nagranie" onClick={toggleVideoOpen} selected={videoOpen} />
       )}
       {canEdit && (
-        <SongControl type={type} icon={<Edit />} label="Edytuj" onClick={() => navigate(`/edit/song/${songSlug}`)} />
+        <SongControl
+          type={type}
+          icon={<Edit />}
+          label="Edytuj"
+          onClick={() => navigate(getEditHref())}
+        />
       )}
       {canVerify && username && (
         <SongControl
