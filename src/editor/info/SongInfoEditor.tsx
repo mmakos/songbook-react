@@ -23,7 +23,7 @@ import Grid from '@mui/material/Grid2';
 import { useSongEditContext } from '../SongEditContext.tsx';
 import SongInfoAutocomplete from './SongInfoAutocomplete.tsx';
 import { getBandAutocomplete, getPersonAutocomplete, getSourceAutocomplete } from './autocomplete.actions.ts';
-import { RestartAlt, Start } from '@mui/icons-material';
+import { Check, RestartAlt } from '@mui/icons-material';
 import useCanEdit from '../../store/useCanEdit.hook.ts';
 import { getPersonFromSongEdit, splitToNewAndExistingPerson } from '../person/person.mapper.ts';
 import { getSourceFromSongEdit, splitToNewAndExistingSource } from '../source/source.mapper.ts';
@@ -82,7 +82,7 @@ const SongInfoEditor = () => {
   const [videos, setVideos] = useState<string[]>(songEdit.video ?? []);
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
-  const [nonUniqueSlug, setNonUniqueSlugTitle] = useState<{ slug: string, title: string }>();
+  const [nonUniqueSlug, setNonUniqueSlugTitle] = useState<{ slug: string; title: string }>();
 
   const dispatch = useAppDispatch();
 
@@ -133,7 +133,7 @@ const SongInfoEditor = () => {
     }
     api
       .get('unique/song/', { params: { title, slug: newSong ? 1 : undefined } })
-      .then(({ data: { unique, slug, title } }: AxiosResponse<{ unique: boolean; slug: string, title: string }>) => {
+      .then(({ data: { unique, slug, title } }: AxiosResponse<{ unique: boolean; slug: string; title: string }>) => {
         if (unique) {
           continueNextStep();
         } else {
@@ -345,10 +345,12 @@ const SongInfoEditor = () => {
       </Grid>
       {validationErrors.minimal && <Typography color="warning">{validationErrors.minimal}</Typography>}
       <Stack direction="row" justifyContent="right" gap={1}>
-        <Button variant="outlined" size="large" onClick={resetSongInfo} startIcon={<RestartAlt />}>
-          Resetuj
-        </Button>
-        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Start />}>
+        {!newSong && (
+          <Button variant="outlined" size="large" onClick={resetSongInfo} startIcon={<RestartAlt />}>
+            Resetuj
+          </Button>
+        )}
+        <Button variant="contained" size="large" onClick={handleNextStep} endIcon={<Check />}>
           Dalej
         </Button>
       </Stack>

@@ -20,6 +20,7 @@ import ReactRouterPrompt from 'react-router-prompt';
 import AlertTransition from '../components/AlertTransition.tsx';
 import NotFound from '../subsites/NotFound.tsx';
 import Progress from '../components/Progress.tsx';
+import ImportSong from "./import-song/ImportSong.tsx";
 
 const SongEditStepper = () => {
   const { activeStep, needsAuthorEdit, song, songEdit, songTimeout, canExit, newSong } = useOptionalSongEditContext();
@@ -31,6 +32,8 @@ const SongEditStepper = () => {
       return <Progress />;
     }
   }
+
+  const stepFromInfo = newSong ? activeStep - 1 : activeStep;
 
   return (
     <Stack gap={2} width="100%">
@@ -52,7 +55,12 @@ const SongEditStepper = () => {
           </Dialog>
         )}
       </ReactRouterPrompt>
-      <Stepper activeStep={activeStep} nonLinear>
+      <Stepper activeStep={activeStep}>
+        {newSong && (
+          <Step>
+            <StepLabel>Importuj</StepLabel>
+          </Step>
+        )}
         <Step>
           <StepLabel>Informacje o piosence</StepLabel>
         </Step>
@@ -68,10 +76,11 @@ const SongEditStepper = () => {
           <StepLabel>Podsumowanie</StepLabel>
         </Step>
       </Stepper>
-      {activeStep === 0 && <SongInfoEditor />}
-      {needsAuthorEdit && activeStep === 1 && <SongDependentsEditor />}
-      {activeStep === (needsAuthorEdit ? 2 : 1) && <SongEditor />}
-      {activeStep === (needsAuthorEdit ? 3 : 2) && <SongEditSummary />}
+      {stepFromInfo === -1 && <ImportSong />}
+      {stepFromInfo === 0 && <SongInfoEditor />}
+      {needsAuthorEdit && stepFromInfo === 1 && <SongDependentsEditor />}
+      {stepFromInfo === (needsAuthorEdit ? 2 : 1) && <SongEditor />}
+      {stepFromInfo === (needsAuthorEdit ? 3 : 2) && <SongEditSummary />}
     </Stack>
   );
 };

@@ -33,7 +33,7 @@ export const songToSongEdit = (song: ISong | null): ISongEdit => {
 
 type TSongNew<New extends boolean> = New extends true ? null : ISong;
 
-interface IAuthorsCache {
+export interface IAuthorsCache {
   person: Record<string, IPersonOverview>;
   source: Record<string, ISourceOverview>;
   band?: IBandOverview;

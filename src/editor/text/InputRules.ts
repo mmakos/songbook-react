@@ -3,7 +3,7 @@ import { InputRule } from '@tiptap/react';
 
 const intervalInputRule = () =>
   new InputRule({
-    find: /(?:^|\s|\/)[A-Ha-h](?:is|e?s|[#b<>+])?(\d)$/,
+    find: /(?:^|\s|\/|\()[A-Ha-h](?:is|e?s|[#b<>+])?(\d)$/,
     handler: ({ state, range, match }) => {
       const { tr } = state;
       const char = match[1];
