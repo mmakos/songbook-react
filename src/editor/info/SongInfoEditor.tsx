@@ -2,8 +2,13 @@ import {
   Autocomplete,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   InputLabel,
+  Link,
   MenuItem,
   Select,
   Stack,
@@ -23,6 +28,10 @@ import useCanEdit from '../../store/useCanEdit.hook.ts';
 import { getPersonFromSongEdit, splitToNewAndExistingPerson } from '../person/person.mapper.ts';
 import { getSourceFromSongEdit, splitToNewAndExistingSource } from '../source/source.mapper.ts';
 import { getBandFromSongEdit, splitToNewAndExistingBand } from '../band/band.mapper.ts';
+import { api } from '../../http/api.ts';
+import { AxiosResponse } from 'axios';
+import { useAppDispatch } from '../../store/songbook.store.ts';
+import { notifyError } from '../../store/songbook.reducer.ts';
 
 interface ValidationErrors {
   title?: string;
@@ -73,6 +82,9 @@ const SongInfoEditor = () => {
   const [videos, setVideos] = useState<string[]>(songEdit.video ?? []);
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [nonUniqueSlug, setNonUniqueSlugTitle] = useState<{ slug: string, title: string }>();
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setNeedsAuthorEdit(
@@ -114,12 +126,24 @@ const SongInfoEditor = () => {
     return errors;
   };
 
-  const handleNextStep = () => {
-    const errors = validate();
-    const errorCount = Object.keys(errors).length;
-    // Ten drugi warunek, to jak zostało już tylko ostrzeżenie, które już wcześniej było
-    if (errorCount && !(errorCount === 1 && errors.minimal && validationErrors.minimal)) return;
+  const checkSongUniqueness = () => {
+    if (title === song?.title) {
+      continueNextStep();
+      return;
+    }
+    api
+      .get('unique/song/', { params: { title, slug: newSong ? 1 : undefined } })
+      .then(({ data: { unique, slug, title } }: AxiosResponse<{ unique: boolean; slug: string, title: string }>) => {
+        if (unique) {
+          continueNextStep();
+        } else {
+          setNonUniqueSlugTitle({ slug, title });
+        }
+      })
+      .catch(() => dispatch(notifyError('Błąd przy sprawdzaniu unikalności tytułu. Spróbuj ponownie.')));
+  };
 
+  const continueNextStep = () => {
     authorsCache.source = {};
     authorsCache.person = {};
     const lyricsSplit = splitToNewAndExistingPerson(lyrics, authorsCache.person, songEdit.lyrics);
@@ -149,6 +173,14 @@ const SongInfoEditor = () => {
     if (!videos.length) delete newEdit.video;
     setSongEdit(newEdit);
     updateStep(1);
+  };
+
+  const handleNextStep = () => {
+    const errors = validate();
+    const errorCount = Object.keys(errors).length;
+    // Ten drugi warunek, to jak zostało już tylko ostrzeżenie, które już wcześniej było
+    if (errorCount && !(errorCount === 1 && errors.minimal && validationErrors.minimal)) return;
+    checkSongUniqueness();
   };
 
   return (
@@ -320,6 +352,20 @@ const SongInfoEditor = () => {
           Dalej
         </Button>
       </Stack>
+      <Dialog open={!!nonUniqueSlug} onClose={() => setNonUniqueSlugTitle(undefined)}>
+        <DialogTitle>Piosenka już istnieje</DialogTitle>
+        <DialogContent>
+          Piosenka o podanym tytule już istnieje:{' '}
+          <Link href={`/song/${nonUniqueSlug?.slug}`} target="_blank" rel="noreferrer">
+            {nonUniqueSlug?.title}
+          </Link>
+          . Jeśli chcesz dodać piosenkę z takim tytułem, to podaj w nawiasie coś wyróżniającego, np.{' '}
+          <strong>Wróżba (Gintrowski)</strong>, <strong>Wróżba (Kaczmarski)</strong>.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNonUniqueSlugTitle(undefined)}>Ok</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
