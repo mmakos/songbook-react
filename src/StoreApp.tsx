@@ -14,7 +14,7 @@ import SongFullTable from './song-list/SongFullTable.tsx';
 import FullSearch from './search/FullSearch.tsx';
 import MainPage from './subsites/MainPage.tsx';
 import Login from './user/Login.tsx';
-import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Navigate, RouterProvider } from 'react-router-dom';
 import BasicLayout from './BasicLayout.tsx';
 import SongEdit from './editor/SongEdit.tsx';
 import GlobalSong from './song/GlobalSong.tsx';
@@ -31,8 +31,9 @@ import { setUser } from './store/songbook.reducer.ts';
 import VerifyBand from './verify/VerifyBand.tsx';
 import VerifySource from './verify/VerifySource.tsx';
 import VerifyPerson from './verify/VerifyPerson.tsx';
-import SongAdd from "./editor/SongAdd.tsx";
-import VerifySong from "./verify/VerifySong.tsx";
+import SongAdd from './editor/SongAdd.tsx';
+import VerifySong from './verify/VerifySong.tsx';
+import RedirectSong from './song/RedirectSong.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -67,8 +68,17 @@ const router = createBrowserRouter(
         <Route path="/verify/person/:slug" element={<VerifyPerson />} />
         <Route path="/verify/source/:slug" element={<VerifySource />} />
         <Route path="/verify/song/:songSlug/:username" element={<VerifySong />} />
-      </Route>s
+      </Route>
+
       <Route path="*" element={<NotFound />} />
+      <Route path="/piosenki" element={<Navigate to="/songs" replace />} />
+      <Route path="/piosenki/wszystkie" element={<Navigate to="/songs" replace />} />
+      <Route path="/piosenki/kaczmarski" element={<Navigate to="/songs/kaczmarski" replace />} />
+      <Route path="/piosenki/obozowe" element={<Navigate to="/songs/other" replace />} />
+      <Route path="/piosenki/patriotyczne" element={<Navigate to="/songs/patriotic" replace />} />
+      <Route path="/piosenki/religijne" element={<Navigate to="/songs/religious" replace />} />
+      <Route path="/piosenki/koledy" element={<Navigate to="/songs/carols" replace />} />
+      <Route path="/piosenki/:category/:title" element={<RedirectSong />} />
     </Route>
   )
 );
