@@ -34,6 +34,8 @@ import VerifyPerson from './verify/VerifyPerson.tsx';
 import SongAdd from './editor/SongAdd.tsx';
 import VerifySong from './verify/VerifySong.tsx';
 import RedirectSong from './song/RedirectSong.tsx';
+import CreateMeeting from './meeting/CreateMeeting.tsx';
+import EditMeeting from './meeting/EditMeeting.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -55,6 +57,8 @@ const router = createBrowserRouter(
       <Route path="/band/:bandSlug/:username?" element={<Band />} />
       <Route path="/source/:sourceSlug/:username?" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
+      <Route path="/add/meeting" element={<CreateMeeting />} />
+      <Route path="/edit/meeting/:meetingId" element={<EditMeeting />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/add/song" element={<SongAdd />} />
