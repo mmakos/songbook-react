@@ -94,7 +94,7 @@ const SongEditSummary = () => {
         dispatch(
           notifySuccess('Pomyślnie zaktualizowano piosenkę - będzie widoczna w poczekalni do czasu weryfikacji')
         );
-        navigate(`/song/${data.slug}/${data.editor}`);
+        navigate(`/song/${data.slug}${newSong ? "" : "/" + data.editor}`);
       })
       .catch(() => {
         dispatch(notifyError('Niespodziewany błąd podczas aktualizacji piosenki'));
