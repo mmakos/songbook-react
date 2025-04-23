@@ -36,6 +36,10 @@ import VerifySong from './verify/VerifySong.tsx';
 import RedirectSong from './song/RedirectSong.tsx';
 import CreateMeeting from './meeting/CreateMeeting.tsx';
 import EditMeeting from './meeting/EditMeeting.tsx';
+import Meeting from './meeting/Meeting.tsx';
+import MyMeetings from './meeting/MyMeetings.tsx';
+import CurrentMeeting from './meeting/CurrentMeeting.tsx';
+import JoinMeeting from './meeting/JoinMeeting.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -57,8 +61,10 @@ const router = createBrowserRouter(
       <Route path="/band/:bandSlug/:username?" element={<Band />} />
       <Route path="/source/:sourceSlug/:username?" element={<Source />} />
       <Route path="/search" element={<FullSearch />} />
-      <Route path="/add/meeting" element={<CreateMeeting />} />
-      <Route path="/edit/meeting/:meetingId" element={<EditMeeting />} />
+
+      <Route path="/meeting/:meetingId" element={<Meeting />} />
+      <Route path="/meeting" element={<CurrentMeeting />} />
+
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/add/song" element={<SongAdd />} />
@@ -66,6 +72,12 @@ const router = createBrowserRouter(
         <Route path="/edit/person/:personSlug/:username?" element={<PersonEdit />} />
         <Route path="/edit/band/:bandSlug/:username?" element={<BandEdit />} />
         <Route path="/edit/source/:sourceSlug/:username?" element={<SourceEdit />} />
+
+        <Route path="/add/meeting" element={<CreateMeeting />} />
+        <Route path="/edit/meeting/:meetingId" element={<EditMeeting />} />
+        <Route path="/meetings" element={<MyMeetings />} />
+        <Route path="/join/meeting/id/:meetingId" element={<JoinMeeting />} />
+        <Route path="/join/meeting/:accessCode" element={<JoinMeeting />} />
       </Route>
       <Route element={<ProtectedRoute types={[UserType.SITH, UserType.JEDI]} />}>
         <Route path="/verify/band/:slug" element={<VerifyBand />} />

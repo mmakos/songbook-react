@@ -18,6 +18,7 @@ import {
   saveStringToStorage,
 } from './local-storage.utils.ts';
 import { IUser } from '../user/user.types.ts';
+import { IMeeting } from '../meeting/meeting.types.tsx';
 
 export interface INotificationState {
   open?: boolean;
@@ -121,6 +122,7 @@ export interface ISongbookState {
    * Dane o zalogowanym użytkowniku
    */
   user?: IUser | null;
+  meeting: { meeting?: IMeeting; id?: string };
   accessToken?: string;
 }
 
@@ -154,8 +156,8 @@ export const initialSongbookState: ISongbookState = {
   songbookSettings: {
     chordDifficulty: initialChordDifficulty,
     textSettings: {
-      hideNonLiteral: getBoolFromStorage("hide-non-literal"),
-      capitalize: getBoolFromStorage("capitalize") ?? true,
+      hideNonLiteral: getBoolFromStorage('hide-non-literal'),
+      capitalize: getBoolFromStorage('capitalize') ?? true,
     },
     songTheme: {
       fontStyles: {
@@ -183,6 +185,7 @@ export const initialSongbookState: ISongbookState = {
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
   },
+  meeting: { id: getStringFromStorage('meetingId') },
 };
 
 const songbookSlice = createSlice({
@@ -353,6 +356,10 @@ const songbookSlice = createSlice({
     setAccessToken: (state: ISongbookState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
+    setCurrentMeeting: (state: ISongbookState, action: PayloadAction<string | undefined>) => {
+      state.meeting.id = action.payload;
+      saveStringToStorage('meetingId', action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAndSaveSong.fulfilled, (state: ISongbookState, action) => {
@@ -402,6 +409,7 @@ export const {
   resetSongTimeout,
   setUser,
   setAccessToken,
+  setCurrentMeeting,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;

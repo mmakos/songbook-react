@@ -14,50 +14,18 @@ import { useState } from 'react';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
-import { IMeetingInfo, TEdit, TSort, TVisibility } from './meeting.types.tsx';
-
-const getVisibilityHelperText = (value: TVisibility) => {
-  switch (value) {
-    case 'public':
-      return 'Wszyscy mogą zobaczyć to spotkanie';
-    case 'code':
-      return 'Użytkownicy mogą dołączyć jeśli posiadają kod dostępu';
-  }
-  return `Tylko ty i dodani przez Ciebie użytkownicy`;
-};
-
-const getEditHelperText = (value: TEdit) => {
-  switch (value) {
-    case 'participant':
-      return 'Tylko osoby, które dodałeś do śpiewanek';
-    case 'user':
-      return 'Każdy zalogowany użytkownik, który ma dostęp do śpiewanek';
-    case 'everyone':
-      return 'Każdy (nawet niezalogowany) użytkownik';
-  }
-  return 'Tylko ty możesz dodawać piosenki';
-};
-
-const getSortHelperText = (value: TSort) => {
-  switch (value) {
-    case 'title':
-      return 'Alfabetyczne po tytule';
-    case 'time':
-      return 'Po czasie dodania piosenki do śpiewanek';
-    case 'single':
-      return 'Kolejka piosenek po jednej na użytkownika';
-    case 'votes':
-      return 'Po liczbie głosów - włącza możliwość głosowania na piosenki dla zalogowanych użytkowników';
-  }
-  return 'Własna kolejność - możliwość ręcznej zmiany kolejności';
-};
+import { editText, IMeetingInfo, sortText, TEdit, TSort, TVisibility, visibilityText } from './meeting.types.tsx';
+import { useNavigate } from 'react-router';
+import {validateString} from "../editor/validation.utils.ts";
 
 const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   const [name, setName] = useState(info?.name ?? '');
+  const [nameError, setNameError] = useState<string>();
   const [visibility, setVisibility] = useState<TVisibility>(info?.visibility ?? 'private');
   const [edit, setEdit] = useState<TEdit>(info?.edit ?? 'host');
   const [sort, setSort] = useState<TSort>(info?.sort ?? 'custom');
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const authAPI = useAuthAPI();
 
   const handleVisibilityChange = (value: TVisibility) => {
@@ -74,68 +42,93 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
     }
   };
 
+  const validate = () => {
+    const nameValidation = validateString(name, 'name', "Nazwa użytkownika", 5, 50, true);
+    setNameError(nameValidation.name);
+    return !nameValidation.name;
+  }
+
   const handleCreate = () => {
+    if (!validate()) return;
     authAPI
       .post('meeting/', { name, visibility, edit, sort })
-      .then(() => dispatch(notifySuccess('Pomyślnie utworzono śpiewanki')))
+      .then(({ data }) => {
+        dispatch(notifySuccess('Pomyślnie utworzono śpiewanki'));
+        navigate(`/meeting/${data.id}`);
+      })
       .catch(() => dispatch(notifyError('Błąd podczas tworzenia śpiewanek')));
   };
 
   const handleEdit = () => {
+    if (!validate()) return;
     authAPI
-        .put(`meeting/${info?.id}/`, { name, visibility, edit, sort })
-        .then(() => dispatch(notifySuccess('Pomyślnie zaktualizowano śpiewanki')))
-        .catch(() => dispatch(notifyError('Błąd podczas aktualizacji śpiewanek')));
-  }
+      .put(`meeting/${info?.id}/`, { name, visibility, edit, sort })
+      .then(({ data }) => {
+        dispatch(notifySuccess('Pomyślnie zaktualizowano śpiewanki'));
+        navigate(`/meeting/${data.id}`);
+      })
+      .catch(() => dispatch(notifyError('Błąd podczas aktualizacji śpiewanek')));
+  };
 
   return (
     <Stack spacing={2} maxWidth="20em">
       <Typography variant="h4">{info ? 'Edytuj śpiewanki' : 'Utwórz śpiewanki'}</Typography>
-      <TextField label="Nazwa śpiewanek" value={name} onChange={(e) => setName(e.target.value)} />
+      <TextField
+        label="Nazwa śpiewanek"
+        value={name}
+        error={!!nameError}
+        helperText={nameError}
+        onChange={(e) => setName(e.target.value)}
+      />
       <FormControl>
         <FormLabel>Widoczność śpiewanek</FormLabel>
         <RadioGroup value={visibility} onChange={(e) => handleVisibilityChange(e.target.value as TVisibility)}>
-          <FormControlLabel value="private" control={<Radio />} label="Prywatne" />
-          <FormControlLabel value="code" control={<Radio />} label="Kod dostępu" />
-          <FormControlLabel value="public" control={<Radio />} label="Publiczne" />
+          <FormControlLabel value="private" control={<Radio />} label={visibilityText['private'].text} />
+          <FormControlLabel value="code" control={<Radio />} label={visibilityText['code'].text} />
+          <FormControlLabel value="public" control={<Radio />} label={visibilityText['public'].text} />
         </RadioGroup>
-        <FormHelperText>{getVisibilityHelperText(visibility)}</FormHelperText>
+        <FormHelperText>{visibilityText[visibility].helper}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Edycja (dodawanie piosenek)</FormLabel>
         <RadioGroup value={edit} onChange={(e) => handleEditChange(e.target.value as TEdit)}>
-          <FormControlLabel value="host" control={<Radio />} label="Tylko ty" />
-          <FormControlLabel value="participant" control={<Radio />} label="Każdy uczestnik śpiewanek" />
+          <FormControlLabel value="host" control={<Radio />} label={editText['host'].text} />
+          <FormControlLabel value="participant" control={<Radio />} label={editText['participant'].text} />
           <FormControlLabel
             value="user"
             control={<Radio />}
-            label="Każdy zalogowany użytkownik"
+            label={editText['user'].text}
             disabled={visibility !== 'public'}
           />
-          <FormControlLabel value="everyone" control={<Radio />} label="Każdy" disabled={visibility !== 'public'} />
+          <FormControlLabel
+            value="everyone"
+            control={<Radio />}
+            label={editText['everyone'].text}
+            disabled={visibility !== 'public'}
+          />
         </RadioGroup>
-        <FormHelperText>{getEditHelperText(edit)}</FormHelperText>
+        <FormHelperText>{editText[edit].helper}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Sortowanie piosenek</FormLabel>
         <RadioGroup value={sort} onChange={(e) => setSort(e.target.value as TSort)}>
-          <FormControlLabel value="custom" control={<Radio />} label="Własna kolejność" />
-          <FormControlLabel value="title" control={<Radio />} label="Po tytule" />
-          <FormControlLabel value="time" control={<Radio />} label="Po czasie dodania" />
+          <FormControlLabel value="custom" control={<Radio />} label={sortText['custom'].helper} />
+          <FormControlLabel value="title" control={<Radio />} label={sortText['title'].helper} />
+          <FormControlLabel value="time" control={<Radio />} label={sortText['time'].helper} />
           <FormControlLabel
             value="single"
             control={<Radio />}
-            label="Kolejka po 1 piosence na użytkownika"
+            label={sortText['single'].helper}
             disabled={edit === 'everyone' || edit === 'host'}
           />
           <FormControlLabel
             value="votes"
             control={<Radio />}
-            label="Na podstawie liczby głosów"
+            label={sortText['votes'].helper}
             disabled={edit === 'everyone' || edit === 'host'}
           />
         </RadioGroup>
-        <FormHelperText>{getSortHelperText(sort)}</FormHelperText>
+        <FormHelperText>{sortText[sort].helper}</FormHelperText>
       </FormControl>
       <Button variant="contained" onClick={info ? handleEdit : handleCreate}>
         {info ? 'Zapisz' : 'Utwórz'}

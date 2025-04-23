@@ -60,7 +60,7 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
     return (
       <Stack spacing={2}>
         <Typography>Nie ma więcej edycji do weryfikacji</Typography>
-        <RouteButton to={`/${entityId}/${slug}`}>Wróć do strony zespołu</RouteButton>
+        <RouteButton to={`/${entityId}/${slug}`}>Wróć do strony osoby/zespołu/źródła</RouteButton>
       </Stack>
     );
 

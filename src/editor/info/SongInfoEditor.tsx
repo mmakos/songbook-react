@@ -82,7 +82,7 @@ const SongInfoEditor = () => {
   const [videos, setVideos] = useState<string[]>(songEdit.video ?? []);
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
-  const [nonUniqueSlug, setNonUniqueSlugTitle] = useState<{ slug: string; title: string }>();
+  const [nonUniqueSlug, setNonUniqueSlug] = useState<{ slug: string; title: string }>();
 
   const dispatch = useAppDispatch();
 
@@ -137,7 +137,7 @@ const SongInfoEditor = () => {
         if (unique) {
           continueNextStep();
         } else {
-          setNonUniqueSlugTitle({ slug, title });
+          setNonUniqueSlug({ slug, title });
         }
       })
       .catch(() => dispatch(notifyError('Błąd przy sprawdzaniu unikalności tytułu. Spróbuj ponownie.')));
@@ -354,7 +354,7 @@ const SongInfoEditor = () => {
           Dalej
         </Button>
       </Stack>
-      <Dialog open={!!nonUniqueSlug} onClose={() => setNonUniqueSlugTitle(undefined)}>
+      <Dialog open={!!nonUniqueSlug} onClose={() => setNonUniqueSlug(undefined)}>
         <DialogTitle>Piosenka już istnieje</DialogTitle>
         <DialogContent>
           Piosenka o podanym tytule już istnieje:{' '}
@@ -365,7 +365,7 @@ const SongInfoEditor = () => {
           <strong>Wróżba (Gintrowski)</strong>, <strong>Wróżba (Kaczmarski)</strong>.
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNonUniqueSlugTitle(undefined)}>Ok</Button>
+          <Button onClick={() => setNonUniqueSlug(undefined)}>Ok</Button>
         </DialogActions>
       </Dialog>
     </>
