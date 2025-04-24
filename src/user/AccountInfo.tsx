@@ -1,7 +1,7 @@
 import { Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { Close, Edit, SaveOutlined } from '@mui/icons-material';
-import { useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import { notifyError, notifySuccess, setAccessToken, setUser } from '../store/songbook.reducer.ts';
 import { AxiosResponse } from 'axios';
@@ -25,8 +25,9 @@ const AccountInfo = () => {
   if (user === undefined) return;
   if (!user) return <Navigate to="/login" />;
 
-  const handleChangeUsername = () => {
-    if (!username) return;
+  const handleChangeUsername = (event: FormEvent) => {
+    event.preventDefault();
+    if (!username || !edit) return;
     if (username.length < 3) {
       setUsernameError('Nazwa użytkownika musi mieć przynajmniej 3 znaki');
     } else if (username.length > 50) {
@@ -76,37 +77,39 @@ const AccountInfo = () => {
   return (
     <Stack spacing={2}>
       <Typography variant="h4">Cześć {user.firstName}</Typography>
-      <TextField
-        inputRef={usernameInputRef}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                {edit ? (
-                  <>
-                    <IconButton onClick={handleChangeUsername}>
-                      <SaveOutlined />
+      <form onSubmit={handleChangeUsername}>
+        <TextField
+          inputRef={usernameInputRef}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  {edit ? (
+                    <>
+                      <IconButton type="submit">
+                        <SaveOutlined />
+                      </IconButton>
+                      <IconButton onClick={handleCancelEdit}>
+                        <Close />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <IconButton onClick={handleEdit}>
+                      <Edit />
                     </IconButton>
-                    <IconButton onClick={handleCancelEdit}>
-                      <Close />
-                    </IconButton>
-                  </>
-                ) : (
-                  <IconButton onClick={handleEdit}>
-                    <Edit />
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
-            readOnly: !edit,
-          },
-        }}
-        label="Nazwa użytkownika"
-        helperText={usernameError ?? 'Widoczna dla wszystkich'}
-        error={!!usernameError}
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+                  )}
+                </InputAdornment>
+              ),
+              readOnly: !edit,
+            },
+          }}
+          label="Nazwa użytkownika"
+          helperText={usernameError ?? 'Widoczna dla wszystkich'}
+          error={!!usernameError}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </form>
       <TextField slotProps={{ input: { readOnly: true } }} label="Imię" value={user.firstName} />
       <TextField slotProps={{ input: { readOnly: true } }} label="Nazwisko" value={user.lastName} />
       <TextField slotProps={{ input: { readOnly: true } }} label="Adres mailowy" value={user.email} />

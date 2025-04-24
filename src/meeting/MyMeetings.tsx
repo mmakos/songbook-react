@@ -5,46 +5,58 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  List,
-  ListItem,
-  ListItemText,
+  InputAdornment,
   Paper,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import { IMeetingOverview } from './meeting.types.tsx';
-import { Sync } from '@mui/icons-material';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import useAuthAPI from '../http/useAuthAPI.ts';
-import RouteListButton from '../components/RouteListButton.tsx';
 import Progress from '../components/Progress.tsx';
-import { conjugate } from '../string.utils.ts';
 import RouteButton from '../components/RouteButton.tsx';
-import CurrentMeetingCheckbox from './CurrentMeetingCheckbox.tsx';
+import SyncButton from '../components/SyncButton.tsx';
+import Grid from '@mui/material/Grid2';
+import { Search } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
+import { api } from '../http/api.ts';
+import MeetingList from './MeetingList.tsx';
 
 const MyMeetings = () => {
   const [hosted, setHosted] = useState<IMeetingOverview[]>();
+  const [fetchingHosted, setFetchingHosted] = useState(false);
   const [participated, setParticipated] = useState<IMeetingOverview[]>();
+  const [fetchingParticipated, setFetchingParticipated] = useState(false);
+  const [searched, setSearched] = useState<IMeetingOverview[]>();
+  const [fetchingSearched, setFetchingSearched] = useState(false);
+
   const [confirmDelete, setConfirmDelete] = useState<IMeetingOverview>();
   const [meetingAccess, setMeetingAccess] = useState('');
+  const [search, setSearch] = useState('');
+
   const dispatch = useAppDispatch();
   const authAPI = useAuthAPI();
+  const navigate = useNavigate();
 
   const fetchHosted = () => {
+    setFetchingHosted(true);
     authAPI
       .get('meeting/hosted/')
       .then(({ data }) => setHosted(data))
-      .catch(() => setHosted([]));
+      .catch(() => setHosted([]))
+      .finally(() => setFetchingHosted(false));
   };
 
   const fetchParticipated = () => {
+    setFetchingParticipated(true);
     authAPI
       .get('meeting/participated/')
       .then(({ data }) => setParticipated(data))
-      .catch(() => setParticipated([]));
+      .catch(() => setParticipated([]))
+      .finally(() => setFetchingParticipated(false));
   };
 
   useEffect(() => {
@@ -64,72 +76,99 @@ const MyMeetings = () => {
     setConfirmDelete(undefined);
   };
 
+  const handleSubmitMeetingCode = (event: FormEvent) => {
+    event.preventDefault();
+    if (meetingAccess) {
+      navigate(`/join/meeting/${meetingAccess}`);
+    }
+  };
+
+  const handleSearch = (event: FormEvent) => {
+    event.preventDefault();
+    setFetchingSearched(true);
+    api
+      .get('meeting/search/', { params: { q: search } })
+      .then(({ data }) => setSearched(data))
+      .finally(() => setFetchingSearched(false));
+  };
+
   return (
-    <Stack spacing={2}>
+    <>
       {!hosted && !participated && <Progress />}
-      <Paper sx={{ p: '1em' }}>
-        <Stack spacing={1}>
-          <Typography variant="h6" display="flex" alignItems="center">
-            Twoje śpiewanki
-            <IconButton sx={{ ml: 'auto' }} onClick={fetchHosted}>
-              <Sync />
-            </IconButton>
-          </Typography>
-          {hosted?.length ? (
-            <List disablePadding>
-              {hosted.map((meeting) => (
-                <ListItem disablePadding secondaryAction={<CurrentMeetingCheckbox meetingId={meeting.id} />}>
-                  <RouteListButton to={`/meeting/${meeting.id}`}>
-                    <ListItemText
-                      primary={meeting.name}
-                      secondary={`${meeting.songs} ${conjugate(meeting.songs, 'piosen', 'ka', 'ki', 'ek')}, ${meeting.participants} ${conjugate(meeting.participants, 'uczestnik', '', 'ów', 'ów')}`}
-                    />
-                  </RouteListButton>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Typography color="text.secondary">Nie masz żadnych śpiewanek</Typography>
-          )}
-          <RouteButton to="/add/meeting">Utwórz śpiewanki</RouteButton>
-        </Stack>
-      </Paper>
-      <Paper sx={{ p: '1em' }}>
-        <Stack spacing={1} useFlexGap>
-          <Typography variant="h6" display="flex" alignItems="center">
-            Śpiewanki, w których uczestniczysz
-            <IconButton sx={{ ml: 'auto' }} onClick={fetchParticipated}>
-              <Sync />
-            </IconButton>
-          </Typography>
-          {participated?.length ? (
-            <List>
-              {participated.map((meeting) => (
-                <ListItem disablePadding secondaryAction={<CurrentMeetingCheckbox meetingId={meeting.id} />}>
-                  <RouteListButton to={`/meeting/${meeting.id}`}>
-                    <ListItemText
-                      primary={`${meeting.name} - ${meeting.host}`}
-                      secondary={`${meeting.songs} piosenek, ${meeting.participants} uczestników`}
-                    />
-                  </RouteListButton>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Typography color="text.secondary">Nie uczestniczysz w żadnych śpiewankach</Typography>
-          )}
-          <TextField
-            label="Kod dostępu"
-            size="small"
-            sx={{ mt: '0.5em' }}
-            value={meetingAccess}
-            onChange={(e) => setMeetingAccess(e.target.value)}
-          />
-          <RouteButton to={`/join/meeting/${meetingAccess}`} disabled={!meetingAccess}>
-            Dołącz do śpiewanek
-          </RouteButton>
-        </Stack>
-      </Paper>
+      <Grid container spacing={2} flexGrow={1}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Paper sx={{ p: '1em', height: '100%' }}>
+            <Stack spacing={1} useFlexGap height="100%">
+              <Typography variant="h6" display="flex" alignItems="start">
+                Twoje śpiewanki
+                <SyncButton sync={fetchHosted} syncing={fetchingHosted} />
+              </Typography>
+              {hosted?.length ? (
+                <MeetingList meetings={hosted} />
+              ) : (
+                <Typography color="text.secondary">Nie masz żadnych śpiewanek</Typography>
+              )}
+              <RouteButton to="/add/meeting" sx={{ mt: 'auto' }}>
+                Utwórz śpiewanki
+              </RouteButton>
+            </Stack>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Paper sx={{ p: '1em', height: '100%' }}>
+            <Stack spacing={1} component="form" useFlexGap height="100%" onSubmit={handleSubmitMeetingCode}>
+              <Typography variant="h6" display="flex" alignItems="start">
+                <span style={{ marginRight: '1em' }}>Śpiewanki, w których uczestniczysz</span>
+                <SyncButton sync={fetchParticipated} syncing={fetchingParticipated} />
+              </Typography>
+              {participated?.length ? (
+                <MeetingList meetings={participated} showHost />
+              ) : (
+                <Typography color="text.secondary">Nie uczestniczysz w żadnych śpiewankach</Typography>
+              )}
+              <TextField
+                label="Kod dostępu"
+                size="small"
+                sx={{ mt: 'auto' }}
+                value={meetingAccess}
+                onChange={(e) => setMeetingAccess(e.target.value)}
+              />
+              <Button type="submit" disabled={!meetingAccess}>
+                Dołącz do śpiewanek
+              </Button>
+            </Stack>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper sx={{ p: '1em', height: '100%' }}>
+            <Stack spacing={2} component="form" onSubmit={handleSearch}>
+              <Typography variant="h6">Wyszukaj śpiewanki</Typography>
+              <TextField
+                placeholder="Szukaj…"
+                value={search}
+                type="search"
+                onChange={(e) => setSearch(e.target.value)}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton type="submit">
+                          <Search />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+              {searched?.length ? (
+                  <MeetingList meetings={searched} showHost />
+              ) : (
+                  <Typography color="text.secondary">Nie znaleziono żadnych śpiewanek</Typography>
+              )}
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
       <Dialog open={!!confirmDelete} onClose={() => setConfirmDelete(undefined)}>
         <DialogTitle>Usuwanie śpiewanek</DialogTitle>
         <DialogContent>
@@ -145,7 +184,7 @@ const MyMeetings = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Stack>
+    </>
   );
 };
 

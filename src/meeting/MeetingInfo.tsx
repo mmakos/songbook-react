@@ -12,13 +12,14 @@ import {
 } from '@mui/material';
 import { FC, useState } from 'react';
 import { editText, IMeeting, sortText, visibilityText } from './meeting.types.tsx';
-import { Delete, Edit, Link, Login, Logout, Visibility } from '@mui/icons-material';
+import { Delete, Edit, Link, Login, Logout, Visibility, VisibilityOff } from '@mui/icons-material';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import CurrentMeetingCheckbox from './CurrentMeetingCheckbox.tsx';
+import BasicTooltip from '../components/BasicTooltip.tsx';
 
 const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const [accessVisible, setAccessVisible] = useState(false);
@@ -53,25 +54,35 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
     <Stack spacing={2}>
       <Typography variant="h5" display="flex" alignItems="center">
         Śpiewanki „{meeting.name}”
-        <CurrentMeetingCheckbox meetingId={meeting.id} sx={{ ml: 'auto' }} />
+        <BasicTooltip title="Obecne śpiewanki" span style={{ marginLeft: 'auto' }}>
+          <CurrentMeetingCheckbox meetingId={meeting.id} />
+        </BasicTooltip>
         {!meeting.inMeeting && canEdit && (
-          <IconButton>
-            <Login />
-          </IconButton>
+          <BasicTooltip title="Dołącz do śpiewanek">
+            <IconButton>
+              <Login />
+            </IconButton>
+          </BasicTooltip>
         )}
         {meeting.inMeeting && !meeting.isHost && (
-          <IconButton>
-            <Logout />
-          </IconButton>
+          <BasicTooltip title="Opuść śpiewanki">
+            <IconButton>
+              <Logout />
+            </IconButton>
+          </BasicTooltip>
         )}
         {meeting.permissions.edit && (
           <>
-            <RouteIconButton to={`/edit/meeting/${meeting.id}`}>
-              <Edit />
-            </RouteIconButton>
-            <IconButton onClick={() => setConfirmDelete(true)}>
-              <Delete />
-            </IconButton>
+            <BasicTooltip title="Edytuj śpiewanki" span>
+              <RouteIconButton to={`/edit/meeting/${meeting.id}`}>
+                <Edit />
+              </RouteIconButton>
+            </BasicTooltip>
+            <BasicTooltip title="Usuń śpiewanki">
+              <IconButton onClick={() => setConfirmDelete(true)}>
+                <Delete />
+              </IconButton>
+            </BasicTooltip>
           </>
         )}
       </Typography>
@@ -107,16 +118,20 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <IconButton onClick={() => setAccessVisible(!accessVisible)}>
-                    <Visibility />
-                  </IconButton>
+                  <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} kod dostępu`}>
+                    <IconButton onClick={() => setAccessVisible(!accessVisible)}>
+                      {accessVisible ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </BasicTooltip>
                 </InputAdornment>
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={copyAccess}>
-                    <Link />
-                  </IconButton>
+                  <BasicTooltip title="Skopiuj kod dostępu">
+                    <IconButton onClick={copyAccess}>
+                      <Link />
+                    </IconButton>
+                  </BasicTooltip>
                 </InputAdornment>
               ),
               readOnly: true,
@@ -134,16 +149,20 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
             input: {
               startAdornment: inviteWithCode ? (
                 <InputAdornment position="start">
-                  <IconButton onClick={() => setAccessVisible(!accessVisible)}>
-                    <Visibility />
-                  </IconButton>
+                  <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} link do dołączania`}>
+                    <IconButton onClick={() => setAccessVisible(!accessVisible)}>
+                      {accessVisible ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </BasicTooltip>
                 </InputAdornment>
               ) : undefined,
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={copyLink}>
-                    <Link />
-                  </IconButton>
+                  <BasicTooltip title="Skopiuj link do dołączania">
+                    <IconButton onClick={copyLink}>
+                      <Link />
+                    </IconButton>
+                  </BasicTooltip>
                 </InputAdornment>
               ),
               readOnly: true,

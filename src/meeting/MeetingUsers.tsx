@@ -5,6 +5,7 @@ import { IMeeting } from './meeting.types.tsx';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
+import BasicTooltip from '../components/BasicTooltip.tsx';
 
 const MeetingUsers: FC<{ meeting: IMeeting; userRemoved: (username: string) => void }> = ({ meeting, userRemoved }) => {
   const authAPI = useAuthAPI();
@@ -26,9 +27,11 @@ const MeetingUsers: FC<{ meeting: IMeeting; userRemoved: (username: string) => v
         <ListItem key={user} disableGutters disablePadding>
           <ListItemText primary={user} />
           {meeting.permissions.deleteUsers && user !== meeting.host && (
-            <IconButton edge="end" size="small" onClick={() => removeUser(user)}>
-              <Clear fontSize="small" />
-            </IconButton>
+            <BasicTooltip title={`Usuń użytkownika ${user}`}>
+              <IconButton edge="end" size="small" onClick={() => removeUser(user)}>
+                <Clear fontSize="small" />
+              </IconButton>
+            </BasicTooltip>
           )}
         </ListItem>
       ))}

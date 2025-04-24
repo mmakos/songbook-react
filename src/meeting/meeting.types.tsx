@@ -3,7 +3,7 @@ export type TEdit = 'host' | 'participant' | 'user' | 'everyone';
 export type TSort = 'custom' | 'title' | 'time' | 'single' | 'votes';
 
 export interface IMeetingOverview {
-  id: string;
+  id: number;
   name: string;
   host: string;
   songs: number;
@@ -11,7 +11,7 @@ export interface IMeetingOverview {
 }
 
 export interface IMeetingInfo {
-  id: string;
+  id: number;
   name: string;
   host: string;
   visibility: TVisibility;

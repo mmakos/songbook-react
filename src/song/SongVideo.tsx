@@ -18,7 +18,7 @@ const SongVideo: FC<{ song?: ISong }> = ({ song }) => {
 
   return (
     <Collapse in={open} collapsedSize={0} unmountOnExit>
-      <Paper sx={{ position: 'relative', mb: '0.5em', padding: '1em 1em' }}>
+      <Paper sx={{ position: 'relative', padding: '1em 1em' }}>
         <Stack spacing={2}>
           {song.video.map((ytId) => (
             <iframe

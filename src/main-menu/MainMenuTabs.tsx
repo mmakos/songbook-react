@@ -48,7 +48,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         expanded={songsExpanded}
         setExpanded={setSongsExpanded}
       >
-        <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
+        <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} inset />
         {canVerify && (
           <MainMenuSubItem
             type={type}

@@ -20,7 +20,7 @@ const JoinMeeting = () => {
     }
     authAPI
       .post('meeting/join/', { accessCode: accessCode, id: meetingId })
-      .then(({ data }: AxiosResponse<{ id: string; name: string }>) => {
+      .then(({ data }: AxiosResponse<{ id: number; name: string }>) => {
         dispatch(notifySuccess(`Dołączono do śpiewanek ${data.name}`));
         dispatch(setCurrentMeeting(data.id));
         navigate(`/meeting/${data.id}`);

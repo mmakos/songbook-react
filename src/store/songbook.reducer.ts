@@ -11,10 +11,11 @@ import { ISpacing } from '../components/font/FontSpacing.tsx';
 import { TScale } from '../components/ScalableBox.tsx';
 import {
   getBoolFromStorage,
+  getNumberFromStorage,
   getObjectFromStorage,
   getStringFromStorage,
-  saveBoolToStorage,
   saveObjectToStorage,
+  saveSimpleToStorage,
   saveStringToStorage,
 } from './local-storage.utils.ts';
 import { IUser } from '../user/user.types.ts';
@@ -122,7 +123,7 @@ export interface ISongbookState {
    * Dane o zalogowanym użytkowniku
    */
   user?: IUser | null;
-  meeting: { meeting?: IMeeting; id?: string };
+  meeting: { meeting?: IMeeting; id?: number };
   accessToken?: string;
 }
 
@@ -185,7 +186,7 @@ export const initialSongbookState: ISongbookState = {
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
   },
-  meeting: { id: getStringFromStorage('meetingId') },
+  meeting: { id: getNumberFromStorage('meetingId') },
 };
 
 const songbookSlice = createSlice({
@@ -205,15 +206,15 @@ const songbookSlice = createSlice({
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.settingsOpen = action.payload;
-      saveBoolToStorage('settings-open', action.payload);
+      saveSimpleToStorage('settings-open', action.payload);
     },
     setSongInfoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.infoOpen = action.payload;
-      saveBoolToStorage('info-open', action.payload);
+      saveSimpleToStorage('info-open', action.payload);
     },
     setSongVideoOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.videoOpen = action.payload;
-      saveBoolToStorage('video-open', action.payload);
+      saveSimpleToStorage('video-open', action.payload);
     },
     notifySuccess: (state: ISongbookState, action: PayloadAction<string>) => {
       state.notification = {
@@ -270,7 +271,7 @@ const songbookSlice = createSlice({
     },
     setExpandVerses: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songDisplayState.expandVerses = action.payload;
-      saveBoolToStorage('expand-verses', action.payload);
+      saveSimpleToStorage('expand-verses', action.payload);
     },
     updateGlobalSettingsWithSongSettings: (state: ISongbookState) => {
       setGlobalChordsDifficulty(state.songSettings.chordDifficulty);
@@ -292,7 +293,7 @@ const songbookSlice = createSlice({
     },
     setSongThemeCustomFont: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.songTheme.customFont = action.payload;
-      saveBoolToStorage('song-theme-custom-font', action.payload);
+      saveSimpleToStorage('song-theme-custom-font', action.payload);
     },
     setSongThemeTextFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
       state.songbookSettings.songTheme.fontStyles.text = action.payload;
@@ -324,7 +325,7 @@ const songbookSlice = createSlice({
     },
     setSongThemeCustomSpacing: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.songTheme.customSpacing = action.payload;
-      saveBoolToStorage('song-theme-custom-spacing', action.payload);
+      saveSimpleToStorage('song-theme-custom-spacing', action.payload);
     },
     setSongThemeSpacing: (state: ISongbookState, action: PayloadAction<ISpacing>) => {
       state.songbookSettings.songTheme.spacing = action.payload;
@@ -332,11 +333,11 @@ const songbookSlice = createSlice({
     },
     setNoChordInfo: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.noChordInfo = action.payload;
-      saveBoolToStorage('no-chord-info', action.payload);
+      saveSimpleToStorage('no-chord-info', action.payload);
     },
     setNoChords: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.noChords = action.payload;
-      saveBoolToStorage('no-chords', action.payload);
+      saveSimpleToStorage('no-chords', action.payload);
     },
     setGlobalChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
       state.songbookSettings.chordDifficulty = { ...state.songbookSettings.chordDifficulty, ...action.payload };
@@ -356,9 +357,12 @@ const songbookSlice = createSlice({
     setAccessToken: (state: ISongbookState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
-    setCurrentMeeting: (state: ISongbookState, action: PayloadAction<string | undefined>) => {
+    setCurrentMeeting: (state: ISongbookState, action: PayloadAction<number | undefined>) => {
       state.meeting.id = action.payload;
-      saveStringToStorage('meetingId', action.payload);
+      saveSimpleToStorage('meetingId', action.payload);
+    },
+    setMeeting: (state: ISongbookState, action: PayloadAction<IMeeting | undefined>) => {
+      state.meeting.meeting = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -410,6 +414,7 @@ export const {
   setUser,
   setAccessToken,
   setCurrentMeeting,
+  setMeeting,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;

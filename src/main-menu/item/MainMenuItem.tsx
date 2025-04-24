@@ -12,10 +12,11 @@ export interface IMainMenuItemProps {
   onClick?: () => void;
   text: ReactNode;
   icon?: ReactNode;
+  inset?: boolean;
   close: () => void;
 }
 
-const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href, onClick, close }) => {
+const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href, onClick, close, inset }) => {
   const navigate = useNavigate();
 
   const handleMenuItemClicked = () => {
@@ -33,7 +34,7 @@ const MainMenuItem: FC<IMainMenuItemProps> = ({ type, icon, text, routeTo, href,
     return (
       <ListItemButton onClick={handleMenuItemClicked}>
         {icon && <ListItemIcon>{icon}</ListItemIcon>}
-        <ListItemText primary={text} />
+        <ListItemText primary={text} inset={inset} />
       </ListItemButton>
     );
   } else {

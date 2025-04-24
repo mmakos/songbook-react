@@ -11,10 +11,11 @@ import SongVideo from './SongVideo.tsx';
 import SongControls from './SongControls.tsx';
 import { ISong } from '../types/song.types.ts';
 import WaitingEditsInfo from './WaitingEditsInfo.tsx';
-import ThemeProvider from "@mui/material/styles/ThemeProvider";
-import useSongTheme from "../store/useSongTheme.ts";
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import useSongTheme from '../store/useSongTheme.ts';
+import GlobalMeeting from '../meeting/GlobalMeeting.tsx';
 
-const Song: FC<{ song?: ISong }> = ({ song }) => {
+const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const songTheme = useSongTheme();
 
@@ -32,22 +33,27 @@ const Song: FC<{ song?: ISong }> = ({ song }) => {
           scrollbarWidth: 'none',
         }}
       >
-        <SongControls type="chip" video={!!song?.video} />
+        <SongControls type="chip" preview={preview} />
       </div>
-      <SongInfo song={song} />
-      <SongVideo song={song} />
-      {!noChords && <SongSettings song={song} />}
-      <Paper>
-        <ThemeProvider theme={songTheme}>
-          <SongContent song={song} />
-        </ThemeProvider>
-        <Divider variant="middle" />
-        <Stack padding="0.5em 1em">
-          {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
-          {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
-          {song && <WaitingEditsInfo waiting={song} routeTo={`/song/${song.slug}`} />}
+      <Stack direction={{xs: 'column', lg: 'row'}} spacing={1} useFlexGap>
+        <Stack direction="column" spacing={1}>
+          <SongInfo song={song} />
+          <SongVideo song={song} />
+          {!noChords && <SongSettings song={song} />}
+          <Paper>
+            <ThemeProvider theme={songTheme}>
+              <SongContent song={song} />
+            </ThemeProvider>
+            <Divider variant="middle" />
+            <Stack padding="0.5em 1em">
+              {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
+              {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
+              {song && <WaitingEditsInfo waiting={song} routeTo={`/song/${song.slug}`} />}
+            </Stack>
+          </Paper>
         </Stack>
-      </Paper>
+        {!preview && <GlobalMeeting />}
+      </Stack>
     </div>
   );
 };
