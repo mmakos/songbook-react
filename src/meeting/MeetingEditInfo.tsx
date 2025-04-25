@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import { useAppDispatch } from '../store/songbook.store.ts';
-import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
+import {notifyError, notifySuccess, setCurrentMeeting} from '../store/songbook.reducer.ts';
 import { editText, IMeetingInfo, sortText, TEdit, TSort, TVisibility, visibilityText } from './meeting.types.tsx';
 import { useNavigate } from 'react-router';
 import {validateString} from "../editor/validation.utils.ts";
@@ -23,7 +23,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   const [nameError, setNameError] = useState<string>();
   const [visibility, setVisibility] = useState<TVisibility>(info?.visibility ?? 'private');
   const [edit, setEdit] = useState<TEdit>(info?.edit ?? 'host');
-  const [sort, setSort] = useState<TSort>(info?.sort ?? 'custom');
+  const [sort, setSort] = useState<TSort>(info?.sort ?? 'time');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authAPI = useAuthAPI();
@@ -38,7 +38,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   const handleEditChange = (value: TEdit) => {
     setEdit(value);
     if ((value === 'host' || value === 'everyone') && (sort === 'single' || sort === 'votes')) {
-      setSort('custom');
+      setSort('time');
     }
   };
 
@@ -54,6 +54,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
       .post('meeting/', { name, visibility, edit, sort })
       .then(({ data }) => {
         dispatch(notifySuccess('Pomyślnie utworzono śpiewanki'));
+        dispatch(setCurrentMeeting(data.id))
         navigate(`/meeting/${data.id}`);
       })
       .catch(() => dispatch(notifyError('Błąd podczas tworzenia śpiewanek')));
@@ -71,7 +72,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   };
 
   return (
-    <Stack spacing={2} maxWidth="20em">
+    <Stack spacing={2} maxWidth="30em">
       <Typography variant="h4">{info ? 'Edytuj śpiewanki' : 'Utwórz śpiewanki'}</Typography>
       <TextField
         label="Nazwa śpiewanek"
@@ -112,7 +113,6 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
       <FormControl>
         <FormLabel>Sortowanie piosenek</FormLabel>
         <RadioGroup value={sort} onChange={(e) => setSort(e.target.value as TSort)}>
-          <FormControlLabel value="custom" control={<Radio />} label={sortText['custom'].helper} />
           <FormControlLabel value="title" control={<Radio />} label={sortText['title'].helper} />
           <FormControlLabel value="time" control={<Radio />} label={sortText['time'].helper} />
           <FormControlLabel
@@ -127,6 +127,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
             label={sortText['votes'].helper}
             disabled={edit === 'everyone' || edit === 'host'}
           />
+          <FormControlLabel value="custom" control={<Radio />} label={sortText['custom'].helper} disabled />
         </RadioGroup>
         <FormHelperText>{sortText[sort].helper}</FormHelperText>
       </FormControl>

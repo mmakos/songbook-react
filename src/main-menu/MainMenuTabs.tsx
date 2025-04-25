@@ -96,9 +96,16 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         expanded={meetingsExpanded}
         setExpanded={setMeetingsExpanded}
       >
-        {canEdit && <MainMenuSubItem type={type} text="Moje śpiewanki" routeTo='/meetings' close={handleMeetingsClose} />}
-        <MainMenuSubItem type={type} text="Obecne śpiewanki" routeTo='/meeting' close={handleMeetingsClose} />
-        {canEdit && <MainMenuSubItem type={type} text="Utwórz śpiewanki" routeTo='/add/meeting' close={handleMeetingsClose} />}
+        {canEdit && (
+          <MainMenuSubItem type={type} text="Moje śpiewanki" routeTo="/meetings" close={handleMeetingsClose} />
+        )}
+        <MainMenuSubItem type={type} text="Obecne śpiewanki" routeTo="/meeting" close={handleMeetingsClose} />
+        {canEdit && (
+          <>
+            <Divider variant="middle" />
+            <MainMenuSubItem type={type} text="Utwórz śpiewanki" routeTo="/add/meeting" close={handleMeetingsClose} />
+          </>
+        )}
       </MainMenuGroup>
       <MainMenuGroup
         type={type}

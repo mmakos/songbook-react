@@ -11,7 +11,7 @@ const GlobalMeeting = () => {
     meeting && (
       <MeetingSongsPaper
         meeting={meeting}
-        songsFetched={(songs) => dispatch(setMeeting({ ...meeting, songs }))}
+        songsChanged={(songs) => dispatch(setMeeting({ ...meeting, songs }))}
         showName
       />
     )

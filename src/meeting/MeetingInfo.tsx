@@ -13,20 +13,24 @@ import {
 import { FC, useState } from 'react';
 import { editText, IMeeting, sortText, visibilityText } from './meeting.types.tsx';
 import { Delete, Edit, Link, Login, Logout, Visibility, VisibilityOff } from '@mui/icons-material';
-import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
-import { useAppDispatch } from '../store/songbook.store.ts';
+import { notifyError, notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
+import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import CurrentMeetingCheckbox from './CurrentMeetingCheckbox.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
+import { useNavigate } from 'react-router';
 
 const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const [accessVisible, setAccessVisible] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
   const { canEdit } = useCanEdit();
+  const currentMeeting = useAppSelector((state) => state.meeting.id);
   const dispatch = useAppDispatch();
   const authAPI = useAuthAPI();
+  const navigate = useNavigate();
 
   const copyLink = () => {
     navigator.clipboard
@@ -44,8 +48,28 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
     setConfirmDelete(false);
     authAPI
       .delete(`meeting/${meeting.id}/`)
-      .then(() => dispatch(notifySuccess('Pomyślnie usunięto spotkanie')))
+      .then(() => {
+        if (currentMeeting === meeting.id) {
+          dispatch(setCurrentMeeting(undefined));
+        }
+        navigate('/meetings');
+        dispatch(notifySuccess('Pomyślnie usunięto spotkanie'));
+      })
       .catch(() => dispatch(notifyError('Nie udało się usunąć spotkania')));
+  };
+
+  const leaveMeeting = () => {
+    setConfirmLeave(false);
+    authAPI
+      .post(`meeting/${meeting.id}/leave/`)
+      .then(() => {
+        if (currentMeeting === meeting.id && meeting.visibility !== 'public') {
+          dispatch(setCurrentMeeting(undefined));
+        }
+        navigate('/meetings');
+        dispatch(notifySuccess('Pomyślnie opuszczono spotkanie'));
+      })
+      .catch(() => dispatch(notifyError('Nie udało się opuścić spotkania')));
   };
 
   const inviteWithCode = meeting.permissions.invite && meeting?.access;
@@ -65,7 +89,7 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           </BasicTooltip>
         )}
         {meeting.inMeeting && !meeting.isHost && (
-          <BasicTooltip title="Opuść śpiewanki">
+          <BasicTooltip title="Opuść śpiewanki" onClick={() => setConfirmLeave(true)}>
             <IconButton>
               <Logout />
             </IconButton>
@@ -170,18 +194,32 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           }}
         />
       )}
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
-        <DialogTitle>Usuwanie śpiewanek</DialogTitle>
+      <Dialog
+        open={confirmDelete || confirmLeave}
+        onClose={() => {
+          setConfirmDelete(false);
+          setConfirmLeave(false);
+        }}
+      >
+        <DialogTitle>{confirmDelete ? 'Usuwanie' : 'Opuszczanie'} śpiewanek</DialogTitle>
         <DialogContent>
-          Czy na pewno chcesz usunąć śpiewanki? Ta czynność jest nieodwracalna. Wszystkie dane spotkania wraz z listą
-          piosenek zostaną usunięte.
+          Czy na pewno chcesz {confirmDelete ? 'usunąć' : 'opuścić'} śpiewanki?
+          {confirmDelete
+            ? 'Ta czynność jest nieodwracalna. Wszystkie dane spotkania wraz z listą piosenek zostaną usunięte.'
+            : ''}
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={() => setConfirmDelete(false)}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setConfirmDelete(false);
+              setConfirmLeave(false);
+            }}
+          >
             Anuluj
           </Button>
-          <Button variant="outlined" onClick={deleteMeeting}>
-            Usuń
+          <Button variant="outlined" onClick={confirmDelete ? deleteMeeting : leaveMeeting}>
+            {confirmDelete ? 'Usuń' : 'Opuść'}
           </Button>
         </DialogActions>
       </Dialog>

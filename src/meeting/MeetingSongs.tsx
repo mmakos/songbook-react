@@ -1,46 +1,38 @@
-import { FC } from 'react';
-import { IconButton, List, ListItem, ListItemText, Stack, useTheme } from '@mui/material';
-import { Clear, DragIndicator } from '@mui/icons-material';
-import RouteLink from '../components/RouteLink.tsx';
-import { IMeeting } from './meeting.types.tsx';
-import { useAppSelector } from '../store/songbook.store.ts';
-import VoteButton from './VoteButton.tsx';
+import { FC, useMemo } from 'react';
+import { IMeeting, IMeetingSong } from './meeting.types.tsx';
+import MeetingSongsList from './MeetingSongsList.tsx';
+import { Divider } from '@mui/material';
+import { sortSongs } from './meeting.sort.ts';
 
-const MeetingSongs: FC<{ meeting: IMeeting; userInfo?: boolean }> = ({ meeting, userInfo }) => {
-  const user = useAppSelector((state) => state.user);
-  const theme = useTheme();
+export interface IMeetingSongsProps {
+  meeting: IMeeting;
+  songsChanged: (meetingSongs: IMeetingSong[]) => void;
+  userInfo?: boolean;
+  showHidden?: boolean;
+}
+
+const MeetingSongs: FC<IMeetingSongsProps> = (props) => {
+  const meeting = props.meeting;
+
+  const [songs, hiddenSongs] = useMemo(() => {
+    const sortedSongs = sortSongs(meeting.songs, meeting.sort);
+
+    const songs: IMeetingSong[] = [];
+    const hiddenSongs: IMeetingSong[] = [];
+    sortedSongs.forEach((s) => (s.hidden ? hiddenSongs : songs).push(s));
+    return [songs, hiddenSongs];
+  }, [meeting.songs]);
 
   return (
-    <List dense disablePadding>
-      {meeting.songs.map((song) => (
-        <ListItem key={song.slug} disableGutters disablePadding>
-          {meeting.permissions.reorder && meeting.sort === 'custom' && (
-            <DragIndicator sx={{ cursor: 'move', mr: '0.3em' }} />
-          )}
-          <ListItemText
-            primary={
-              <RouteLink to={`/song/${song.slug}`} underline="hover" color="text.primary">
-                {song.title}
-              </RouteLink>
-            }
-            slotProps={{
-              secondary: {
-                fontSize: theme.typography.caption.fontSize,
-              },
-            }}
-            secondary={userInfo ? `${song.user} (${new Date(song.time * 1000).toLocaleTimeString()})` : undefined}
-          />
-          <Stack direction="row" alignItems="center" ml="1em">
-            {meeting.permissions.vote && meeting.sort === 'votes' && <VoteButton song={song} />}
-            {meeting.permissions.songs && (meeting.permissions.deleteSongs || (user && user.username === song.user)) && (
-              <IconButton edge="end" size="small">
-                <Clear fontSize="small" />
-              </IconButton>
-            )}
-          </Stack>
-        </ListItem>
-      ))}
-    </List>
+    <>
+      <MeetingSongsList {...props} songs={songs} />
+      {props.showHidden && !!hiddenSongs.length && (
+        <>
+          <Divider />
+          <MeetingSongsList {...props} songs={hiddenSongs} />
+        </>
+      )}
+    </>
   );
 };
 

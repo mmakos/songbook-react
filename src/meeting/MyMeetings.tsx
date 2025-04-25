@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -85,6 +86,7 @@ const MyMeetings = () => {
 
   const handleSearch = (event: FormEvent) => {
     event.preventDefault();
+    if (fetchingSearched) return;
     setFetchingSearched(true);
     api
       .get('meeting/search/', { params: { q: search } })
@@ -152,18 +154,22 @@ const MyMeetings = () => {
                   input: {
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton type="submit">
-                          <Search />
-                        </IconButton>
+                        {fetchingSearched ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          <IconButton type="submit">
+                            <Search />
+                          </IconButton>
+                        )}
                       </InputAdornment>
                     ),
                   },
                 }}
               />
               {searched?.length ? (
-                  <MeetingList meetings={searched} showHost />
+                <MeetingList meetings={searched} showHost />
               ) : (
-                  <Typography color="text.secondary">Nie znaleziono żadnych śpiewanek</Typography>
+                <Typography color="text.secondary">Nie znaleziono żadnych śpiewanek</Typography>
               )}
             </Stack>
           </Paper>

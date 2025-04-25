@@ -88,7 +88,10 @@ const Meeting = () => {
             )}
           </Stack>
         </Paper>
-        <MeetingSongsPaper meeting={meeting} songsFetched={(songs) => setMeeting({ ...meeting, songs })} />
+        <MeetingSongsPaper
+          meeting={meeting}
+          songsChanged={(songs) => setMeeting({ ...meeting, songs })}
+        />
       </Stack>
     </Stack>
   );

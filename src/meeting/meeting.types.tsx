@@ -44,7 +44,8 @@ export interface IMeetingSong {
   user: string;
   time: number;
   votes?: number;
-  vote?: boolean;
+  voted?: boolean;
+  hidden?: boolean;
 }
 
 export const visibilityText: Record<TVisibility, { text: string; helper: string }> = {

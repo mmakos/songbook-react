@@ -84,7 +84,7 @@ const parseAdditionals = (html: string, chord: IChord) => {
 };
 
 const parseNoPrime = (html: string, chord: IChord): string => {
-  if (html.startsWith('<strike>1</strike>')) {
+  if (html.startsWith('<s>1</s>')) {
     chord.noPrime = true;
     html = html.slice(18).trimStart();
   }

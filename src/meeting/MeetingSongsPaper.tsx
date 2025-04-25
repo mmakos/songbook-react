@@ -4,23 +4,27 @@ import MeetingSongs from './MeetingSongs.tsx';
 import { FC, useState } from 'react';
 import { IMeeting, IMeetingSong } from './meeting.types.tsx';
 import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
+import { setMeetingSettings } from '../store/songbook.reducer.ts';
 
 interface IMeetingSongsPaperProps {
   meeting: IMeeting;
-  songsFetched: (songs: IMeetingSong[]) => void;
+  songsChanged: (songs: IMeetingSong[]) => void;
   showName?: boolean;
 }
 
-const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsFetched, showName }) => {
+const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged, showName }) => {
+  const meetingSetting = useAppSelector((state) => state.songbookSettings.meetingSettings);
   const [fetchingSongs, setFetchingSongs] = useState(false);
-  const [showUserInfo, setShowUserInfo] = useState(true);
   const authAPI = useAuthAPI();
+  const dispatch = useAppDispatch();
+  const { showUserInfo, showHiddenSongs } = meetingSetting;
 
   const fetchSongs = () => {
     setFetchingSongs(true);
     authAPI
       .get(`meeting/${meeting.id}/songs/`)
-      .then(({ data }) => songsFetched(data.songs))
+      .then(({ data }) => songsChanged(data.songs))
       .finally(() => setFetchingSongs(false));
   };
 
@@ -41,14 +45,33 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsFetched,
           )}
         </Stack>
         {meeting.songs.length ? (
-          <MeetingSongs meeting={meeting} userInfo={showUserInfo} />
+          <MeetingSongs
+            meeting={meeting}
+            userInfo={showUserInfo}
+            songsChanged={songsChanged}
+            showHidden={showHiddenSongs}
+          />
         ) : (
           <Typography color="text.disabled">Brak piosenek</Typography>
         )}
         <FormControlLabel
-          control={<Switch checked={showUserInfo} onChange={(_, checked) => setShowUserInfo(checked)} />}
-          label="Pokaż uczestników"
+          control={
+            <Switch
+              checked={showHiddenSongs}
+              onChange={(_, checked) => dispatch(setMeetingSettings({ ...meetingSetting, showHiddenSongs: checked }))}
+            />
+          }
+          label="Pokaż zaśpiewane"
           sx={{ mt: 'auto' }}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showUserInfo}
+              onChange={(_, checked) => dispatch(setMeetingSettings({ ...meetingSetting, showUserInfo: checked }))}
+            />
+          }
+          label="Pokaż uczestników"
         />
       </Stack>
     </Paper>

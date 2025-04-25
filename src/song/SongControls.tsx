@@ -1,4 +1,13 @@
-import {Edit, InfoOutlined, PlaylistAdd, PlaylistAddCheck, Verified, YouTube, ZoomIn, ZoomOut} from '@mui/icons-material';
+import {
+  Edit,
+  InfoOutlined,
+  PlaylistAdd,
+  PlaylistAddCheck,
+  Verified,
+  YouTube,
+  ZoomIn,
+  ZoomOut,
+} from '@mui/icons-material';
 import { SettingsIcon } from '../components/SettingsIcon.tsx';
 import { FC, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
@@ -6,6 +15,7 @@ import {
   changeZoom,
   notifyError,
   notifySuccess,
+  setMeeting,
   setSongInfoOpen,
   setSongSettingsOpen,
   setSongVideoOpen,
@@ -16,6 +26,8 @@ import { useNavigate, useParams } from 'react-router';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import useMeeting from '../store/useMeeting.ts';
+import { AxiosResponse } from 'axios';
+import { IMeetingSong } from '../meeting/meeting.types.tsx';
 
 const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type, preview }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
@@ -29,8 +41,9 @@ const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type,
   const user = useAppSelector((state) => state.user);
   const authAPI = useAuthAPI();
 
-  const inMeeting = useMemo(() => {
-    return song?.slug && meeting?.songs.find((s) => s.slug === song.slug);
+  const meetingSong = useMemo(() => {
+    if (!meeting || !song?.slug) return;
+    return meeting.songs.find((s) => s.slug === song.slug);
   }, [meeting, song?.slug]);
 
   const toggleSettingsOpen = () => {
@@ -52,9 +65,26 @@ const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type,
   const addToMeeting = () => {
     if (!meeting || !song) return;
     authAPI
-      .post(`meeting/${meeting.id}/add-song/`, { song: song.slug })
-      .then(() => {})
+      .post(`meeting/${meeting.id}/song/${song.slug}/`)
+      .then(({ data }: AxiosResponse<IMeetingSong>) => {
+        dispatch(setMeeting({ ...meeting, songs: [...meeting.songs, data] }));
+      })
       .catch(() => dispatch(notifyError('Błąd podczas dodawania piosenki do spotkania')));
+  };
+
+  const handleSongSung = () => {
+    if (!meeting || !meetingSong) return;
+    authAPI
+      .post(`meeting/${meeting.id}/hide/${meetingSong.slug}/`, { hide: !meetingSong.hidden })
+      .then(() => {
+        dispatch(
+          setMeeting({
+            ...meeting,
+            songs: meeting.songs.map((s) => (s.slug === meetingSong.slug ? { ...s, hidden: !meetingSong.hidden } : s)),
+          })
+        );
+      })
+      .catch(() => dispatch(notifyError('Błąd podczas oznaczania piosenki jako zaśpiewaną')));
   };
 
   const acceptSong = () => {
@@ -106,10 +136,16 @@ const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type,
       {song?.video && (
         <SongControl type={type} icon={<YouTube />} label="Nagranie" onClick={toggleVideoOpen} selected={videoOpen} />
       )}
-      {meeting && !preview && !inMeeting ? (
+      {!preview && meeting?.permissions.edit && !meetingSong && (
         <SongControl type={type} icon={<PlaylistAdd />} label="Do śpiewanek" onClick={addToMeeting} />
-      ) : (
-        <SongControl type={type} icon={<PlaylistAddCheck/>} label="Zaśpiewano" onClick={addToMeeting} />
+      )}
+      {meeting && !preview && meetingSong && meeting.isHost && (
+        <SongControl
+          type={type}
+          icon={meetingSong.hidden ? <PlaylistAdd /> : <PlaylistAddCheck />}
+          label={meetingSong.hidden ? 'Przywróć' : 'Zaśpiewano'}
+          onClick={handleSongSung}
+        />
       )}
       {canEdit && !preview && (
         <SongControl type={type} icon={<Edit />} label="Edytuj" onClick={() => navigate(getEditHref())} />

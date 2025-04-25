@@ -48,6 +48,11 @@ export interface ITextSettings {
   capitalize?: boolean;
 }
 
+export interface IMeetingSettings {
+  showHiddenSongs?: boolean;
+  showUserInfo?: boolean;
+}
+
 export interface ISongSettings {
   transposition: ITransposition;
   chordDifficulty: IChordDifficulty;
@@ -60,6 +65,7 @@ export interface ISongbookSettings {
   chordDifficulty: IChordDifficulty;
   textSettings: ITextSettings;
   songTheme: ISongTheme;
+  meetingSettings: IMeetingSettings;
 }
 
 export interface ISongDisplayState {
@@ -185,8 +191,9 @@ export const initialSongbookState: ISongbookState = {
     },
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
+    meetingSettings: getObjectFromStorage('meeting-settings'),
   },
-  meeting: { id: getNumberFromStorage('meetingId') },
+  meeting: { id: getNumberFromStorage('meeting-id') },
 };
 
 const songbookSlice = createSlice({
@@ -359,10 +366,17 @@ const songbookSlice = createSlice({
     },
     setCurrentMeeting: (state: ISongbookState, action: PayloadAction<number | undefined>) => {
       state.meeting.id = action.payload;
-      saveSimpleToStorage('meetingId', action.payload);
+      saveSimpleToStorage('meeting-id', action.payload);
+      if (action.payload === undefined) {
+        delete state.meeting.meeting;
+      }
     },
     setMeeting: (state: ISongbookState, action: PayloadAction<IMeeting | undefined>) => {
       state.meeting.meeting = action.payload;
+    },
+    setMeetingSettings: (state: ISongbookState, action: PayloadAction<IMeetingSettings>) => {
+      state.songbookSettings.meetingSettings = action.payload;
+      saveObjectToStorage('meeting-settings', action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -415,6 +429,7 @@ export const {
   setAccessToken,
   setCurrentMeeting,
   setMeeting,
+  setMeetingSettings,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;
