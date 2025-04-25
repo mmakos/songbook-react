@@ -8,7 +8,7 @@ import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 
 const MeetingUsers: FC<{ meeting: IMeeting; userRemoved: (username: string) => void }> = ({ meeting, userRemoved }) => {
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
 
   const removeUser = (username: string) => {

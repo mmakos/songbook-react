@@ -39,7 +39,7 @@ const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type,
   const { songSlug, username } = useParams();
   const { canEdit, canVerify } = useCanEdit();
   const user = useAppSelector((state) => state.user);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
 
   const meetingSong = useMemo(() => {
     if (!meeting || !song?.slug) return;

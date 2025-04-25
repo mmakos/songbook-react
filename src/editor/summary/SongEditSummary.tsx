@@ -45,7 +45,7 @@ const SongEditSummary = () => {
     useSongEditContext();
   const [compare, setCompare] = useState(false);
   const [split, setSplit] = useState(true);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const theme = useTheme();

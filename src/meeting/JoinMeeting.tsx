@@ -9,7 +9,7 @@ import { Stack, Typography } from '@mui/material';
 const JoinMeeting = () => {
   const [invalid, setInvalid] = useState(false);
   const { accessCode, meetingId } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI, accessToken } = useAuthAPI();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -18,15 +18,17 @@ const JoinMeeting = () => {
       setInvalid(true);
       return;
     }
-    authAPI
-      .post('meeting/join/', { accessCode: accessCode, id: meetingId })
-      .then(({ data }: AxiosResponse<{ id: number; name: string }>) => {
-        dispatch(notifySuccess(`Dołączono do śpiewanek ${data.name}`));
-        dispatch(setCurrentMeeting(data.id));
-        navigate(`/meeting/${data.id}`);
-      })
-      .catch(() => setInvalid(true));
-  }, [accessCode]);
+    if (accessToken) {
+      authAPI
+        .post('meeting/join/', { accessCode: accessCode, id: meetingId })
+        .then(({ data }: AxiosResponse<{ id: number; name: string }>) => {
+          dispatch(notifySuccess(`Dołączono do śpiewanek ${data.name}`));
+          dispatch(setCurrentMeeting(data.id));
+          navigate(`/meeting/${data.id}`);
+        })
+        .catch(() => setInvalid(true));
+    }
+  }, [accessCode, accessToken]);
 
   if (invalid)
     return (

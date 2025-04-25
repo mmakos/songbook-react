@@ -26,7 +26,7 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   const [sort, setSort] = useState<TSort>(info?.sort ?? 'time');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
 
   const handleVisibilityChange = (value: TVisibility) => {
     setVisibility(value);

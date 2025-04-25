@@ -6,7 +6,7 @@ import { setMeeting } from './songbook.reducer.ts';
 const useMeeting = () => {
   const meetingId = useAppSelector((state) => state.meeting.id);
   const meeting = useAppSelector((state) => state.meeting.meeting);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
 
   useEffect(() => {

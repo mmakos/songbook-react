@@ -19,7 +19,7 @@ const MeetingSongsList: FC<IMeetingSongsProps & { songs: IMeetingSong[] }> = ({
   const user = useAppSelector((state) => state.user);
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
 
   const handleRemoveSong = (songSlug: string) => {
     authAPI

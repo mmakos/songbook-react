@@ -21,12 +21,12 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
   const { slug } = useParams();
   const [entity, setEntity] = useState<Entity>();
   const [edits, setEdits] = useState<Record<string, Entity>>({});
-  const authAPI = useAuthAPI();
+  const { authAPI, accessToken } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const fetchEntities = () => {
-    if (!slug) return;
+    if (!slug || !accessToken) return;
     authAPI
       .get(`verify/${entityId}/${slug}/`)
       .then((response: AxiosResponse<Entity[]>) => {
@@ -51,7 +51,7 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
 
   useEffect(() => {
     fetchEntities();
-  }, [slug]);
+  }, [slug, accessToken]);
 
   if (!entity) return <Progress />;
 

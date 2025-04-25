@@ -102,7 +102,7 @@ const router = createBrowserRouter(
 const StoreApp = () => {
   const preferredTheme = useAppSelector((state) => state.theme);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
 
   useEffect(() => {

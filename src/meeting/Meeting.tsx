@@ -18,16 +18,18 @@ const Meeting = () => {
   const [fetchingUsers, setFetchingUsers] = useState(false);
 
   const { meetingId } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI, accessToken } = useAuthAPI();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     setMeeting(undefined);
-    authAPI
-      .get(`meeting/${meetingId}/`)
-      .then(({ data }) => setMeeting(data))
-      .catch(() => setMeeting(null));
-  }, [meetingId]);
+    if (accessToken) {
+      authAPI
+          .get(`meeting/${meetingId}/`)
+          .then(({data}) => setMeeting(data))
+          .catch(() => setMeeting(null));
+    }
+  }, [meetingId, accessToken]);
 
   if (meeting === undefined) return <Progress />;
   if (meeting === null) return <NotFound text="Spotkanie nie istnieje" />;

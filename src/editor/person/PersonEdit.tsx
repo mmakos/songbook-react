@@ -21,7 +21,7 @@ const PersonEdit = () => {
   const [personName, setPersonName] = useState<string>();
   const [errors, setErrors] = useState<IPersonValidationErrors>();
   const { personSlug, username } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const slugAndUser = `${personSlug}${username ? '/' + username : ''}`;

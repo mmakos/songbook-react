@@ -21,7 +21,7 @@ const BandEdit = () => {
   const [bandName, setBandName] = useState<string>();
   const [errors, setErrors] = useState<IBandValidationErrors>();
   const { bandSlug, username } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

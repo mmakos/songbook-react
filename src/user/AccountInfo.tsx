@@ -14,7 +14,7 @@ const AccountInfo = () => {
   const [usernameError, setUsernameError] = useState<string>();
   const [edit, setEdit] = useState(false);
   const usernameInputRef = useRef<HTMLInputElement>(null);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

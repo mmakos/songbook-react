@@ -16,7 +16,7 @@ interface IMeetingSongsPaperProps {
 const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged, showName }) => {
   const meetingSetting = useAppSelector((state) => state.songbookSettings.meetingSettings);
   const [fetchingSongs, setFetchingSongs] = useState(false);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const { showUserInfo, showHiddenSongs } = meetingSetting;
 

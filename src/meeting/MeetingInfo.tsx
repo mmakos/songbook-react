@@ -29,7 +29,7 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const { canEdit } = useCanEdit();
   const currentMeeting = useAppSelector((state) => state.meeting.id);
   const dispatch = useAppDispatch();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const navigate = useNavigate();
 
   const copyLink = () => {

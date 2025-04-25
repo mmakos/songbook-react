@@ -39,7 +39,7 @@ const MyMeetings = () => {
   const [search, setSearch] = useState('');
 
   const dispatch = useAppDispatch();
-  const authAPI = useAuthAPI();
+  const { authAPI, accessToken } = useAuthAPI();
   const navigate = useNavigate();
 
   const fetchHosted = () => {
@@ -61,9 +61,11 @@ const MyMeetings = () => {
   };
 
   useEffect(() => {
-    fetchHosted();
-    fetchParticipated();
-  }, []);
+    if (accessToken) {
+      fetchHosted();
+      fetchParticipated();
+    }
+  }, [accessToken]);
 
   const deleteMeeting = () => {
     if (!confirmDelete) return;

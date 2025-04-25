@@ -20,7 +20,7 @@ const SourceEdit = () => {
   const [sourceName, setSourceName] = useState<string>();
   const [errors, setErrors] = useState<ISourceValidationErrors>();
   const { sourceSlug, username } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const slugAndUser = `${sourceSlug}${username ? '/' + username : ''}`;

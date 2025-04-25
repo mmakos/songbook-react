@@ -45,7 +45,7 @@ const useAuthAPI = () => {
     };
   }, [accessToken]);
 
-  return api;
+  return { authAPI: api, accessToken };
 };
 
 export default useAuthAPI;

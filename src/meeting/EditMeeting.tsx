@@ -10,16 +10,18 @@ import { notifyError } from '../store/songbook.reducer.ts';
 
 const EditMeeting = () => {
   const { meetingId } = useParams();
-  const authAPI = useAuthAPI();
+  const { authAPI, accessToken } = useAuthAPI();
   const dispatch = useAppDispatch();
   const [meetingInfo, setMeetingInfo] = useState<IMeetingInfo>();
 
   useEffect(() => {
-    authAPI
-      .get(`meeting/${meetingId}/`)
-      .then((response: AxiosResponse<IMeetingInfo>) => setMeetingInfo(response.data))
-      .catch(() => dispatch(notifyError('Błąd podczas pobierania informacji o spotkaniu')));
-  }, [meetingId]);
+    if (accessToken) {
+      authAPI
+          .get(`meeting/${meetingId}/`)
+          .then((response: AxiosResponse<IMeetingInfo>) => setMeetingInfo(response.data))
+          .catch(() => dispatch(notifyError('Błąd podczas pobierania informacji o spotkaniu')));
+    }
+  }, [meetingId, accessToken]);
 
   if (!meetingInfo) return <Progress />;
 

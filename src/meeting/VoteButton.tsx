@@ -28,7 +28,7 @@ interface IVoteButtonProps {
 
 const VoteButton: FC<IVoteButtonProps> = ({ meetingId, song, handleVoted }) => {
   const [voting, setVoting] = useState(false);
-  const authAPI = useAuthAPI();
+  const { authAPI } = useAuthAPI();
 
   const handleVote = (vote: boolean) => {
     setVoting(true);
