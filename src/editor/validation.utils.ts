@@ -1,9 +1,11 @@
+import {conjugate} from "../string.utils.ts";
+
 export const minError = (name: string, min: number) => {
-  return `${name} musi mieć przynajmniej ${min} znaki`;
+  return `${name} musi mieć przynajmniej ${min} ${conjugate(min, 'znak', '', 'i', 'ów')}`;
 };
 
 export const maxError = (name: string, max: number) => {
-  return `${name} może mieć masymalnie ${max} znaków`;
+  return `${name} może mieć masymalnie ${max} ${conjugate(max, 'znak', '', 'i', 'ów')}`;
 };
 
 export const validateString = <Name extends string>(

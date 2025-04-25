@@ -155,9 +155,9 @@ const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
   }
 
   return (
-    <Collapse in={open && !!song} collapsedSize={0}>
+    <Collapse in={open && !!song} collapsedSize={0} unmountOnExit>
       {song && (
-        <Paper sx={{ position: 'relative', mb: '0.5em', padding: '0.5em 1em' }}>
+        <Paper sx={{ position: 'relative', padding: '0.5em 1em' }}>
           {children.length > 0 ? children : 'Brak informacji'}
           <IconButton sx={{ position: 'absolute', top: '0.2em', right: '0.2em' }} size="small" onClick={close}>
             <Close />

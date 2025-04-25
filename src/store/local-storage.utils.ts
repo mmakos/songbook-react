@@ -14,7 +14,7 @@ export const saveObjectToStorage = (key: string, value?: object) => {
   }
 };
 
-export const saveBoolToStorage = (key: string, value?: boolean) => {
+export const saveSimpleToStorage = (key: string, value?: number | boolean) => {
   if (value !== undefined) {
     localStorage.setItem(key, value.toString());
   } else {
@@ -31,6 +31,14 @@ export const getStringFromStorage = (key: string): string | undefined => {
   const item = localStorage.getItem(key);
   return item ?? undefined;
 };
+
+export const getNumberFromStorage = (key: string): number | undefined => {
+  const item = localStorage.getItem(key);
+  if (item) {
+    const n = +item;
+    if (!isNaN(n)) return n;
+  }
+}
 
 export const getObjectFromStorage = (key: string): object => {
   const item = localStorage.getItem(key);

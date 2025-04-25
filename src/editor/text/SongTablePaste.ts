@@ -10,7 +10,6 @@ const SongTablePaste = Extension.create({
       new Plugin({
         props: {
           clipboardTextParser(text, $context, _, view) {
-            console.log(text);
             const stanzas = text
               ?.split(/\n\s*\n/)
               .map((s) => s.trim())

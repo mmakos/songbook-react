@@ -29,12 +29,11 @@ const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
 
   return (
     <ClickAwayListener onClickAway={() => setMoreSettings(false)}>
-      <Collapse in={open && !!song} collapsedSize={0}>
+      <Collapse in={open && !!song} collapsedSize={0} unmountOnExit>
         {song && (
           <Paper
             sx={{
               position: 'relative',
-              mb: '0.5em',
               padding: '0.5em 1em',
               display: 'flex',
               flexDirection: 'column',

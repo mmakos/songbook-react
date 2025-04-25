@@ -1,7 +1,7 @@
 import MainMenuGroup from './group/MainMenuGroup.tsx';
 import { FC, useState } from 'react';
 import MainMenuItem, { TMenuType } from './item/MainMenuItem.tsx';
-import { Add, CasinoOutlined, EmojiEmotions, Home, HourglassBottom, LibraryMusic } from '@mui/icons-material';
+import { Add, CasinoOutlined, EmojiEmotions, Groups, Home, HourglassBottom, LibraryMusic } from '@mui/icons-material';
 import MainMenuSubItem from './item/MainMenuSubItem.tsx';
 import { Divider } from '@mui/material';
 import { Category } from '../types/song.types.ts';
@@ -18,6 +18,7 @@ interface IMainMenuTabsProps {
 
 const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
   const [songsExpanded, setSongsExpanded] = useState(false);
+  const [meetingsExpanded, setMeetingsExpanded] = useState(false);
   const [extrasExpanded, setExtrasExpanded] = useState(false);
   const drawSong = useRandomSong();
   const { canVerify, canEdit } = useCanEdit();
@@ -32,6 +33,11 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
     setSongsExpanded(false);
   };
 
+  const handleMeetingsClose = () => {
+    close();
+    setMeetingsExpanded(false);
+  };
+
   return (
     <>
       <MainMenuItem type={type} routeTo="/" text={'Strona główna'} icon={<Home />} close={close} />
@@ -42,7 +48,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
         expanded={songsExpanded}
         setExpanded={setSongsExpanded}
       >
-        <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} />
+        <MainMenuSubItem type={type} text="Wszystkie" routeTo="/songs" close={handleSongsClose} inset />
         {canVerify && (
           <MainMenuSubItem
             type={type}
@@ -80,6 +86,24 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
               close={handleSongsClose}
               icon={<Add />}
             />
+          </>
+        )}
+      </MainMenuGroup>
+      <MainMenuGroup
+        type={type}
+        text="Śpiewanki"
+        icon={<Groups />}
+        expanded={meetingsExpanded}
+        setExpanded={setMeetingsExpanded}
+      >
+        {canEdit && (
+          <MainMenuSubItem type={type} text="Moje śpiewanki" routeTo="/meetings" close={handleMeetingsClose} />
+        )}
+        <MainMenuSubItem type={type} text="Obecne śpiewanki" routeTo="/meeting" close={handleMeetingsClose} />
+        {canEdit && (
+          <>
+            <Divider variant="middle" />
+            <MainMenuSubItem type={type} text="Utwórz śpiewanki" routeTo="/add/meeting" close={handleMeetingsClose} />
           </>
         )}
       </MainMenuGroup>
