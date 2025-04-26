@@ -134,7 +134,7 @@ const SongInfoEditor = () => {
     api
       .get('unique/song/', { params: { title, slug: newSong ? 1 : undefined } })
       .then(({ data: { unique, slug, title } }: AxiosResponse<{ unique: boolean; slug: string; title: string }>) => {
-        if (unique) {
+        if (unique || (!newSong && slug === song?.slug)) {
           continueNextStep();
         } else {
           setNonUniqueSlug({ slug, title });
