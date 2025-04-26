@@ -1,7 +1,7 @@
 import { FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { ISourceData, SourceType } from '../../types/song.types.ts';
 import { sourceTypeNominative } from '../../author/author.utils.ts';
-import { validateHttpURL, validateString } from '../validation.utils.ts';
+import {undefinedIfBlank, validateHttpURL, validateString} from '../validation.utils.ts';
 import { Delete } from '@mui/icons-material';
 
 const currentYear = new Date().getFullYear();
@@ -37,7 +37,7 @@ const SongSourceEditor = <Source extends ISourceData>({
 }: ISongSourceEditorProps<Source>) => {
   const setName = (name: string) => setSource({ ...source, name });
   const setType = (type: string) => setSource({ ...source, type: type as SourceType });
-  const setUrl = (url: string) => setSource({ ...source, url });
+  const setUrl = (url: string) => setSource({ ...source, url: undefinedIfBlank(url) });
   const setYear = (year: string) => {
     if (!year.length) {
       setSource({ ...source, year: undefined });
@@ -98,7 +98,7 @@ const SongSourceEditor = <Source extends ISourceData>({
         label="Link (najlepiej wikipedia)"
         error={!!errors?.url}
         helperText={errors?.url}
-        value={source.url}
+        value={source.url ?? ''}
         onChange={(event) => setUrl(event.target.value)}
         slotProps={{
           htmlInput: {

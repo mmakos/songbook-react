@@ -51,3 +51,9 @@ export const validateChanged = (entityData: object, originalEntity: object): boo
   }
   return false;
 };
+
+export const undefinedIfBlank = (str: string) => {
+  if (str.trim()) {
+    return str;
+  }
+}

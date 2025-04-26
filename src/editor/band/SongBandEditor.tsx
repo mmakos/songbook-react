@@ -1,6 +1,6 @@
 import { IconButton, Stack, TextField, Typography } from '@mui/material';
 import { IBandData } from '../../types/song.types.ts';
-import { validateHttpURL, validateString } from '../validation.utils.ts';
+import {undefinedIfBlank, validateHttpURL, validateString} from '../validation.utils.ts';
 import { Delete } from '@mui/icons-material';
 
 export interface IBandValidationErrors {
@@ -33,7 +33,7 @@ const SongBandEditor = <Band extends IBandData>({
   errors,
 }: ISongBandEditorProps<Band>) => {
   const setName = (name: string) => setBand({ ...band, name });
-  const setUrl = (url: string) => setBand({ ...band, url });
+  const setUrl = (url: string) => setBand({ ...band, url: undefinedIfBlank(url) });
 
   return (
     <Stack gap={2}>
@@ -59,7 +59,7 @@ const SongBandEditor = <Band extends IBandData>({
         label="Link (najlepiej wikipedia)"
         error={!!errors?.url}
         helperText={errors?.url}
-        value={band.url}
+        value={band.url ?? ''}
         onChange={(event) => setUrl(event.target.value)}
         slotProps={{
           htmlInput: {

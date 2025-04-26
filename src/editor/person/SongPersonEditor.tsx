@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, FormGroup, IconButton, Stack, TextField, Ty
 import { IPersonData } from '../../types/song.types.ts';
 import { personAsString } from '../../author/author.utils.ts';
 import { Delete } from '@mui/icons-material';
-import { validateHttpURL, validateString } from '../validation.utils.ts';
+import { undefinedIfBlank, validateHttpURL, validateString } from '../validation.utils.ts';
 
 export interface IPersonValidationErrors {
   name?: string;
@@ -41,9 +41,9 @@ const SongPersonEditor = <Person extends IPersonData>({
 }: ISongPersonEditorProps<Person>) => {
   const setName = (name: string) => setPerson({ ...person, name });
   const setLastName = (lastName: string) => setPerson({ ...person, lastName });
-  const setSecondName = (secondName: string) => setPerson({ ...person, secondName });
-  const setNickname = (nickname: string) => setPerson({ ...person, nickname });
-  const setUrl = (url: string) => setPerson({ ...person, url });
+  const setSecondName = (secondName: string) => setPerson({ ...person, secondName: undefinedIfBlank(secondName) });
+  const setNickname = (nickname: string) => setPerson({ ...person, nickname: undefinedIfBlank(nickname) });
+  const setUrl = (url: string) => setPerson({ ...person, url: undefinedIfBlank(url) });
   const setForceNickname = (forceNickname: boolean) => setPerson({ ...person, forceNickname });
   const setForceSecondName = (forceSecondName: boolean) => setPerson({ ...person, forceSecondName });
 
