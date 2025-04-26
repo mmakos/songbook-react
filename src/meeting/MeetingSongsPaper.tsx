@@ -6,6 +6,7 @@ import { IMeeting, IMeetingSong } from './meeting.types.tsx';
 import useAuthAPI from '../http/useAuthAPI.ts';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { setMeetingSettings } from '../store/songbook.reducer.ts';
+import RouteLink from "../components/RouteLink.tsx";
 
 interface IMeetingSongsPaperProps {
   meeting: IMeeting;
@@ -38,10 +39,10 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
             <SyncButton sync={fetchSongs} syncing={fetchingSongs} />
           </Typography>
           {showName && (
-            <Typography color="text.secondary">
+            <RouteLink to={`/meeting/${meeting.id}`} color="text.secondary" underline='hover'>
               {meeting.name}
               {!meeting.isHost && ` - ${meeting.host}`}
-            </Typography>
+            </RouteLink>
           )}
         </Stack>
         {meeting.songs.length ? (
