@@ -1,4 +1,4 @@
-import { FormControlLabel, Paper, Stack, Switch, Typography } from '@mui/material';
+import { Divider, FormControlLabel, Paper, Stack, Switch, Typography } from '@mui/material';
 import SyncButton from '../components/SyncButton.tsx';
 import MeetingSongs from './MeetingSongs.tsx';
 import { FC, useState } from 'react';
@@ -54,6 +54,7 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
         ) : (
           <Typography color="text.disabled">Brak piosenek</Typography>
         )}
+        <Divider />
         <FormControlLabel
           control={
             <Switch
