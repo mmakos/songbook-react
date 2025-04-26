@@ -198,8 +198,8 @@ const SongEditSummary = () => {
         />
       ) : (
         <Stack direction="row" justifyContent="center" spacing={2}>
-          {song && split && <Song song={song} />}
-          <Song song={songPreview} />
+          {song && split && <Song song={song} preview />}
+          <Song song={songPreview} preview />
         </Stack>
       )}
     </>
