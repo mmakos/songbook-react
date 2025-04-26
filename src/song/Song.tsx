@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import {Box, Divider, Paper, Skeleton, Stack, useMediaQuery, useTheme} from '@mui/material';
+import { Box, Divider, Paper, Skeleton, Stack, useMediaQuery, useTheme } from '@mui/material';
 import SongInfo from './SongInfo.tsx';
-import { useAppSelector } from '../store/songbook.store.ts';
+import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import EditorInfo from './EditorInfo.tsx';
 import SongTitle from './SongTitle.tsx';
 import SongSettings from './SongSettings.tsx';
@@ -13,9 +13,13 @@ import { ISong } from '../types/song.types.ts';
 import WaitingEditsInfo from './WaitingEditsInfo.tsx';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import useSongTheme from '../store/useSongTheme.ts';
-import GlobalMeeting from '../meeting/GlobalMeeting.tsx';
+import useMeeting from '../store/useMeeting.ts';
+import MeetingSongsPaper from '../meeting/MeetingSongsPaper.tsx';
+import { setMeeting } from '../store/songbook.reducer.ts';
 
 const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
+  const meeting = useMeeting();
+  const dispatch = useAppDispatch();
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const theme = useTheme();
   const downMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -54,21 +58,33 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
             </Stack>
           </Paper>
         </Stack>
-        {!preview && !downMd && <Box sx={{position: 'relative', flex: 1, minWidth: '20em'}}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: 0,
-              overflow: 'auto',
-            }}
-          >
-            <GlobalMeeting />
+        {!preview && meeting && !downMd && (
+          <Box sx={{ position: 'relative', flex: 1, minWidth: '20em' }}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                right: 0,
+                left: 0,
+                overflow: 'auto',
+              }}
+            >
+              <MeetingSongsPaper
+                meeting={meeting}
+                songsChanged={(songs) => dispatch(setMeeting({ ...meeting, songs }))}
+                showName
+              />
+            </Box>
           </Box>
-        </Box>}
-        {!preview && downMd && <GlobalMeeting />}
+        )}
+        {!preview && meeting && downMd && (
+          <MeetingSongsPaper
+            meeting={meeting}
+            songsChanged={(songs) => dispatch(setMeeting({ ...meeting, songs }))}
+            showName
+          />
+        )}
       </Stack>
     </div>
   );
