@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { CloudDownload, SkipNext } from '@mui/icons-material';
 import { IAuthorsCache, useSongEditContext } from '../SongEditContext.tsx';
 import { api } from '../../http/api.ts';
@@ -44,6 +44,12 @@ const ImportSong = () => {
 
   return (
     <Stack spacing={1}>
+      <Typography variant="caption" color="info">
+        Możesz wkleić tu link z <Link href="https://www.piosenkaztekstem.pl/">Piosenka z tekstem</Link> lub ze{' '}
+        <Link href="https://spiewnik.wywrota.pl/">Śpiewnik Wywrota</Link> (może się uda). Będzie to dobry star i
+        unikniesz problemów z kopiowaniem tekstu/akordów. Oczywiście edytuj potem tekst tak czy siak, bo może zostać
+        trochę „artefaktów”.
+      </Typography>
       <TextField
         label="Link do piosenki"
         error={!!hrefError}
