@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../store/songbook.store.ts';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Collapse } from '@mui/material';
 import { ISongContent, IVerse } from '../../types/song.types.ts';
 import VerseRepetition from './VerseRepetition.tsx';
@@ -35,33 +35,41 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
 
   const verseRefValid = verse.verseRef !== undefined && verse.verseRef < song.verses.length;
 
-  if ((!showOriginal || expandVerses) && verseRefValid) {
-    const referencedVerse = { ...song.verses[verse.verseRef!] };
-    if (verse.lines.length === 1) {
-      const onlyLine = verse.lines[0];
-      if (onlyLine.repetitionEnd && !verseHasMultipleRepetition(referencedVerse)) {
-        referencedVerse.lines = referencedVerse.lines.map((line) => ({ ...line, repetition: true }));
-        referencedVerse.lines[referencedVerse.lines.length - 1].repetitionEnd = onlyLine.repetitionEnd;
+  const finalVerse = useMemo(() => {
+    if ((!showOriginal || expandVerses) && verseRefValid) {
+      const referencedVerse = { ...song.verses[verse.verseRef!] };
+      if (verse.lines.length === 1) {
+        const onlyLine = verse.lines[0];
+        if (onlyLine.repetition) {
+          if (onlyLine.repetitionEnd === 1) {
+            referencedVerse.lines = referencedVerse.lines.map((line) => ({ ...line, repetition: false }));
+            referencedVerse.lines[referencedVerse.lines.length - 1].repetitionEnd = undefined;
+          } else if (!verseHasMultipleRepetition(referencedVerse)) {
+            referencedVerse.lines = referencedVerse.lines.map((line) => ({ ...line, repetition: true }));
+            referencedVerse.lines[referencedVerse.lines.length - 1].repetitionEnd = onlyLine.repetitionEnd;
+          }
+        }
       }
+      return referencedVerse;
     }
-    verse = referencedVerse;
-  }
+    return verse;
+  }, [verse, showOriginal, expandVerses]);
 
   if (!verseRefValid) {
-    return <VerseRepetition verse={verse} previousVerse={previousVerse} />;
+    return <VerseRepetition verse={finalVerse} previousVerse={previousVerse} />;
   }
 
   return (
-      <Collapse
-        in={expandVerses}
-        collapsedSize={`${lineHeight + verseSpacing}em`}
-        onEntered={() => setShowOriginal(false)}
-        onExited={() => setShowOriginal(true)}
-      >
-        <div>
-          <VerseRepetition verse={verse} previousVerse={previousVerse} />
-        </div>
-      </Collapse>
+    <Collapse
+      in={expandVerses}
+      collapsedSize={`${lineHeight + verseSpacing}em`}
+      onEntered={() => setShowOriginal(false)}
+      onExited={() => setShowOriginal(true)}
+    >
+      <div>
+        <VerseRepetition verse={finalVerse} previousVerse={previousVerse} />
+      </div>
+    </Collapse>
   );
 };
 

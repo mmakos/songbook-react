@@ -19,7 +19,12 @@ const VerseRepetition: FC<IVerseRepetitionProps> = ({ verse, previousVerse }) =>
         }
         return (
           <Fragment key={'l' + i}>
-            <LineRepetition line={line} previousLine={previousLine} last={i === verse.lines.length - 1} first={i === 0} />
+            <LineRepetition
+              line={line}
+              previousLine={previousLine}
+              last={i === verse.lines.length - 1}
+              first={i === 0}
+            />
           </Fragment>
         );
       })}

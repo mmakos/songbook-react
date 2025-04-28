@@ -39,13 +39,13 @@ const LineRepetition: FC<ILineRepetitionProps> = ({ line, previousLine, first, l
     <div
       style={{
         lineHeight: height,
-        borderLeft: line.repetition ? 'solid' : undefined,
+        borderLeft: line.repetition && line.repetitionEnd !== 1 ? 'solid' : undefined,
         paddingLeft: '0.1em',
         marginTop: marginTop && `${marginTop}em`,
         marginBottom: marginBottom && `${marginBottom}em`,
       }}
     >
-      {line.repetitionEnd ? (line.repetitionEnd >= 0 ? 'x' + line.repetitionEnd : 'x∞') : <>&nbsp;</>}
+      {line.repetition && line.repetitionEnd && line.repetitionEnd !== 1 ? (line.repetitionEnd >= 0 ? 'x' + line.repetitionEnd : 'x∞') : <>&nbsp;</>}
     </div>
   );
 };

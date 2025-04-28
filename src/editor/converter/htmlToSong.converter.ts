@@ -335,13 +335,13 @@ const cellToRepetitions = (cell: Node): number[] => {
     let rep = 0;
     const str = cell.child(i).textContent.trim();
     if (str.startsWith('|')) {
-      rep = 1;
+      rep = -2; // Jest powtórzenie
       if (str[1] === 'x' || str[1] === 'X') {
         if (str[2] === '∞') {
           rep = -1;
         } else {
           const i = +str[2];
-          if (!isNaN(i) && i >= 2) rep = i;
+          if (!isNaN(i) && i >= 1) rep = i;
         }
       }
       repetitions.push(rep);
@@ -390,7 +390,7 @@ const createVerseFromParts = (
       const rep = repetitions[i];
       if (rep) {
         lines[i].repetition = true;
-        if (rep !== 1) lines[i].repetitionEnd = rep;
+        if (rep !== -2) lines[i].repetitionEnd = rep;
       }
     }
     if (comments && i < comments?.length) {
