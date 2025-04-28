@@ -41,6 +41,9 @@ export interface IChordDifficulty {
   signAccidentals?: boolean;
   hideAdditionals269?: boolean;
   hideFourths?: boolean;
+  enharmonicFlats?: boolean;
+  enharmonicSharps?: boolean;
+  americanNotation?: boolean;
 }
 
 export interface ITextSettings {

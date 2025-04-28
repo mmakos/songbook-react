@@ -77,7 +77,7 @@ export const getPositionOnCircle = ({ note, minor }: IKey): number => {
   return 0;
 };
 
-const noteIndexes: Record<NoteBase, number> = {
+export const noteIndexes: Record<NoteBase, number> = {
   [NoteBase.C]: 0,
   [NoteBase.D]: 2,
   [NoteBase.E]: 4,
@@ -87,7 +87,7 @@ const noteIndexes: Record<NoteBase, number> = {
   [NoteBase.H]: 11,
 };
 
-const notesByIndex: Record<number, NoteBase> = {
+export const notesByIndex: Record<number, NoteBase> = {
   0: NoteBase.C,
   2: NoteBase.D,
   4: NoteBase.E,

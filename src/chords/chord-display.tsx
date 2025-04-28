@@ -11,6 +11,7 @@ import {
 } from '../types/song.types.ts';
 import { IChordDifficulty } from '../store/songbook.reducer.ts';
 import { ReactNode } from 'react';
+import { noteIndexes, notesByIndex } from './chord-transposition.tsx';
 
 type THidableInterval = 'prime' | 'triad';
 
@@ -107,21 +108,48 @@ const accidentalAsString = (accidental: Accidental, noteBase: NoteBase, chordDif
 };
 
 export const noteAsString = (note: INote, minor?: boolean, chordDifficulty?: IChordDifficulty): string => {
+  note = replaceEnharmonicFlatIfNeeded(note, chordDifficulty);
+  note = replaceEnharmonicSharpIfNeeded(note, chordDifficulty);
   const noteBase: NoteBase = note.base;
-  const accidental = note.accidental;
+  let accidental = note.accidental;
   let chordNote: string;
 
   // Wyjątek dla notacji niemieckiej (zamiast B jest H, A zamiast Bb (b-flat) jest B)
-  if (accidental == Accidental.FLAT && noteBase == NoteBase.H) {
+  if (noteBase == NoteBase.H && (chordDifficulty?.americanNotation || accidental == Accidental.FLAT)) {
     chordNote = minor ? 'b' : 'B';
+    if (!chordDifficulty?.americanNotation) {
+      accidental = undefined;
+    }
   } else {
     chordNote = minor ? noteBase.toLowerCase() : noteBase;
-    if (accidental) {
-      chordNote = chordNote + accidentalAsString(accidental, noteBase, chordDifficulty);
-    }
+  }
+  if (accidental) {
+    chordNote = chordNote + accidentalAsString(accidental, noteBase, chordDifficulty);
   }
 
   return chordNote;
+};
+
+const replaceEnharmonicFlatIfNeeded = (note: INote, chordDifficulty?: IChordDifficulty): INote => {
+  if (!chordDifficulty?.enharmonicFlats || note.accidental !== Accidental.FLAT) return note;
+  if (note.base === NoteBase.H && !chordDifficulty?.americanNotation) return note;
+  const noteIndex = (noteIndexes[note.base] + 10) % 12;
+  const lowerNote = notesByIndex[noteIndex];
+  if (lowerNote) {
+    return { base: lowerNote, accidental: Accidental.SHARP };
+  } else {
+    return { base: notesByIndex[(noteIndex + 1) % 12] };
+  }
+};
+
+const replaceEnharmonicSharpIfNeeded = (note: INote, chordDifficulty?: IChordDifficulty): INote => {
+  if (!chordDifficulty?.enharmonicSharps || note.accidental !== Accidental.SHARP) return note;
+  if (note.base === NoteBase.E) return { base: NoteBase.F };
+  if (note.base === NoteBase.H) return { base: NoteBase.C };
+  if (note.base === NoteBase.A && !chordDifficulty.americanNotation) {
+    return { base: NoteBase.H, accidental: Accidental.FLAT };
+  }
+  return note;
 };
 
 const intervalModificationAsString = (

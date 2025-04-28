@@ -29,7 +29,14 @@ const Chord: FC<IChordProps> = ({ chord }) => {
 
   const chordNote = useMemo(() => {
     return noteAsString(transposeNote(chord.note, transposition), chord.minor, chordDifficulty);
-  }, [chordDifficulty.signAccidentals, transposition, chord]);
+  }, [
+    chordDifficulty.signAccidentals,
+    chordDifficulty.enharmonicFlats,
+    chordDifficulty.enharmonicSharps,
+    chordDifficulty.americanNotation,
+    transposition,
+    chord,
+  ]);
 
   const chordModification = useMemo(() => {
     if (chord.modification) return chordModificationAsString(chord.modification, chordDifficulty);

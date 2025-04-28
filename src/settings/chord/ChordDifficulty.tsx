@@ -369,6 +369,81 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         checked={!!chordDifficulty.signAccidentals}
         onChange={(value) => changeDifficulty({ signAccidentals: value })}
       />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Zamieniaj enharmonicznie akordy bemolowe'}
+        expansion={
+          <>
+            <b>Des es</b>
+            &nbsp;→&nbsp;
+            <b>Cis dis</b>
+          </>
+        }
+        description={
+          showDescription ? (
+            <>
+              Zgodnie z zasadami muzyki, to czy użyjemy akordu bemolowego czy krzyżykowego zależy od tego w jakiej
+              jesteśmy tonacji. Np. w tonacji <b>cis-moll</b> będziemy mieli <b>Gis</b>, ale w tonacji <b>c-moll</b> już{' '}
+              <b>As</b>, mimo, że oba te akordy składają się z dokładnie tych samych dźwięków. Dla ludzi, którzy nie
+              uczyli się teorii muzyki może wydawać się to bez sensu, a akordy bemolowe mogą w ogóle nie istnieć,
+              dlatego można sobie zmienić (bo dla ludzi zaznajomionych z teorią jest z kolei odwrotnie i np. ciąg
+              akordów <b>c Dis</b> jest niezrozumiały i mylący).
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.enharmonicFlats}
+        onChange={(value) => changeDifficulty({ enharmonicFlats: value })}
+      />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Zamieniaj enharmonicznie akordy krzyżykowe'}
+        expansion={
+          <>
+            <b>Ais his</b>
+            &nbsp;→&nbsp;
+            <b>B c</b>
+          </>
+        }
+        description={
+          showDescription ? (
+            <>
+              Zgodnie z zasadami muzyki, to czy użyjemy akordu bemolowego czy krzyżykowego zależy od tego w jakiej
+              jesteśmy tonacji. Np. w tonacji <b>gis-moll</b> będziemy mieli <b>Ais</b>, ale w tonacji <b>c-moll</b> już{' '}
+              <b>B</b>, mimo, że oba te akordy składają się z dokładnie tych samych dźwięków. Dla ludzi, którzy nie
+              uczyli się teorii muzyki może wydawać się to bez sensu, a akordy takie jak <b>Ais</b> w ogóle nie
+              istnieją, dlatego można sobie zmienić (bo dla ludzi zaznajomionych z teorią jest z kolei odwrotnie i np.
+              ciąg akordów <b>gis B</b> jest niezrozumiały i mylący).
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.enharmonicSharps}
+        onChange={(value) => changeDifficulty({ enharmonicSharps: value })}
+      />
+      <ExpandableSwitch
+        sx={{ mt: showDescription ? '1em' : undefined }}
+        label={'Notacja amerykańska'}
+        expansion={
+          <>
+            <b>H B</b>
+            &nbsp;→&nbsp;
+            <b>B B♭</b>
+          </>
+        }
+        description={
+          showDescription ? (
+            <>
+              Zgodnie z zasadami muzyki, to czy użyjemy akordu bemolowego czy krzyżykowego zależy od tego w jakiej
+              jesteśmy tonacji. Np. w tonacji <b>gis-moll</b> będziemy mieli <b>Ais</b>, ale w tonacji <b>c-moll</b> już{' '}
+              <b>B</b>, mimo, że oba te akordy składają się z dokładnie tych samych dźwięków. Dla ludzi, którzy nie
+              uczyli się teorii muzyki może wydawać się to bez sensu, a akordy takie jak <b>Ais</b> w ogóle nie
+              istnieją, dlatego można sobie zmienić (bo dla ludzi zaznajomionych z teorią jest z kolei odwrotnie i np.
+              ciąg akordów <b>gis B</b> jest niezrozumiały i mylący).
+            </>
+          ) : undefined
+        }
+        checked={!!chordDifficulty.americanNotation}
+        onChange={(value) => changeDifficulty({ americanNotation: value })}
+      />
     </FormGroup>
   );
 };

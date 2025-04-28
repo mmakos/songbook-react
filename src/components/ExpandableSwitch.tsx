@@ -1,5 +1,5 @@
 import { FC, ReactElement, ReactNode, useState } from 'react';
-import { Fade, FormControlLabel, Switch, SxProps, Typography } from '@mui/material';
+import { Collapse, FormControlLabel, Stack, Switch, SxProps, Typography } from '@mui/material';
 
 interface IExpandableSwitchProps {
   label: ReactNode;
@@ -21,17 +21,19 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({ label, expansion, descri
         onMouseLeave={() => expansion && setExpanded(false)}
         control={<Switch checked={checked} onChange={(_, value) => onChange(value)} />}
         label={
-          <>
+          <Stack position="relative">
             {label}
             {expansion && (
-              <Fade in={expanded} unmountOnExit>
-                <span style={{ marginLeft: '0.5em' }}>{expansion}</span>
-              </Fade>
+              <Collapse in={expanded}>
+                <Typography color="text.secondary">
+                  {expansion}
+                </Typography>
+              </Collapse>
             )}
-          </>
+          </Stack>
         }
       />
-      {description && (
+      {(description || expansion) && (
         <Typography variant="caption" fontStyle="italic">
           {description}
         </Typography>
