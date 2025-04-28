@@ -1,9 +1,8 @@
-import SongTable from './SongTable.tsx';
 import { useMemo } from 'react';
 import { Category } from '../types/song.types.ts';
 import { useParams } from 'react-router';
-import { Paper } from '@mui/material';
 import { getCategoryDisplayName } from '../category/category.utils.ts';
+import SongList from './SongList.tsx';
 
 const SongFullTable = () => {
   const { category: categoryParam } = useParams();
@@ -15,9 +14,7 @@ const SongFullTable = () => {
   }, [categoryParam]);
 
   return (
-    <Paper sx={{ minHeight: '100%', width: '100%' }}>
-      <SongTable category={category} title={category && `Piosenki z kategorii "${getCategoryDisplayName(category)}"`} />
-    </Paper>
+    <SongList category={category} title={category && `Piosenki z kategorii "${getCategoryDisplayName(category)}"`} />
   );
 };
 

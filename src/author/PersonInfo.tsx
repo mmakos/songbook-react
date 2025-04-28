@@ -46,7 +46,7 @@ const PersonInfo: FC<IPersonInfoProps> = ({ personSlug, person, imageUrl }) => {
         )}
       </Stack>
       <Divider sx={{ my: '0.5em' }} />
-      <EditorInfo prefix="Utworzono" editorInfo={person.created} />
+      <EditorInfo prefix="Dodano" editorInfo={person.created} />
       {person.edited && <EditorInfo prefix="Edytowano" editorInfo={person.edited} />}
       <WaitingEditsInfo waiting={person} routeTo={`/person/${personSlug}`} />
     </Paper>

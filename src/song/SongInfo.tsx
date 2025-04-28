@@ -1,119 +1,122 @@
-import { FC, Fragment } from 'react';
-import { Button, Collapse, IconButton, Paper, Typography } from '@mui/material';
-import {
-  Close,
-  Groups,
-  Lyrics,
-  MusicNote,
-  Piano,
-  RecordVoiceOver,
-  ThumbUpOutlined,
-  Translate,
-} from '@mui/icons-material';
+import { FC, Fragment, PropsWithChildren } from 'react';
+import {Button, SxProps, Typography} from '@mui/material';
+import { Groups, Lyrics, MusicNote, Piano, RecordVoiceOver, ThumbUpOutlined, Translate } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import { setSongInfoOpen, transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
+import { transposeToComfort, transposeToOriginal } from '../store/songbook.reducer.ts';
 import { keyAsString } from '../chords/chord-display.tsx';
-import RouteLink from '../components/RouteLink.tsx';
 import { personAsString, sourceTypeGenitive } from '../author/author.utils.ts';
 import SourceTypeIcon from '../author/SourceTypeIcon.tsx';
-import { ISong } from '../types/song.types.ts';
+import { ISongFullOverview, ISongKey } from '../types/song.types.ts';
+import RouteLink from '../components/RouteLink.tsx';
 
-const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
-  const open = useAppSelector((state) => state.songDisplayState.infoOpen);
+interface ISongInfoProps {
+  song?: ISongFullOverview & { key?: ISongKey };
+  disableLinks?: boolean;
+  color?: string;
+  sx?: SxProps;
+}
+
+const AuthorLink: FC<{ to: string; disabled?: boolean } & PropsWithChildren> = ({ to, disabled, children }) => {
+  if (disabled) return children;
+
+  return (
+    <RouteLink to={to} underline="hover" color="textPrimary" display="inline">
+      {children}
+    </RouteLink>
+  );
+};
+
+const SongInfo: FC<ISongInfoProps> = ({ song, disableLinks, color, sx }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const dispatch = useAppDispatch();
-
-  const close = () => {
-    dispatch(setSongInfoOpen(false));
-  };
 
   const children = [];
 
   if (song) {
     song.source?.forEach((source) => {
       children.push(
-        <Typography key={source.slug} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key={source.slug} color={color} sx={sx}>
           <BasicTooltip title={`Piosenka pochodzi ${sourceTypeGenitive(source.type)}`}>
-            <SourceTypeIcon fontSize="inherit" sx={{ mr: '0.5em' }} type={source.type} />
+            <SourceTypeIcon fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} type={source.type} />
           </BasicTooltip>
-          <RouteLink to={`/source/${source.slug}`} underline="hover" color="textPrimary">
+          <AuthorLink to={`/source/${source.slug}`} disabled={disableLinks}>
             {source.name}
-          </RouteLink>
+          </AuthorLink>
         </Typography>
       );
     });
     song.band &&
       children.push(
-        <Typography key="band" sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="band" color={color} sx={sx}>
           <BasicTooltip title="Zespół">
-            <Groups fontSize="inherit" sx={{ mr: '0.5em' }} />
+            <Groups fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
           </BasicTooltip>
-          <RouteLink to={`/band/${song.band.slug}`} underline="hover" color="textPrimary">
+          <AuthorLink to={`/band/${song.band.slug}`} disabled={disableLinks}>
             {song.band.name}
-          </RouteLink>
+          </AuthorLink>
         </Typography>
       );
     song.performer &&
       children.push(
-        <Typography key="performer" sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="performer" color={color} sx={sx}>
           <BasicTooltip title="Wykonanie">
-            <RecordVoiceOver fontSize="inherit" sx={{ mr: '0.5em' }} />
+            <RecordVoiceOver fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
           </BasicTooltip>
           {song.performer.map((person, i) => (
             <Fragment key={person.slug}>
-              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+              <AuthorLink to={`/person/${person.slug}`} disabled={disableLinks}>
                 {personAsString(person)}
-              </RouteLink>
-              {i < song.performer!.length - 1 && <>,&nbsp;</>}
+              </AuthorLink>
+              {i < song.performer!.length - 1 && <>{', '}</>}
             </Fragment>
           ))}
         </Typography>
       );
     song.composer &&
       children.push(
-        <Typography key="composer" sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="composer" color={color} sx={sx}>
           <BasicTooltip title="Muzyka">
-            <MusicNote fontSize="inherit" sx={{ mr: '0.5em' }} />
+            <MusicNote fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
           </BasicTooltip>
           {song.composer.map((person, i) => (
             <Fragment key={person.slug}>
-              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+              <AuthorLink to={`/person/${person.slug}`} disabled={disableLinks}>
                 {personAsString(person)}
-              </RouteLink>
-              {i < song.composer!.length - 1 && <>,&nbsp;</>}
+              </AuthorLink>
+              {i < song.composer!.length - 1 && <>{', '}</>}
             </Fragment>
           ))}
         </Typography>
       );
     song.lyrics &&
       children.push(
-        <Typography key="lyrics" sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="lyrics" color={color} sx={sx}>
           <BasicTooltip title="Słowa">
-            <Lyrics fontSize="inherit" sx={{ mr: '0.5em' }} />
+            <Lyrics fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
           </BasicTooltip>
           {song.lyrics.map((person, i) => (
             <Fragment key={person.slug}>
-              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+              <AuthorLink to={`/person/${person.slug}`} disabled={disableLinks}>
                 {personAsString(person)}
-              </RouteLink>
-              {i < song.lyrics!.length - 1 && <>,&nbsp;</>}
+              </AuthorLink>
+              {i < song.lyrics!.length - 1 && <>{', '}</>}
             </Fragment>
           ))}
         </Typography>
       );
     song.translation &&
       children.push(
-        <Typography key="translation" sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography key="translation" color={color} sx={sx}>
           <BasicTooltip title="Tłumaczenie">
-            <Translate fontSize="inherit" sx={{ mr: '0.5em' }} />
+            <Translate fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
           </BasicTooltip>
           {song.translation.map((person, i) => (
             <Fragment key={person.slug}>
-              <RouteLink to={`/person/${person.slug}`} underline="hover" color="textPrimary">
+              <AuthorLink to={`/person/${person.slug}`} disabled={disableLinks}>
                 {personAsString(person)}
-              </RouteLink>
-              {i < song.translation!.length - 1 && <>,&nbsp;</>}
+              </AuthorLink>
+              {i < song.translation!.length - 1 && <>{', '}</>}
             </Fragment>
           ))}
         </Typography>
@@ -145,7 +148,8 @@ const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
                   sx={{ textTransform: 'none', padding: '0 4px', ml: '0.3em' }}
                   onClick={() => dispatch(transposeToComfort())}
                 >
-                  {keyAsString(song.key.comfort)}{song.key.maxComfort && " - " + keyAsString(song.key.maxComfort)}
+                  {keyAsString(song.key.comfort)}
+                  {song.key.maxComfort && ' - ' + keyAsString(song.key.maxComfort)}
                 </Button>
               </BasicTooltip>
             </>
@@ -154,18 +158,7 @@ const SongInfo: FC<{ song?: ISong }> = ({ song }) => {
       );
   }
 
-  return (
-    <Collapse in={open && !!song} collapsedSize={0} unmountOnExit>
-      {song && (
-        <Paper sx={{ position: 'relative', padding: '0.5em 1em' }}>
-          {children.length > 0 ? children : 'Brak informacji'}
-          <IconButton sx={{ position: 'absolute', top: '0.2em', right: '0.2em' }} size="small" onClick={close}>
-            <Close />
-          </IconButton>
-        </Paper>
-      )}
-    </Collapse>
-  );
+  return children.length > 0 ? children : <Typography color='text.secondary'>Brak informacji</Typography>;
 };
 
 export default SongInfo;

@@ -2,7 +2,6 @@ import { useParams } from 'react-router';
 import { Container, Divider, Link, Paper, Stack, Typography, useTheme } from '@mui/material';
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import Progress from '../components/Progress.tsx';
-import SongTable from '../song-list/SongTable.tsx';
 import { useEffect, useState } from 'react';
 import { IBand } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
@@ -12,6 +11,7 @@ import { Edit, Verified } from '@mui/icons-material';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
+import SongList from '../song-list/SongList.tsx';
 
 const Band = () => {
   const [band, setBand] = useState<IBand>();
@@ -86,14 +86,12 @@ const Band = () => {
             </a>
           )}
           <Divider sx={{ my: '0.5em' }} />
-          <EditorInfo prefix="Utworzono" editorInfo={band.created} />
+          <EditorInfo prefix="Dodano" editorInfo={band.created} />
           {band.edited && <EditorInfo prefix="Edytowano" editorInfo={band.edited} />}
           <WaitingEditsInfo waiting={band} routeTo={`/band/${bandSlug}`} />
         </Paper>
       )}
-      <Paper>
-        <SongTable band={bandSlug} />
-      </Paper>
+      <SongList band={bandSlug} />
     </Container>
   );
 };

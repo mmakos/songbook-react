@@ -5,7 +5,6 @@ import { Container, Divider, Link, Paper, Stack, Typography, useTheme } from '@m
 import InfoUrlIcon from './InfoUrlIcon.tsx';
 import { sourceTypeAblative, sourceTypeNominative } from './author.utils.ts';
 import Progress from '../components/Progress.tsx';
-import SongTable from '../song-list/SongTable.tsx';
 import { ISource } from '../types/song.types.ts';
 import EditorInfo from '../song/EditorInfo.tsx';
 import useCanEdit from '../store/useCanEdit.hook.ts';
@@ -13,6 +12,7 @@ import RouteIconButton from '../components/RouteIconButton.tsx';
 import { Edit, Verified } from '@mui/icons-material';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
+import SongList from '../song-list/SongList.tsx';
 
 const Source = () => {
   const [source, setSource] = useState<ISource>();
@@ -93,14 +93,12 @@ const Source = () => {
             )}
           </Stack>
           <Divider sx={{ my: '0.5em' }} />
-          <EditorInfo prefix="Utworzono" editorInfo={source.created} />
+          <EditorInfo prefix="Dodano" editorInfo={source.created} />
           {source.edited && <EditorInfo prefix="Edytowano" editorInfo={source.edited} />}
           <WaitingEditsInfo waiting={source} routeTo={`/source/${sourceSlug}`} />
         </Paper>
       )}
-      <Paper>
-        <SongTable source={sourceSlug} />
-      </Paper>
+      <SongList source={sourceSlug} />
     </Container>
   );
 };

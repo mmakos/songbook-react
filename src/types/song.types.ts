@@ -28,6 +28,18 @@ export interface ISongOverview extends ISlug {
   category: Category;
 }
 
+export interface ISongFullOverview extends ISongOverview {
+  altTitle?: string;
+  lyrics?: IPersonOverview[];
+  composer?: IPersonOverview[];
+  translation?: IPersonOverview[];
+  performer?: IPersonOverview[];
+  source?: ISourceOverview[];
+  band?: IBandOverview;
+}
+
+export type TSongFullOverview = ISongFullOverview & IEditInfo;
+
 export interface ISongContent {
   verses: IVerse[];
 }
@@ -45,16 +57,7 @@ export interface IWaitingEdit {
   waiting?: { username: string; editTime: number }[];
 }
 
-export interface ISongData {
-  title: string;
-  altTitle?: string;
-  category: Category;
-  lyrics?: IPersonOverview[];
-  composer?: IPersonOverview[];
-  translation?: IPersonOverview[];
-  performer?: IPersonOverview[];
-  source?: ISourceOverview[];
-  band?: IBandOverview;
+export interface ISongData extends Omit<ISongFullOverview, 'slug'> {
   video?: string[];
 
   key?: ISongKey;
@@ -72,8 +75,8 @@ export interface IAuthorEdit<T, Single extends boolean = false> {
 }
 
 export interface IEditResult {
-  slug: string,
-  editor: string,
+  slug: string;
+  editor: string;
 }
 
 export interface ISongEdit {

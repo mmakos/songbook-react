@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Box, Divider, Paper, Skeleton, Stack, useMediaQuery, useTheme } from '@mui/material';
-import SongInfo from './SongInfo.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import EditorInfo from './EditorInfo.tsx';
 import SongTitle from './SongTitle.tsx';
@@ -16,6 +15,7 @@ import useSongTheme from '../store/useSongTheme.ts';
 import useMeeting from '../store/useMeeting.ts';
 import MeetingSongsPaper from '../meeting/MeetingSongsPaper.tsx';
 import { setMeeting } from '../store/songbook.reducer.ts';
+import CollapsibleSongInfo from './CollapsibleSongInfo.tsx';
 
 const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
   const meeting = useMeeting();
@@ -43,7 +43,7 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
       </div>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap>
         <Stack direction="column" spacing={1}>
-          <SongInfo song={song} />
+          <CollapsibleSongInfo song={song} />
           <SongVideo song={song} />
           {!noChords && <SongSettings song={song} />}
           <Paper>
@@ -52,7 +52,7 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
             </ThemeProvider>
             <Divider variant="middle" />
             <Stack padding="0.5em 1em">
-              {song ? <EditorInfo prefix="Utworzono" editorInfo={song.created} /> : <Skeleton />}
+              {song ? <EditorInfo prefix="Dodano" editorInfo={song.created} /> : <Skeleton />}
               {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
               {song && <WaitingEditsInfo waiting={song} routeTo={`/song/${song.slug}`} />}
             </Stack>

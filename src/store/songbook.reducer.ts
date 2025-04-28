@@ -69,6 +69,7 @@ export interface ISongbookSettings {
   textSettings: ITextSettings;
   songTheme: ISongTheme;
   meetingSettings: IMeetingSettings;
+  songListGrid?: boolean;
 }
 
 export interface ISongDisplayState {
@@ -195,6 +196,7 @@ export const initialSongbookState: ISongbookState = {
     noChordInfo: getBoolFromStorage('no-chord-info'),
     noChords: getBoolFromStorage('no-chords'),
     meetingSettings: getObjectFromStorage('meeting-settings'),
+    songListGrid: getBoolFromStorage('song-list-grid'),
   },
   meeting: { id: getNumberFromStorage('meeting-id') },
 };
@@ -381,6 +383,10 @@ const songbookSlice = createSlice({
       state.songbookSettings.meetingSettings = action.payload;
       saveObjectToStorage('meeting-settings', action.payload);
     },
+    setSongListGrid: (state: ISongbookState, action: PayloadAction<boolean | undefined>) => {
+      state.songbookSettings.songListGrid = action.payload;
+      saveSimpleToStorage('song-list-grid', action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAndSaveSong.fulfilled, (state: ISongbookState, action) => {
@@ -433,6 +439,7 @@ export const {
   setCurrentMeeting,
   setMeeting,
   setMeetingSettings,
+  setSongListGrid,
 } = songbookSlice.actions;
 
 export default songbookSlice.reducer;

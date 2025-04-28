@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Container, Paper, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import PersonInfo from './PersonInfo.tsx';
 import { personAsString } from './author.utils.ts';
 import Progress from '../components/Progress.tsx';
-import SongTable from '../song-list/SongTable.tsx';
 import { IPerson } from '../types/song.types.ts';
 import { fetchAuthor } from './author.actions.ts';
-import {Edit, Verified} from '@mui/icons-material';
+import { Edit, Verified } from '@mui/icons-material';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
-import BasicTooltip from "../components/BasicTooltip.tsx";
+import BasicTooltip from '../components/BasicTooltip.tsx';
+import SongList from '../song-list/SongList.tsx';
 
 const Person = () => {
   const [person, setPerson] = useState<IPerson>();
@@ -53,17 +53,15 @@ const Person = () => {
           </BasicTooltip>
         )}
         {canVerify && (person.waiting || !person.created.verified) && (
-            <BasicTooltip title="Zweryfikuj oczekujące edycje">
-              <RouteIconButton to={`/verify/person/${personSlug}`}>
-                <Verified />
-              </RouteIconButton>
-            </BasicTooltip>
+          <BasicTooltip title="Zweryfikuj oczekujące edycje">
+            <RouteIconButton to={`/verify/person/${personSlug}`}>
+              <Verified />
+            </RouteIconButton>
+          </BasicTooltip>
         )}
       </Typography>
       <PersonInfo personSlug={personSlug} person={person} imageUrl={imageUrl} />
-      <Paper>
-        <SongTable person={personSlug} />
-      </Paper>
+      <SongList person={personSlug} />
     </Container>
   );
 };

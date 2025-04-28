@@ -122,7 +122,7 @@ const VerifyEntity = <Entity extends IBand | ISource | IPerson>({ entityId, Edit
               setEntity={entity.created.verified ? setEntity : () => {}}
             />
             <Stack>
-              <EditorInfo prefix="Utworzono" editorInfo={entity.created} />
+              <EditorInfo prefix="Dodano" editorInfo={entity.created} />
               {entity.edited && <EditorInfo prefix="Edytowano" editorInfo={entity.edited} />}
             </Stack>
             {!entity.created.verified && (
