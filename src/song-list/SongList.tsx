@@ -51,7 +51,7 @@ const SongList: FC<ISongTableProps> = ({ category, person, band, source, query, 
   const [params, setParams] = useSearchParams();
   const page = strToNumber(params.get('p'), 1);
   const pageSize = strToNumber(params.get('s'), 24);
-  const sortField = params.get('f');
+  const sortField = params.get('f') ?? 'title';
   const waiting = params.get('w');
   const sortDir: TSortDir = (params.get('o') as TSortDir) ?? 'asc';
 

@@ -10,7 +10,7 @@ const LargeLayout: FC<{ title: ReactNode; editor: ReactNode; info: ReactNode }> 
     <>
       <Stack direction="row" justifyContent="space-between" width="100%">
         {title}
-        <Stack>{editor}</Stack>
+        <Stack alignItems="end">{editor}</Stack>
       </Stack>
       <Stack direction="row" spacing={2} display="inline-block">
         {info}
@@ -56,11 +56,13 @@ const SongListElement: FC<{ song: TSongFullOverview }> = ({ song }) => {
           }
           editor={
             <>
-              <EditorInfo prefix="Dodano" editorInfo={song.created} sx={{ mr: song.edited ? '1em' : 0 }} />
+              <EditorInfo prefix="Dodano" editorInfo={song.created} />
               {song.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
             </>
           }
-          info={<SongInfo song={song} sx={{ display: 'inline-block', mr: '1em' }} disableLinks color="text.secondary" />}
+          info={
+            <SongInfo song={song} sx={{ display: 'inline-block', mr: '1em' }} disableLinks color="text.secondary" />
+          }
         />
       </Stack>
     </ListItemButton>

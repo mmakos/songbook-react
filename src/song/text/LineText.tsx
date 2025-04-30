@@ -6,6 +6,7 @@ import { IFontStyle } from '../../components/font/FontStyle.tsx';
 import { Chat } from '@mui/icons-material';
 import { Stack, styled } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
+import { ITextSettings } from '../../store/songbook.reducer.ts';
 
 interface ILineTextProps {
   line: ILine;
@@ -29,7 +30,28 @@ const capitalizeLine = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
+const processText = (text: string, first: boolean, last: boolean, textSettings: ITextSettings) => {
+  let processed = text;
+  if (textSettings.hideNonLiteral) {
+    processed = processed.replace(/[^\p{L}\p{N}]+/gu, '');
+  } else {
+    if (first && textSettings.hideNonLiteralPrefix) {
+      processed = processed.replace(/^[^\p{L}\p{N}]+/u, '');
+    }
+    if (last && textSettings.hideNonLiteralSuffix) {
+      processed = processed.replace(/[^\p{L}\p{N}]+$/u, '');
+    }
+  }
+  if (first) processed = processed.trimStart();
+  if (last) processed = processed.trimEnd();
+  if (processed.length && capitalizeLine(processed)) {
+    processed = processed.charAt(0).toUpperCase() + text.slice(1);
+  }
+  return processed;
+};
+
 const LineText: FC<ILineTextProps> = ({ line }) => {
+  const textSettings = useAppSelector((state) => state.songbookSettings.textSettings);
   const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
 
   const getRunStyle = (run: ITextRun): CSSProperties | undefined => {
@@ -61,7 +83,7 @@ const LineText: FC<ILineTextProps> = ({ line }) => {
       {line.text?.map((run, i) => {
         return (
           <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run) }}>
-            {i == 0 ? capitalizeLine(run.text) : run.text}
+            {processText(run.text, i == 0, i == line.text!.length - 1, textSettings)}
           </StyledTextSpan>
         );
       })}

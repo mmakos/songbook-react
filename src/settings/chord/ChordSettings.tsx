@@ -24,6 +24,7 @@ const ChordSettings = () => {
               akordy, ale także informacje o tonacji piosenki, ustawienia wyświetlania akordów w danej piosence itd.
             </>
           }
+          showDescription
         />
         <FormControlLabel
           sx={{ mt: '1em' }}

@@ -1,4 +1,4 @@
-import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
+import { FormControlLabel, FormGroup, Stack, Switch, Typography } from '@mui/material';
 import FontChooser from '../../components/font/FontChooser.tsx';
 import FontStyle from '../../components/font/FontStyle.tsx';
 import FontSpacing from '../../components/font/FontSpacing.tsx';
@@ -14,6 +14,7 @@ import {
   setSongThemeText2FontStyle,
   setSongThemeText3FontStyle,
   setSongThemeTextFontStyle,
+  setTextSettings,
 } from '../../store/songbook.reducer.ts';
 import ThemeChooser from '../../components/ThemeChooser.tsx';
 import SettingsSection from '../SettingsSection.tsx';
@@ -27,6 +28,7 @@ const SongTheme = () => {
     customSpacing,
     mode,
   } = useAppSelector((state) => state.songbookSettings.songTheme);
+  const textSettings = useAppSelector((state) => state.songbookSettings.textSettings);
   const dispatch = useAppDispatch();
 
   return (
@@ -97,6 +99,59 @@ const SongTheme = () => {
             setFontStyle={(fontStyle) => dispatch(setSongThemeRepetitionFontStyle(fontStyle))}
           />
         </Stack>
+      </SettingsSection>
+      <SettingsSection titleVariant="h5" title="Tekst piosenki">
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={textSettings.capitalize}
+                onChange={(_, checked) => dispatch(setTextSettings({ ...textSettings, capitalize: checked }))}
+              />
+            }
+            label="Początki wersów zawsze z wielkiej litery"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={textSettings.hideNonLiteral}
+                onChange={(_, checked) => dispatch(setTextSettings({ ...textSettings, hideNonLiteral: checked }))}
+              />
+            }
+            label="Nie wyświetlaj znaków interpunkcyjnych"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={textSettings.hideNonLiteralPrefix}
+                onChange={(_, checked) => dispatch(setTextSettings({ ...textSettings, hideNonLiteralPrefix: checked }))}
+              />
+            }
+            disabled={textSettings.hideNonLiteral}
+            label="na początkach linii"
+            sx={{ ml: '1em' }}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={textSettings.hideNonLiteralSuffix}
+                onChange={(_, checked) => dispatch(setTextSettings({ ...textSettings, hideNonLiteralSuffix: checked }))}
+              />
+            }
+            disabled={textSettings.hideNonLiteral}
+            label="na końcach linii"
+            sx={{ ml: '1em' }}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={textSettings.numberVerses}
+                onChange={(_, checked) => dispatch(setTextSettings({ ...textSettings, numberVerses: checked }))}
+              />
+            }
+            label="Wyświetlaj numery zwrotek"
+          />
+        </FormGroup>
       </SettingsSection>
     </SettingsSection>
   );

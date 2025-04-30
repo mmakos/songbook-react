@@ -1,14 +1,14 @@
-import { Accidental, ISong } from '../types/song.types.ts';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getAndSaveSong } from './songbook.actions.ts';
-import { AlertColor, AlertPropsColorOverrides, PaletteMode } from '@mui/material';
-import { OverridableStringUnion } from '@mui/types';
-import { expert } from '../chords/chord-difficulty.tsx';
-import { FontFamily, IFont } from '../components/font/FontChooser.tsx';
-import { getTranspositionBetweenNotes, ITransposition } from '../chords/chord-transposition.tsx';
-import { IFontStyle } from '../components/font/FontStyle.tsx';
-import { ISpacing } from '../components/font/FontSpacing.tsx';
-import { TScale } from '../components/ScalableBox.tsx';
+import {Accidental, ISong} from '../types/song.types.ts';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {getAndSaveSong} from './songbook.actions.ts';
+import {AlertColor, AlertPropsColorOverrides, PaletteMode} from '@mui/material';
+import {OverridableStringUnion} from '@mui/types';
+import {expert} from '../chords/chord-difficulty.tsx';
+import {FontFamily, IFont} from '../components/font/FontChooser.tsx';
+import {getTranspositionBetweenNotes, ITransposition} from '../chords/chord-transposition.tsx';
+import {IFontStyle} from '../components/font/FontStyle.tsx';
+import {ISpacing} from '../components/font/FontSpacing.tsx';
+import {TScale} from '../components/ScalableBox.tsx';
 import {
   getBoolFromStorage,
   getNumberFromStorage,
@@ -18,8 +18,8 @@ import {
   saveSimpleToStorage,
   saveStringToStorage,
 } from './local-storage.utils.ts';
-import { IUser } from '../user/user.types.ts';
-import { IMeeting } from '../meeting/meeting.types.tsx';
+import {IUser} from '../user/user.types.ts';
+import {IMeeting} from '../meeting/meeting.types.tsx';
 
 export interface INotificationState {
   open?: boolean;
@@ -48,7 +48,10 @@ export interface IChordDifficulty {
 
 export interface ITextSettings {
   hideNonLiteral?: boolean;
+  hideNonLiteralSuffix?: boolean;
+  hideNonLiteralPrefix?: boolean;
   capitalize?: boolean;
+  numberVerses?: boolean;
 }
 
 export interface IMeetingSettings {
@@ -137,7 +140,7 @@ export interface ISongbookState {
   accessToken?: string;
 }
 
-const initialChordDifficulty = { ...expert, ...getObjectFromStorage('chord-difficulty') };
+const initialChordDifficulty = {...expert, ...getObjectFromStorage('chord-difficulty')};
 
 export const initialSpacing: ISpacing = {
   lineHeight: 1.5,
@@ -160,25 +163,22 @@ export const initialSongbookState: ISongbookState = {
   },
   theme: (getStringFromStorage('theme') as PaletteMode) ?? 'dark',
   songSettings: {
-    transposition: { amount: 0 },
+    transposition: {amount: 0},
     chordDifficulty: initialChordDifficulty,
     showChords: !getBoolFromStorage('no-chords'),
   },
   songbookSettings: {
     chordDifficulty: initialChordDifficulty,
-    textSettings: {
-      hideNonLiteral: getBoolFromStorage('hide-non-literal'),
-      capitalize: getBoolFromStorage('capitalize') ?? true,
-    },
+    textSettings: {capitalize: true, ...getObjectFromStorage('text-settings')},
     songTheme: {
       fontStyles: {
         text: getObjectFromStorage('song-theme-text-style'),
-        text1: { italic: true, ...getObjectFromStorage('song-theme-text1-style') },
-        text2: { underline: true, ...getObjectFromStorage('song-theme-text2-style') },
-        text3: { bold: true, ...getObjectFromStorage('song-theme-text3-style') },
-        repetition: { bold: true, ...getObjectFromStorage('song-theme-repetition-style') },
-        chords: { bold: true, ...getObjectFromStorage('song-theme-chords-style') },
-        silentChords: { bold: true, italic: true, ...getObjectFromStorage('song-theme-silent-chords-style') },
+        text1: {italic: true, ...getObjectFromStorage('song-theme-text1-style')},
+        text2: {underline: true, ...getObjectFromStorage('song-theme-text2-style')},
+        text3: {bold: true, ...getObjectFromStorage('song-theme-text3-style')},
+        repetition: {bold: true, ...getObjectFromStorage('song-theme-repetition-style')},
+        chords: {bold: true, ...getObjectFromStorage('song-theme-chords-style')},
+        silentChords: {bold: true, italic: true, ...getObjectFromStorage('song-theme-silent-chords-style')},
       },
       font: {
         fontFamily: FontFamily.VERDANA,
@@ -198,7 +198,7 @@ export const initialSongbookState: ISongbookState = {
     meetingSettings: getObjectFromStorage('meeting-settings'),
     songListGrid: getBoolFromStorage('song-list-grid'),
   },
-  meeting: { id: getNumberFromStorage('meeting-id') },
+  meeting: {id: getNumberFromStorage('meeting-id')},
 };
 
 const songbookSlice = createSlice({
@@ -213,7 +213,7 @@ const songbookSlice = createSlice({
       state.songSettings = {
         showChords: !state.songbookSettings.noChords,
         chordDifficulty: state.songbookSettings.chordDifficulty,
-        transposition: { amount: 0 },
+        transposition: {amount: 0},
       };
     },
     setSongSettingsOpen: (state: ISongbookState, action: PayloadAction<boolean>) => {
@@ -273,7 +273,7 @@ const songbookSlice = createSlice({
       state.songSettings.transposition = getTranspositionBetweenNotes(state.song!.key!.songbook.note, original);
     },
     changeSongChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
-      state.songSettings.chordDifficulty = { ...state.songSettings.chordDifficulty, ...action.payload };
+      state.songSettings.chordDifficulty = {...state.songSettings.chordDifficulty, ...action.payload};
     },
     setShowChords: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songSettings.showChords = action.payload;
@@ -288,7 +288,7 @@ const songbookSlice = createSlice({
     updateGlobalSettingsWithSongSettings: (state: ISongbookState) => {
       setGlobalChordsDifficulty(state.songSettings.chordDifficulty);
       setNoChords(!state.songSettings.showChords);
-      state.notification = { open: true, message: 'Zaktualizowano globalne ustawienia', severity: 'success' };
+      state.notification = {open: true, message: 'Zaktualizowano globalne ustawienia', severity: 'success'};
     },
     changeTheme: (state: ISongbookState, action: PayloadAction<PaletteMode | undefined>) => {
       state.theme = action.payload;
@@ -343,6 +343,10 @@ const songbookSlice = createSlice({
       state.songbookSettings.songTheme.spacing = action.payload;
       saveObjectToStorage('song-theme-spacing', action.payload);
     },
+    setTextSettings: (state: ISongbookState, action: PayloadAction<ITextSettings>) => {
+      state.songbookSettings.textSettings = action.payload;
+      saveObjectToStorage('text-settings', action.payload);
+    },
     setNoChordInfo: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.noChordInfo = action.payload;
       saveSimpleToStorage('no-chord-info', action.payload);
@@ -352,7 +356,7 @@ const songbookSlice = createSlice({
       saveSimpleToStorage('no-chords', action.payload);
     },
     setGlobalChordsDifficulty: (state: ISongbookState, action: PayloadAction<IChordDifficulty>) => {
-      state.songbookSettings.chordDifficulty = { ...state.songbookSettings.chordDifficulty, ...action.payload };
+      state.songbookSettings.chordDifficulty = {...state.songbookSettings.chordDifficulty, ...action.payload};
       saveObjectToStorage('chord-difficulty', state.songbookSettings.chordDifficulty);
     },
 
@@ -429,6 +433,7 @@ export const {
   setSongThemeRepetitionFontStyle,
   setSongThemeChordsFontStyle,
   setSongThemeSilentChordsFontStyle,
+  setTextSettings,
   setNoChordInfo,
   setNoChords,
   setGlobalChordsDifficulty,

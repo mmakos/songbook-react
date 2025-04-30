@@ -20,14 +20,21 @@ const SongTitle: FC<{ song?: ISong }> = ({ song }) => {
 
   return (
     <div
-      style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}
+      style={{ display: 'inline-block', alignItems: 'center', marginBottom: '0.5em' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <Typography variant="h4">{song.title}</Typography>
+      <Typography variant="h4" display='inline'>
+        {song.title}
+      </Typography>
+      {song.altTitle && (
+        <Typography variant="h4" color="text.secondary" display='inline'>
+          {' '}({song.altTitle})
+        </Typography>
+      )}
       <BasicTooltip title="Skopiuj link do schowka">
-        <Fade in={hover}>
-          <IconButton onClick={copyUrlToString} sx={{ marginLeft: '0.2em' }}>
+        <Fade in={hover} unmountOnExit>
+          <IconButton onClick={copyUrlToString} sx={{ ml: '0.2em', verticalAlign: 'bottom' }}>
             <Link />
           </IconButton>
         </Fade>

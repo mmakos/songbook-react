@@ -1,5 +1,6 @@
 import { FC, ReactElement, ReactNode, useState } from 'react';
 import {
+  Box,
   Button,
   Collapse,
   Dialog,
@@ -35,14 +36,14 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
   const [help, setHelp] = useState(false);
 
   return (
-    <Stack position="relative">
+    <Stack>
       <Stack direction="row" justifyContent="space-between">
         <FormControlLabel
           onMouseEnter={() => expansion && setExpanded(true)}
           onMouseLeave={() => expansion && setExpanded(false)}
           control={<Switch checked={checked} onChange={(_, value) => onChange(value)} />}
           label={
-            <Stack position="relative">
+            <Stack>
               {label}
               {expansion && (
                 <Collapse in={expanded}>
@@ -53,9 +54,11 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
           }
         />
         {!showDescription && description && (
-          <IconButton size="small" onClick={() => setHelp(true)}>
-            <HelpOutline color="disabled" />
-          </IconButton>
+          <Box>
+            <IconButton size="small" onClick={() => setHelp(true)}>
+              <HelpOutline color="disabled" />
+            </IconButton>
+          </Box>
         )}
       </Stack>
       {showDescription && (description || expansion) && (
