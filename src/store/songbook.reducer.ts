@@ -93,7 +93,7 @@ export interface ISongTheme {
   fontStyles: IFontStyles;
 }
 
-interface IFontStyles {
+export interface IFontStyles {
   text: IFontStyle;
   text1: IFontStyle;
   text2: IFontStyle;

@@ -10,6 +10,7 @@ import useLineHeight from '../../store/useLineHeight.hook.ts';
 interface ICollapsibleVerseTextProps {
   verse: IVerse;
   song: ISongContent;
+  verseNumber?: number;
 }
 
 const IconBackground = styled('span')(({ theme }) => ({
@@ -20,7 +21,7 @@ const IconBackground = styled('span')(({ theme }) => ({
   lineHeight: 1,
 }));
 
-const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) => {
+const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song, verseNumber }) => {
   const { expandVerses, hoverExpandVerses } = useAppSelector((state) => state.songDisplayState);
   let spacing = useAppSelector((state) => state.songbookSettings.songTheme.spacing);
   const customSpacing = useAppSelector((state) => state.songbookSettings.songTheme.customSpacing);
@@ -33,7 +34,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
 
   const lineHeight = useLineHeight();
 
-  const indent = verse.indent;
+  const indent = verse.indent ?? 0;
   const verseRefValid = verse.verseRef !== undefined && verse.verseRef < song.verses.length;
 
   if ((!showOriginal || expandVerses) && verseRefValid) {
@@ -44,11 +45,11 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
     return (
       <div
         style={{
-          marginLeft: verse.indent * (spacing?.verseIndent ?? 3) + 'ch',
+          marginLeft: indent * (spacing?.verseIndent ?? 3) + 'ch',
           marginBottom: `${spacing.verseSpacing}em`,
         }}
       >
-        <VerseText verse={verse} />
+        <VerseText verse={verse} verseNumber={verseNumber} />
       </div>
     );
   }
@@ -95,7 +96,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song }) =
         onExited={() => setShowOriginal(true)}
       >
         <div>
-          <VerseText verse={verse} />
+          <VerseText verse={verse} reference={verseRefValid && !expandVerses} verseNumber={verseNumber} />
         </div>
       </Collapse>
     </div>

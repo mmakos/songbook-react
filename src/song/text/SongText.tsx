@@ -10,6 +10,7 @@ interface ISongTextProps {
 const SongText: FC<ISongTextProps> = ({ song }) => {
   const textStyle = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles.text);
 
+  let mainVerseNumber = 1;
   return (
     <div
       style={{
@@ -21,7 +22,7 @@ const SongText: FC<ISongTextProps> = ({ song }) => {
     >
       {song.verses.map((verse, i) => (
         <Fragment key={'v' + i}>
-          <CollapsibleVerseText verse={verse} song={song} />
+          <CollapsibleVerseText verse={verse} song={song} verseNumber={verse.indent ? undefined : mainVerseNumber++} />
         </Fragment>
       ))}
     </div>

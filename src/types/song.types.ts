@@ -143,7 +143,7 @@ export interface IVerse {
   /**
    * Wcięcie zwrotki
    */
-  indent: number;
+  indent?: number;
   /**
    * Indeks właściwej zwrotki (w przypadku skrócenia ...)
    */

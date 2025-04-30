@@ -6,10 +6,12 @@ import { IFontStyle } from '../../components/font/FontStyle.tsx';
 import { Chat } from '@mui/icons-material';
 import { Stack, styled } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
-import { ITextSettings } from '../../store/songbook.reducer.ts';
+import { IFontStyles, ITextSettings } from '../../store/songbook.reducer.ts';
 
 interface ILineTextProps {
   line: ILine;
+  reference?: boolean;
+  verseNumber?: number;
 }
 
 const StyledChatIcon = styled(Chat)(({ theme }) => ({
@@ -30,60 +32,73 @@ const capitalizeLine = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-const processText = (text: string, first: boolean, last: boolean, textSettings: ITextSettings) => {
+const processText = (
+  text: string,
+  first: boolean,
+  last: boolean,
+  textSettings: ITextSettings,
+  reference?: boolean,
+  verseNumber?: number
+) => {
   let processed = text;
   if (textSettings.hideNonLiteral) {
-    processed = processed.replace(/[^\p{L}\p{N}]+/gu, '');
+    processed = processed.replace(/[^\p{L}\p{N}\s']+/gu, '');
   } else {
     if (first && textSettings.hideNonLiteralPrefix) {
-      processed = processed.replace(/^[^\p{L}\p{N}]+/u, '');
+      processed = processed.replace(/^[^\p{L}\p{N}\s]+/u, '');
     }
     if (last && textSettings.hideNonLiteralSuffix) {
-      processed = processed.replace(/[^\p{L}\p{N}]+$/u, '');
+      processed = processed.replace(/[^\p{L}\p{N}\s]+$/u, '');
     }
   }
   if (first) processed = processed.trimStart();
   if (last) processed = processed.trimEnd();
+  if (last && reference && (textSettings.hideNonLiteral || textSettings.hideNonLiteralSuffix)) {
+    processed += '…';
+  }
   if (processed.length && capitalizeLine(processed)) {
-    processed = processed.charAt(0).toUpperCase() + text.slice(1);
+    processed = processed.charAt(0).toUpperCase() + processed.slice(1);
+  }
+  if (textSettings.numberVerses && verseNumber && first) {
+    processed = `${verseNumber}. ${processed}`;
   }
   return processed;
 };
 
-const LineText: FC<ILineTextProps> = ({ line }) => {
+const getRunStyle = (run: ITextRun, fontStyles: IFontStyles): CSSProperties | undefined => {
+  if (!run.style) return;
+  let fontStyle: IFontStyle | undefined = undefined;
+  switch (run.style) {
+    case 1:
+      fontStyle = fontStyles.text1;
+      break;
+    case 2:
+      fontStyle = fontStyles.text2;
+      break;
+    case 3:
+      fontStyle = fontStyles.text3;
+      break;
+  }
+  if (!fontStyle) return;
+
+  const style: CSSProperties = {};
+  if (fontStyle.bold) style.fontWeight = 'bold';
+  if (fontStyle.italic) style.fontStyle = 'italic';
+  if (fontStyle.underline) style.textDecoration = 'underline';
+
+  return style;
+};
+
+const LineText: FC<ILineTextProps> = ({ line, reference, verseNumber }) => {
   const textSettings = useAppSelector((state) => state.songbookSettings.textSettings);
   const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
-
-  const getRunStyle = (run: ITextRun): CSSProperties | undefined => {
-    if (!run.style) return;
-    let fontStyle: IFontStyle | undefined = undefined;
-    switch (run.style) {
-      case 1:
-        fontStyle = fontStyles.text1;
-        break;
-      case 2:
-        fontStyle = fontStyles.text2;
-        break;
-      case 3:
-        fontStyle = fontStyles.text3;
-        break;
-    }
-    if (!fontStyle) return;
-
-    const style: CSSProperties = {};
-    if (fontStyle.bold) style.fontWeight = 'bold';
-    if (fontStyle.italic) style.fontStyle = 'italic';
-    if (fontStyle.underline) style.textDecoration = 'underline';
-
-    return style;
-  };
 
   return (
     <Stack direction="row">
       {line.text?.map((run, i) => {
         return (
-          <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run) }}>
-            {processText(run.text, i == 0, i == line.text!.length - 1, textSettings)}
+          <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run, fontStyles) }}>
+            {processText(run.text, i == 0, i == line.text!.length - 1, textSettings, reference, verseNumber)}
           </StyledTextSpan>
         );
       })}
