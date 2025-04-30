@@ -1,5 +1,5 @@
 import { FC, Fragment, PropsWithChildren } from 'react';
-import {Button, SxProps, Typography} from '@mui/material';
+import { Button, SxProps, Typography } from '@mui/material';
 import { Groups, Lyrics, MusicNote, Piano, RecordVoiceOver, ThumbUpOutlined, Translate } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
@@ -7,8 +7,9 @@ import { transposeToComfort, transposeToOriginal } from '../store/songbook.reduc
 import { keyAsString } from '../chords/chord-display.tsx';
 import { personAsString, sourceTypeGenitive } from '../author/author.utils.ts';
 import SourceTypeIcon from '../author/SourceTypeIcon.tsx';
-import { ISongFullOverview, ISongKey } from '../types/song.types.ts';
+import { IBible, ISongFullOverview, ISongKey } from '../types/song.types.ts';
 import RouteLink from '../components/RouteLink.tsx';
+import Bible from '../components/icon/Bible.tsx';
 
 interface ISongInfoProps {
   song?: ISongFullOverview & { key?: ISongKey };
@@ -17,11 +18,34 @@ interface ISongInfoProps {
   sx?: SxProps;
 }
 
-const AuthorLink: FC<{ to: string; disabled?: boolean } & PropsWithChildren> = ({ to, disabled, children }) => {
+const bibleToString = (bible: IBible): string => {
+  if (bible.book === 'Ps' && !bible.verses) {
+    return `Psalm ${bible.chapter}`;
+  }
+  let str = `${bible.book} ${bible.chapter}`;
+  if (bible.verses?.length) {
+    str += ',' + bible.verses[0];
+    if (bible.verses.length > 1) {
+      str += '-' + bible.verses[1];
+    }
+  }
+  return str;
+};
+
+const bibleToHref = ({ book, chapter, verses }: IBible): string => {
+  return `${book.replace(' ', '')},${chapter},${verses?.length ? verses[0] : 1}-${(verses?.length ?? 0) > 1 ? verses![1] : 200}`;
+};
+
+const AuthorLink: FC<{ to?: string; href?: string; disabled?: boolean } & PropsWithChildren> = ({
+  to,
+  href,
+  disabled,
+  children,
+}) => {
   if (disabled) return children;
 
   return (
-    <RouteLink to={to} underline="hover" color="textPrimary" display="inline">
+    <RouteLink to={to} href={href} underline="hover" color="textPrimary" display="inline">
       {children}
     </RouteLink>
   );
@@ -121,6 +145,23 @@ const SongInfo: FC<ISongInfoProps> = ({ song, disableLinks, color, sx }) => {
           ))}
         </Typography>
       );
+    song.bible &&
+      children.push(
+        <Typography key="bible" color={color} sx={sx}>
+          <BasicTooltip title="Fragment Pisma Świętego">
+            <Bible fontSize="inherit" sx={{ mr: '0.5em', verticalAlign: 'text-top' }} />
+          </BasicTooltip>
+          {song.bible.map((bible, i) => {
+            const str = bibleToString(bible);
+            return (
+              <Fragment key={str}>
+                <AuthorLink href={`https://www.biblijni.pl/${bibleToHref(bible)}`}>{str}</AuthorLink>
+                {i < song.bible!.length - 1 && <>{', '}</>}
+              </Fragment>
+            );
+          })}
+        </Typography>
+      );
     !noChords &&
       song.key &&
       (song.key.original || song.key.comfort) &&
@@ -158,7 +199,7 @@ const SongInfo: FC<ISongInfoProps> = ({ song, disableLinks, color, sx }) => {
       );
   }
 
-  return children.length > 0 ? children : <Typography color='text.secondary'>Brak informacji</Typography>;
+  return children.length > 0 ? children : <Typography color="text.secondary">Brak informacji</Typography>;
 };
 
 export default SongInfo;

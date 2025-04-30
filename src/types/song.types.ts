@@ -36,6 +36,7 @@ export interface ISongFullOverview extends ISongOverview {
   performer?: IPersonOverview[];
   source?: ISourceOverview[];
   band?: IBandOverview;
+  bible?: IBible[];
 }
 
 export type TSongFullOverview = ISongFullOverview & IEditInfo;
@@ -130,6 +131,12 @@ export interface IEditorInfo {
   type?: UserType;
   verified?: boolean;
   time: number;
+}
+
+export interface IBible {
+  book: string;
+  chapter: number;
+  verses?: number[];
 }
 
 /**
