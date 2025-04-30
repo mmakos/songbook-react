@@ -32,14 +32,7 @@ const capitalizeLine = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-const processText = (
-  text: string,
-  first: boolean,
-  last: boolean,
-  textSettings: ITextSettings,
-  reference?: boolean,
-  verseNumber?: number
-) => {
+const processText = (text: string, first: boolean, last: boolean, textSettings: ITextSettings, reference?: boolean) => {
   let processed = text;
   if (textSettings.hideNonLiteral) {
     processed = processed.replace(/[^\p{L}\p{N}\s']+/gu, '');
@@ -58,9 +51,6 @@ const processText = (
   }
   if (processed.length && capitalizeLine(processed)) {
     processed = processed.charAt(0).toUpperCase() + processed.slice(1);
-  }
-  if (textSettings.numberVerses && verseNumber && first) {
-    processed = `${verseNumber}. ${processed}`;
   }
   return processed;
 };
@@ -95,10 +85,11 @@ const LineText: FC<ILineTextProps> = ({ line, reference, verseNumber }) => {
 
   return (
     <Stack direction="row">
+      {verseNumber && textSettings.numberVerses && <>{verseNumber}.&nbsp;</>}
       {line.text?.map((run, i) => {
         return (
           <StyledTextSpan key={'r' + i} style={{ ...getRunStyle(run, fontStyles) }}>
-            {processText(run.text, i == 0, i == line.text!.length - 1, textSettings, reference, verseNumber)}
+            {processText(run.text, i == 0, i == line.text!.length - 1, textSettings, reference)}
           </StyledTextSpan>
         );
       })}

@@ -1,7 +1,7 @@
 import StyledRating from '../../components/StyledRating.tsx';
 import { IChordDifficulty } from '../../store/songbook.reducer.ts';
 import { getDifficultyFromPreset, getDifficultyPreset, TDifficultyPreset } from '../../chords/chord-difficulty.tsx';
-import {Stack, Typography} from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import {
   SentimentNeutral,
   SentimentSatisfiedSharp,
@@ -9,6 +9,7 @@ import {
   SentimentVerySatisfied,
 } from '@mui/icons-material';
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
+import BasicTooltip from '../../components/BasicTooltip.tsx';
 
 const chordDifficultyIcons: Record<number, { icon: ReactNode; label: string; description: string }> = {
   1: {
@@ -66,21 +67,25 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
   return (
     <>
       <Stack direction="row" alignItems="center">
-        <StyledRating
-          size="large"
-          max={4}
-          highlightSelectedOnly
-          value={difficultyPreset}
-          onChangeActive={(_, value) => setHoverPreset(value as TDifficultyPreset)}
-          onChange={(_, value) => value && changeDifficulty(getDifficultyFromPreset(value))}
-          IconContainerComponent={(props) => (
-            <span style={{ marginLeft: props.value > 1 ? '0.2em' : 0 }} {...props}>
-              {chordDifficultyIcons[props.value].icon}
-            </span>
-          )}
-        />
+        <BasicTooltip
+          title={showDescription || hoverPreset < 0 ? undefined : getPresetDescription(hoverPreset, hoverPreset)}
+        >
+          <StyledRating
+            size="large"
+            max={4}
+            highlightSelectedOnly
+            value={difficultyPreset}
+            onChangeActive={(_, value) => setHoverPreset(value as TDifficultyPreset)}
+            onChange={(_, value) => value && changeDifficulty(getDifficultyFromPreset(value))}
+            IconContainerComponent={(props) => (
+              <span style={{ marginLeft: props.value > 1 ? '0.2em' : 0 }} {...props}>
+                {chordDifficultyIcons[props.value].icon}
+              </span>
+            )}
+          />
+        </BasicTooltip>
         <Typography style={{ marginLeft: '0.5em' }}>
-          {chordDifficultyIcons[hoverPreset!]?.label ?? chordDifficultyIcons[difficultyPreset!]?.label ?? 'Własna'}
+          {chordDifficultyIcons[hoverPreset]?.label ?? chordDifficultyIcons[difficultyPreset]?.label ?? 'Własna'}
         </Typography>
       </Stack>
       {showDescription && (
