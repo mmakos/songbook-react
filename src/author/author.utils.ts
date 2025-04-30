@@ -1,23 +1,35 @@
 import { IPersonData, SourceType } from '../types/song.types.ts';
 
 export const personAsString = (person: IPersonData): string => {
+  let name;
   if (person.nickname && (person.forceNickname || person.nickname.includes(' '))) {
-    return person.nickname;
-  }
-  let name = person.name + ' ';
-  if (person.forceSecondName && person.secondName) {
-    const split = person.secondName.split(' ');
-    if (split.length == 1) {
-      name += split[0];
-    } else {
-      name += split.map((s) => s[0] + '.').join('');
+    name = person.nickname;
+  } else {
+    name = person.name + ' ';
+    if (person.forceSecondName && person.secondName) {
+      const split = person.secondName.split(' ');
+      if (split.length == 1) {
+        name += split[0];
+      } else {
+        name += split.map((s) => s[0] + '.').join('');
+      }
+      name += ' ';
     }
-    name += ' ';
+    if (person.nickname) {
+      name += `"${person.nickname}" `;
+    }
+    name += person.lastName;
   }
-  if (person.nickname) {
-    name += `"${person.nickname}" `;
+  if (person.title) {
+    const title = personTitles[person.title];
+    if (title?.length) {
+      name = `${title[0]} ${name}`;
+      if (title.length > 2) {
+        name += ' ' + title[2];
+      }
+    }
   }
-  return name + person.lastName;
+  return name;
 };
 
 export const parsePersonName = (name: string): IPersonData => {
@@ -104,4 +116,16 @@ export const sourceTypeNominative = (type: SourceType) => {
     case SourceType.SOUNDTRACK:
       return 'Ścieżka dźwiękowa';
   }
+};
+
+export const personTitles: Record<string, [string, string, string?]> = {
+  captain: ['kpt.', 'Kapitan'],
+  colonel: ['płk.', 'Pułkownik'],
+  ['lieutenant-colonel']: ['ppłk.', 'Podpułkownik'],
+  major: ['kpt.', 'Kapitan'],
+  op: ['o.', 'Ojciec Dominikanin', 'OP'],
+  sj: ['o.', 'Ojciec Jezuita', 'SJ'],
+  priest: ['ks.', 'Ksiądz'],
+  saint: ['św.', 'Święty'],
+  sister: ['s.', 'Siostra'],
 };

@@ -104,6 +104,7 @@ export interface IPersonData {
   url?: string;
   forceNickname?: boolean;
   forceSecondName?: boolean;
+  title?: string;
 }
 
 export interface IBandData {

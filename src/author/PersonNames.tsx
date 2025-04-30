@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { IPerson } from '../types/song.types.ts';
 import { Typography } from '@mui/material';
+import { personTitles } from './author.utils.ts';
 
 interface IPersonNamesProps {
   person: IPerson;
@@ -8,6 +9,7 @@ interface IPersonNamesProps {
 
 const PersonNames: FC<IPersonNamesProps> = ({ person }) => {
   const stageName = person.nickname && (person.forceNickname || person.nickname.includes(' '));
+  const personTitle = person.title && personTitles[person.title];
 
   return (
     <div
@@ -40,6 +42,14 @@ const PersonNames: FC<IPersonNamesProps> = ({ person }) => {
             Pseudonim
           </Typography>
           <Typography lineHeight={1.75}>{person.nickname}</Typography>
+        </>
+      )}
+      {(personTitle?.length ?? 0) > 1 && (
+        <>
+          <Typography lineHeight={1.75} fontWeight="bold">
+            Tytuł
+          </Typography>
+          <Typography>{personTitle![1]}</Typography>
         </>
       )}
     </div>
