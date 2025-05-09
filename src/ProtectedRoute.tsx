@@ -6,7 +6,7 @@ const ProtectedRoute = ({ types }: { types?: UserType[] }) => {
   const user = useAppSelector((state) => state.user);
   if (user === undefined) return;
 
-  if ((user && !types) || (user?.type && types.includes(user.type))) return <Outlet />;
+  if (user && (!types || (user.type && types.includes(user.type)))) return <Outlet />;
   return <Navigate to="/login" />;
 };
 
