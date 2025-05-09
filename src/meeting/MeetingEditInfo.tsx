@@ -43,8 +43,9 @@ const MeetingEditInfo = ({ info }: { info?: IMeetingInfo }) => {
   };
 
   const validate = () => {
-    const nameValidation = validateString(name, 'name', "Nazwa użytkownika", 5, 50, true);
+    const nameValidation = validateString(name, 'name', "Nazwa śpiewanek", 5, 50, true);
     setNameError(nameValidation.name);
+    
     return !nameValidation.name;
   }
 
