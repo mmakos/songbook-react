@@ -8,8 +8,6 @@ const CurrentMeetingCheckbox: FC<{ meetingId: number } & CheckboxProps> = ({ mee
   const currentMeeting = useAppSelector((state) => state.meeting.id);
   const dispatch = useAppDispatch();
 
-  console.log(currentMeeting)
-
   return (
     <Checkbox
       {...props}
