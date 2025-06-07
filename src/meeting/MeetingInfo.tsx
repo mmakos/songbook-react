@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,10 +10,11 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { FC, useState } from 'react';
 import { editText, IMeeting, sortText, visibilityText } from './meeting.types.tsx';
-import { Delete, Edit, Link, Login, Logout, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Delete, Edit, ExpandMore, Link, Login, Logout, Visibility, VisibilityOff } from '@mui/icons-material';
 import { notifyError, notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
@@ -27,10 +29,12 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
   const { canEdit } = useCanEdit();
+  const [expanded, setExpanded] = useState(canEdit);
   const currentMeeting = useAppSelector((state) => state.meeting.id);
   const dispatch = useAppDispatch();
   const authAPI = useAuthAPI();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const copyLink = () => {
     navigator.clipboard
@@ -75,10 +79,15 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const inviteWithCode = meeting.permissions.invite && meeting?.access && meeting.visibility === 'code';
 
   return (
-    <Stack spacing={2}>
+    <Stack>
       <Typography variant="h5" display="flex" alignItems="center">
         Śpiewanki „{meeting.name}”
-        <BasicTooltip title="Obecne śpiewanki" span style={{ marginLeft: 'auto' }}>
+        <BasicTooltip title={expanded ? 'Zwiń' : 'Rozwiń'} style={{ marginLeft: 'auto' }}>
+          <IconButton onClick={() => setExpanded(!expanded)}>
+            <ExpandMore sx={{ rotate: expanded ? '180deg' : '0deg', transition: theme.transitions.create('rotate') }} />
+          </IconButton>
+        </BasicTooltip>
+        <BasicTooltip title="Obecne śpiewanki" span>
           <CurrentMeetingCheckbox meetingId={meeting.id} />
         </BasicTooltip>
         {!meeting.inMeeting && canEdit && (
@@ -110,90 +119,94 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           </>
         )}
       </Typography>
-      <TextField label="Host" value={meeting.host} variant="standard" slotProps={{ input: { readOnly: true } }} />
-      <TextField
-        label="Widoczność"
-        value={visibilityText[meeting.visibility].text}
-        helperText={visibilityText[meeting.visibility].helper}
-        variant="standard"
-        slotProps={{ input: { readOnly: true } }}
-      />
-      <TextField
-        label="Edycja"
-        value={editText[meeting.edit].text}
-        helperText={editText[meeting.edit].helper}
-        variant="standard"
-        slotProps={{ input: { readOnly: true } }}
-      />
-      <TextField
-        label="Sortowanie"
-        value={sortText[meeting.sort].text}
-        helperText={sortText[meeting.sort].helper}
-        variant="standard"
-        slotProps={{ input: { readOnly: true } }}
-      />
-      {inviteWithCode && (
-        <TextField
-          label="Kod dostępu"
-          value={meeting.access}
-          variant="standard"
-          type={accessVisible ? 'text' : 'password'}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} kod dostępu`}>
-                    <IconButton onClick={() => setAccessVisible(!accessVisible)}>
-                      {accessVisible ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </BasicTooltip>
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <BasicTooltip title="Skopiuj kod dostępu">
-                    <IconButton onClick={copyAccess}>
-                      <Link />
-                    </IconButton>
-                  </BasicTooltip>
-                </InputAdornment>
-              ),
-              readOnly: true,
-            },
-          }}
-        />
-      )}
-      {(inviteWithCode || meeting.visibility === 'public') && (
-        <TextField
-          label="Link do dołączania"
-          value={`${window.location.protocol}//${window.location.host}/join/meeting/${!inviteWithCode ? 'id/' + meeting.id : meeting.access}`}
-          variant="standard"
-          type={accessVisible || !inviteWithCode ? 'text' : 'password'}
-          slotProps={{
-            input: {
-              startAdornment: inviteWithCode ? (
-                <InputAdornment position="start">
-                  <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} link do dołączania`}>
-                    <IconButton onClick={() => setAccessVisible(!accessVisible)}>
-                      {accessVisible ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </BasicTooltip>
-                </InputAdornment>
-              ) : undefined,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <BasicTooltip title="Skopiuj link do dołączania">
-                    <IconButton onClick={copyLink}>
-                      <Link />
-                    </IconButton>
-                  </BasicTooltip>
-                </InputAdornment>
-              ),
-              readOnly: true,
-            },
-          }}
-        />
-      )}
+      <Collapse in={expanded}>
+        <Stack spacing={2} mt="1em">
+          <TextField label="Host" value={meeting.host} variant="standard" slotProps={{ input: { readOnly: true } }} />
+          <TextField
+            label="Widoczność"
+            value={visibilityText[meeting.visibility].text}
+            helperText={visibilityText[meeting.visibility].helper}
+            variant="standard"
+            slotProps={{ input: { readOnly: true } }}
+          />
+          <TextField
+            label="Edycja"
+            value={editText[meeting.edit].text}
+            helperText={editText[meeting.edit].helper}
+            variant="standard"
+            slotProps={{ input: { readOnly: true } }}
+          />
+          <TextField
+            label="Sortowanie"
+            value={sortText[meeting.sort].text}
+            helperText={sortText[meeting.sort].helper}
+            variant="standard"
+            slotProps={{ input: { readOnly: true } }}
+          />
+          {inviteWithCode && (
+            <TextField
+              label="Kod dostępu"
+              value={meeting.access}
+              variant="standard"
+              type={accessVisible ? 'text' : 'password'}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} kod dostępu`}>
+                        <IconButton onClick={() => setAccessVisible(!accessVisible)}>
+                          {accessVisible ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </BasicTooltip>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <BasicTooltip title="Skopiuj kod dostępu">
+                        <IconButton onClick={copyAccess}>
+                          <Link />
+                        </IconButton>
+                      </BasicTooltip>
+                    </InputAdornment>
+                  ),
+                  readOnly: true,
+                },
+              }}
+            />
+          )}
+          {(inviteWithCode || meeting.visibility === 'public') && (
+            <TextField
+              label="Link do dołączania"
+              value={`${window.location.protocol}//${window.location.host}/join/meeting/${!inviteWithCode ? 'id/' + meeting.id : meeting.access}`}
+              variant="standard"
+              type={accessVisible || !inviteWithCode ? 'text' : 'password'}
+              slotProps={{
+                input: {
+                  startAdornment: inviteWithCode ? (
+                    <InputAdornment position="start">
+                      <BasicTooltip title={`${accessVisible ? 'Ukryj' : 'Pokaż'} link do dołączania`}>
+                        <IconButton onClick={() => setAccessVisible(!accessVisible)}>
+                          {accessVisible ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </BasicTooltip>
+                    </InputAdornment>
+                  ) : undefined,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <BasicTooltip title="Skopiuj link do dołączania">
+                        <IconButton onClick={copyLink}>
+                          <Link />
+                        </IconButton>
+                      </BasicTooltip>
+                    </InputAdornment>
+                  ),
+                  readOnly: true,
+                },
+              }}
+            />
+          )}
+        </Stack>
+      </Collapse>
       <Dialog
         open={confirmDelete || confirmLeave}
         onClose={() => {

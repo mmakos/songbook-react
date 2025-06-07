@@ -61,6 +61,10 @@ const Meeting = () => {
         <MeetingInfo meeting={meeting} />
       </Paper>
       <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} flexGrow={1}>
+        <MeetingSongsPaper
+            meeting={meeting}
+            songsChanged={(songs) => setMeeting({ ...meeting, songs })}
+        />
         <Paper sx={{ p: '1em', flexGrow: 1 }}>
           <Stack spacing={1} useFlexGap height="100%">
             <Typography variant="h6" display="flex" alignItems="center">
@@ -88,10 +92,6 @@ const Meeting = () => {
             )}
           </Stack>
         </Paper>
-        <MeetingSongsPaper
-          meeting={meeting}
-          songsChanged={(songs) => setMeeting({ ...meeting, songs })}
-        />
       </Stack>
     </Stack>
   );
