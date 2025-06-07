@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import useAuthAPI from '../http/useAuthAPI.ts';
-import { useAppDispatch } from '../store/songbook.store.ts';
+import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
 import { AxiosResponse } from 'axios';
 import { Stack, Typography } from '@mui/material';
@@ -12,10 +12,21 @@ const JoinMeeting = () => {
   const authAPI = useAuthAPI();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
 
   useEffect(() => {
     if (!accessCode && !meetingId) {
       setInvalid(true);
+      return;
+    }
+    if (!user) {
+      if (meetingId && !isNaN(+meetingId)) {
+        dispatch(notifySuccess('Ustawiono obecne śpiewanki'));
+        dispatch(setCurrentMeeting(+meetingId));
+        navigate(`/meeting/${meetingId}`);
+      } else {
+        setInvalid(true);
+      }
       return;
     }
     authAPI
@@ -25,8 +36,10 @@ const JoinMeeting = () => {
         dispatch(setCurrentMeeting(data.id));
         navigate(`/meeting/${data.id}`);
       })
-      .catch(() => setInvalid(true));
-  }, [accessCode]);
+      .catch(() => {
+        setInvalid(true);
+      });
+  }, [accessCode, meetingId]);
 
   if (invalid)
     return (

@@ -64,6 +64,7 @@ const router = createBrowserRouter(
 
       <Route path="/meeting/:meetingId" element={<Meeting />} />
       <Route path="/meeting" element={<CurrentMeeting />} />
+      <Route path="/join/meeting/id/:meetingId" element={<JoinMeeting />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
@@ -76,7 +77,6 @@ const router = createBrowserRouter(
         <Route path="/add/meeting" element={<CreateMeeting />} />
         <Route path="/edit/meeting/:meetingId" element={<EditMeeting />} />
         <Route path="/meetings" element={<MyMeetings />} />
-        <Route path="/join/meeting/id/:meetingId" element={<JoinMeeting />} />
         <Route path="/join/meeting/:accessCode" element={<JoinMeeting />} />
       </Route>
       <Route element={<ProtectedRoute types={[UserType.SITH, UserType.JEDI]} />}>
