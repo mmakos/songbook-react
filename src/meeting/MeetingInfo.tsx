@@ -36,12 +36,6 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const copyLink = () => {
-    navigator.clipboard
-      .writeText(`${window.location.protocol}//${window.location.host}/join/meeting/${meeting.access}`)
-      .then(() => dispatch(notifySuccess('Skopiowano link do dołączania do schowka')));
-  };
-
   const copyAccess = () => {
     navigator.clipboard
       .writeText(meeting.access!)
@@ -77,6 +71,13 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
   };
 
   const inviteWithCode = meeting.permissions.invite && meeting?.access && meeting.visibility === 'code';
+  const joinLink = `${window.location.protocol}//${window.location.host}/join/meeting/${!inviteWithCode ? 'id/' + meeting.id : meeting.access}`;
+
+  const copyLink = () => {
+    navigator.clipboard
+        .writeText(joinLink)
+        .then(() => dispatch(notifySuccess('Skopiowano link do dołączania do schowka')));
+  };
 
   return (
     <Stack>
@@ -177,7 +178,7 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           {(inviteWithCode || meeting.visibility === 'public') && (
             <TextField
               label="Link do dołączania"
-              value={`${window.location.protocol}//${window.location.host}/join/meeting/${!inviteWithCode ? 'id/' + meeting.id : meeting.access}`}
+              value={joinLink}
               variant="standard"
               type={accessVisible || !inviteWithCode ? 'text' : 'password'}
               slotProps={{
