@@ -72,7 +72,7 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
       .catch(() => dispatch(notifyError('Nie udało się opuścić spotkania')));
   };
 
-  const inviteWithCode = meeting.permissions.invite && meeting?.access;
+  const inviteWithCode = meeting.permissions.invite && meeting?.access && meeting.visibility === 'code';
 
   return (
     <Stack spacing={2}>
@@ -83,14 +83,14 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
         </BasicTooltip>
         {!meeting.inMeeting && canEdit && (
           <BasicTooltip title="Dołącz do śpiewanek">
-            <IconButton>
+            <RouteIconButton to={`/join/meeting/id/${meeting.id}`}>
               <Login />
-            </IconButton>
+            </RouteIconButton>
           </BasicTooltip>
         )}
         {meeting.inMeeting && !meeting.isHost && (
-          <BasicTooltip title="Opuść śpiewanki" onClick={() => setConfirmLeave(true)}>
-            <IconButton>
+          <BasicTooltip title="Opuść śpiewanki">
+            <IconButton onClick={() => setConfirmLeave(true)}>
               <Logout />
             </IconButton>
           </BasicTooltip>
