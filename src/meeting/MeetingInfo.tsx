@@ -120,6 +120,7 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           </>
         )}
       </Typography>
+      {currentMeeting !== meeting.id && <Typography variant="caption" color="info">Protip: zaznacz flagę, aby mieć stały dostęp do listy piosenek.</Typography>}
       <Collapse in={expanded}>
         <Stack spacing={2} mt="1em">
           <TextField label="Host" value={meeting.host} variant="standard" slotProps={{ input: { readOnly: true } }} />
