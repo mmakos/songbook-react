@@ -96,7 +96,7 @@ const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song, ver
         onExited={() => setShowOriginal(true)}
       >
         <div>
-          <VerseText verse={verse} reference={verseRefValid && !expandVerses} verseNumber={verseNumber} />
+          <VerseText verse={verse} reference={verseRefValid && !expandVerses && showOriginal} verseNumber={verseNumber} />
         </div>
       </Collapse>
     </div>
