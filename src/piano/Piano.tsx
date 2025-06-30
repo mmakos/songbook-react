@@ -69,7 +69,7 @@ const Piano: FC<IPianoProps> = ({ setOpen, chordsToPlayProvider, chordTypedConsu
     chord.forEach((n) => (keys[n].selected = true));
     setKeys([...keys]);
     playSound(chord.map((n) => n + 48));
-    playbackTimeoutId.current = setTimeout(() => playChord(chords), 1000);
+    playbackTimeoutId.current = window.setTimeout(() => playChord(chords), 1000);
   };
 
   const playChords = () => {

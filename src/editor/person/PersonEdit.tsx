@@ -14,6 +14,7 @@ import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
 import {AxiosResponse} from "axios";
+import BasicHelmet from '../../subsites/BasicHelmet.tsx';
 
 const PersonEdit = () => {
   const originalPerson = useRef<IPerson>();
@@ -63,6 +64,7 @@ const PersonEdit = () => {
 
   return (
     <Stack spacing={2}>
+      <BasicHelmet title={`Edycja „${personName}”`}/>
       <SongPersonEditor title={`Edytuj osobę „${personName}”`} person={person} setPerson={setPerson} errors={errors} />
       <Stack direction="row" spacing={1}>
         <RouteButton to={`/person/${slugAndUser}`} variant="outlined" startIcon={<CancelOutlined />} fullWidth>

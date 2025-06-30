@@ -11,6 +11,7 @@ import useCanEdit from '../store/useCanEdit.hook.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import SongList from '../song-list/SongList.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const Person = () => {
   const [person, setPerson] = useState<IPerson>();
@@ -36,6 +37,8 @@ const Person = () => {
 
   if (!person || !personSlug) return <Progress />;
 
+  const personString = personAsString(person);
+
   return (
     <Container
       sx={{
@@ -43,8 +46,9 @@ const Person = () => {
         flexDirection: 'column',
       }}
     >
+      <BasicHelmet title={personString}/>
       <Typography variant="h4" mb="0.5rem" display="flex">
-        {personAsString(person)}
+        {personString}
         {canEdit && (
           <BasicTooltip title="Edytuj osobę" style={{ marginLeft: 'auto' }}>
             <RouteIconButton to={`/edit/person/${slugAndUser}`}>

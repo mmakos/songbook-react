@@ -41,6 +41,7 @@ import Grid from '@mui/material/Grid2';
 import SearchIcon from '@mui/icons-material/Search';
 import RouteButton from '../components/RouteButton.tsx';
 import useRandomSong from '../store/useRandomSong.hook.ts';
+import BasicHelmet from './BasicHelmet.tsx';
 
 const MainPage = () => {
   const theme = useTheme();
@@ -48,6 +49,7 @@ const MainPage = () => {
 
   return (
     <div>
+      <BasicHelmet/>
       <Grid container spacing={2} mb="2em">
         <Grid size={{ xs: 12, sm: 4 }}>
           <RouteButton to="/songs" variant="contained" startIcon={<MusicNote />} fullWidth>

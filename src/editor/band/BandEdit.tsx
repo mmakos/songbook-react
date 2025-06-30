@@ -14,6 +14,7 @@ import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
 import { AxiosResponse } from 'axios';
+import BasicHelmet from '../../subsites/BasicHelmet.tsx';
 
 const BandEdit = () => {
   const originalBand = useRef<IBand>();
@@ -66,6 +67,7 @@ const BandEdit = () => {
 
   return (
     <Stack gap={2}>
+      <BasicHelmet title={`Edycja „${bandName}”`}/>
       <SongBandEditor title={`Edytuj zespół „${bandName}”`} band={band} setBand={setBand} errors={errors} />
       <Stack direction="row" spacing={1}>
         <RouteButton to={`/band/${slugAndUser}`} variant="outlined" startIcon={<CancelOutlined />} fullWidth>

@@ -11,6 +11,7 @@ import { useParams } from 'react-router';
 import NotFound from '../subsites/NotFound.tsx';
 import SyncButton from '../components/SyncButton.tsx';
 import MeetingSongsPaper from './MeetingSongsPaper.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const Meeting = () => {
   const [meeting, setMeeting] = useState<IMeeting | null>();
@@ -57,6 +58,7 @@ const Meeting = () => {
 
   return (
     <Stack spacing={2} width="50em">
+      <BasicHelmet title={`Śpiewaniki „${meeting.name}”`}/>
       <Paper sx={{ p: '1em' }}>
         <MeetingInfo meeting={meeting} />
       </Paper>

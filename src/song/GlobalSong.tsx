@@ -5,6 +5,7 @@ import { getAndSaveSong } from '../store/songbook.actions.ts';
 import { clearSong } from '../store/songbook.reducer.ts';
 import NotFound from '../subsites/NotFound.tsx';
 import Song from './Song.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const GlobalSong: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -27,7 +28,16 @@ const GlobalSong: FC = () => {
     return <NotFound />;
   }
 
-  return <Song song={song} />;
+  return (
+    <>
+      <BasicHelmet
+        title={song?.title}
+        href={`/song/${songSlug}`}
+        description={song && `${song.title} - tekst piosenki, akordy, chwyty`}
+      />
+      <Song song={song} />
+    </>
+  );
 };
 
 export default GlobalSong;

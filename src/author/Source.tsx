@@ -13,6 +13,7 @@ import { Edit, Verified } from '@mui/icons-material';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import SongList from '../song-list/SongList.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const Source = () => {
   const [source, setSource] = useState<ISource>();
@@ -46,6 +47,7 @@ const Source = () => {
         flexDirection: 'column',
       }}
     >
+      <BasicHelmet title={source.name} />
       <Typography variant="h4" mb="0.5rem" display="flex">
         {source.name}
         {canEdit && (

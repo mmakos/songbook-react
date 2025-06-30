@@ -1,7 +1,7 @@
 console.log(
   '%cHola hola, czego tutaj szukasz? ' +
     "Jak chcesz sobie zobaczyć kod (i go rowijać), to lepiej odwiedź mojego GitHub'a - tam jest wszystko dostępne. " +
-    'A jak ktoś Ci naopowiadał, że możesz tu sobie pohakować, to pamiętaj, że shakujesz (zepsujesz) śpiewnik najwyżej u siebie.',
+    'A jak ktoś Ci naopowiadał, że możesz tu sobie pohakować, to pamiętaj, że "zhakujesz" (czyt. zepsujesz) śpiewnik najwyżej u siebie.',
   'color: #ff6f26; font-weight: bold; font-size: 20px'
 );
 

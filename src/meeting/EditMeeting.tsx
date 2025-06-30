@@ -7,6 +7,7 @@ import useAuthAPI from '../http/useAuthAPI.ts';
 import { AxiosResponse } from 'axios';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError } from '../store/songbook.reducer.ts';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const EditMeeting = () => {
   const { meetingId } = useParams();
@@ -23,7 +24,12 @@ const EditMeeting = () => {
 
   if (!meetingInfo) return <Progress />;
 
-  return <MeetingEditInfo info={meetingInfo} />;
+  return (
+    <>
+      <BasicHelmet title={`Edycja śpiewanek „${meetingInfo.name}”`} />
+      <MeetingEditInfo info={meetingInfo} />
+    </>
+  );
 };
 
 export default EditMeeting;

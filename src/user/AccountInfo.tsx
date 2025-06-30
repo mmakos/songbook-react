@@ -7,6 +7,7 @@ import { notifyError, notifySuccess, setAccessToken, setUser } from '../store/so
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router';
 import { Navigate } from 'react-router-dom';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const AccountInfo = () => {
   const user = useAppSelector((state) => state.user);
@@ -76,6 +77,7 @@ const AccountInfo = () => {
 
   return (
     <Stack spacing={2}>
+      <BasicHelmet title="Konto" />
       <Typography variant="h4">Cześć {user.firstName}</Typography>
       <form onSubmit={handleChangeUsername}>
         <TextField

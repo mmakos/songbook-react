@@ -1,8 +1,24 @@
 import { useMemo } from 'react';
 import { Category } from '../types/song.types.ts';
 import { useParams } from 'react-router';
-import { getCategoryDisplayName } from '../category/category.utils.ts';
 import SongList from './SongList.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
+
+const categorySongsName = (category?: Category) => {
+  if (!category) return 'Lista piosenek';
+  switch (category) {
+    case 'kaczmarski':
+      return 'Piosenki kaczmarskiego';
+    case 'other':
+      return 'Pozostałe piosenki';
+    case 'patriotic':
+      return 'Pieśni patriotyczne';
+    case 'religious':
+      return 'Pieśni religijne';
+    case 'carols':
+      return 'Kolędy';
+  }
+};
 
 const SongFullTable = () => {
   const { category: categoryParam } = useParams();
@@ -13,8 +29,13 @@ const SongFullTable = () => {
     }
   }, [categoryParam]);
 
+  const catName = categorySongsName(category);
+
   return (
-    <SongList category={category} title={category && `Piosenki z kategorii "${getCategoryDisplayName(category)}"`} />
+    <>
+      <BasicHelmet title={catName} />
+      <SongList category={category} title={catName} />
+    </>
   );
 };
 

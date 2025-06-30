@@ -35,13 +35,13 @@ export const playSounds = (
   },
   currentNumber?: number
 ) => {
-  if (!currentNumber) currentNumber = 0;
+  currentNumber ??= 0;
   if (midi.length) {
     playingNext(currentNumber);
     playSound(midi[currentNumber]);
     if (currentNumber < midi.length - 1) {
-      if (!timeout) timeout = { id: 0 };
-      timeout.id = setTimeout(() => playSounds(midi, playingNext, finished, timeout, currentNumber + 1), 1);
+      timeout ??= { id: 0 };
+      timeout.id = window.setTimeout(() => playSounds(midi, playingNext, finished, timeout, currentNumber + 1), 1);
     }
   }
   return () => clearTimeout(timeout?.id);

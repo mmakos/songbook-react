@@ -1,6 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import RouteLink from '../components/RouteLink.tsx';
 import { FC, PropsWithChildren } from 'react';
+import BasicHelmet from './BasicHelmet.tsx';
 
 const drawSadEmoji = () => {
   let code: number = Math.floor(Math.random() * 29) + 128528;
@@ -13,6 +14,7 @@ const NotFound: FC<PropsWithChildren & { text?: string }> = ({ children, text })
 
   return (
     <Stack alignItems="center">
+      <BasicHelmet title='404'/>
       <Typography variant="h1">4{drawSadEmoji()}4</Typography>
       {finalText && (
         <Typography variant="h3" mb="1em" mt="0.3em">

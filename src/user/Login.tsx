@@ -12,6 +12,7 @@ import { AxiosResponse } from 'axios';
 import { ILoginResponse } from './user.types.ts';
 import { notifyError, setAccessToken, setUser } from '../store/songbook.reducer.ts';
 import { useNavigate } from 'react-router';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const Login = () => {
   const user = useAppSelector((state) => state.user);
@@ -26,7 +27,7 @@ const Login = () => {
 
   const handleLogin = () => {
     api
-      .post(`auth/login/`, { username, password }, {withCredentials: true})
+      .post(`auth/login/`, { username, password }, { withCredentials: true })
       .then((res: AxiosResponse<ILoginResponse>) => {
         dispatch(setAccessToken(res.data.access));
         dispatch(setUser(res.data.user));
@@ -39,6 +40,7 @@ const Login = () => {
 
   return (
     <Stack justifyContent="center" spacing={2}>
+      <BasicHelmet title="Logowanie" />
       <GoogleLogin />
       <GithubLogin />
       <FacebookLogin />

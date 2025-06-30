@@ -25,6 +25,7 @@ import { Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { api } from '../http/api.ts';
 import MeetingList from './MeetingList.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const MyMeetings = () => {
   const [hosted, setHosted] = useState<IMeetingOverview[]>();
@@ -96,6 +97,7 @@ const MyMeetings = () => {
 
   return (
     <>
+      <BasicHelmet title='Lista śpiewanek'/>
       {!hosted && !participated && <Progress />}
       <Grid container spacing={2} flexGrow={1}>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>

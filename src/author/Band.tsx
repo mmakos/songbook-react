@@ -12,6 +12,7 @@ import useCanEdit from '../store/useCanEdit.hook.ts';
 import WaitingEditsInfo from '../song/WaitingEditsInfo.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import SongList from '../song-list/SongList.tsx';
+import BasicHelmet from '../subsites/BasicHelmet.tsx';
 
 const Band = () => {
   const [band, setBand] = useState<IBand>();
@@ -45,6 +46,7 @@ const Band = () => {
         flexDirection: 'column',
       }}
     >
+      <BasicHelmet title={band.name}/>
       <Typography variant="h4" mb="0.5rem" display="flex">
         {band.name}
         {canEdit && (

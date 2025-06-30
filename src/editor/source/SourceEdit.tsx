@@ -13,6 +13,7 @@ import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';
 import { validateChanged } from '../validation.utils.ts';
 import { AxiosResponse } from 'axios';
+import BasicHelmet from '../../subsites/BasicHelmet.tsx';
 
 const SourceEdit = () => {
   const originalSource = useRef<ISource>();
@@ -64,6 +65,7 @@ const SourceEdit = () => {
 
   return (
     <Stack spacing={2}>
+      <BasicHelmet title={`Edycja „${sourceName}”`}/>
       <SongSourceEditor title={`Edytuj źródło „${sourceName}”`} source={source} setSource={setSource} errors={errors} />
       <Stack direction="row" spacing={1}>
         <RouteButton to={`/source/${slugAndUser}`} variant="outlined" startIcon={<CancelOutlined />} fullWidth>

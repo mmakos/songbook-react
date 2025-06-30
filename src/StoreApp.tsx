@@ -40,6 +40,7 @@ import Meeting from './meeting/Meeting.tsx';
 import MyMeetings from './meeting/MyMeetings.tsx';
 import CurrentMeeting from './meeting/CurrentMeeting.tsx';
 import JoinMeeting from './meeting/JoinMeeting.tsx';
+import { HelmetProvider } from 'react-helmet-async';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -121,11 +122,13 @@ const StoreApp = () => {
   }, [preferredTheme, prefersDarkMode]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Notification />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Notification />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </HelmetProvider>
   );
 };
 
