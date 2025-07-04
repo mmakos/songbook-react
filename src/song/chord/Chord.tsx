@@ -77,8 +77,8 @@ const Chord: FC<IChordProps> = ({ chord }) => {
             <SingleChord
               chordNote={chordNote}
               chordModification={chordModification}
-              chordBase={chordBase?.[Math.min(i, chordBase?.length ?? 0)]}
-              chordAdditionals={chordAdditionals?.[Math.min(i, chordAdditionals?.length ?? 0)]}
+              chordBase={chordBase?.[Math.min(i, (chordBase?.length ?? 1) - 1)]}
+              chordAdditionals={chordAdditionals?.[Math.min(i, (chordAdditionals?.length ?? 1) - 1)]}
               noPrime={chord.noPrime}
             />
             {i < singleChordsLength - 1 && <>&nbsp;</>}
