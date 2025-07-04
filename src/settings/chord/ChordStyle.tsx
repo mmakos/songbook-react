@@ -1,30 +1,36 @@
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import FontStyle from '../../components/font/FontStyle.tsx';
-import { setSongThemeChordsFontStyle, setSongThemeSilentChordsFontStyle } from '../../store/songbook.reducer.ts';
-import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
+import { IFontStyles } from '../../store/songbook.reducer.ts';
+import { FC } from 'react';
 
-const ChordStyle = () => {
-  const { chords, silentChords } = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
-  const dispatch = useAppDispatch();
+interface IChordStyleProps {
+  fontStyles: IFontStyles;
+  setFontStyles: (fontStyles: IFontStyles) => void;
+  maxWidth?: string;
+}
 
+const ChordStyle: FC<IChordStyleProps> = ({ fontStyles, setFontStyles, maxWidth }) => {
   return (
-    <>
-      <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}>
+    <Stack spacing={1}>
+      <Stack direction="row" flexWrap="wrap" maxWidth={maxWidth} alignItems="center">
         <Typography variant="h6" marginRight="auto" paddingRight="7ch">
           Akordy
         </Typography>
-        <FontStyle fontStyle={chords} setFontStyle={(fontStyle) => dispatch(setSongThemeChordsFontStyle(fontStyle))} />
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '40ch', alignItems: 'center', marginBottom: '0.5em' }}>
+        <FontStyle
+          fontStyle={fontStyles.chords}
+          setFontStyle={(fontStyle) => setFontStyles({ ...fontStyles, chords: fontStyle })}
+        />
+      </Stack>
+      <Stack direction="row" flexWrap="wrap" maxWidth={maxWidth} alignItems="center">
         <Typography variant="h6" marginRight="auto" paddingRight="1em">
           Ciche akordy
         </Typography>
         <FontStyle
-          fontStyle={silentChords}
-          setFontStyle={(fontStyle) => dispatch(setSongThemeSilentChordsFontStyle(fontStyle))}
+          fontStyle={fontStyles.silentChords}
+          setFontStyle={(fontStyle) => setFontStyles({ ...fontStyles, silentChords: fontStyle })}
         />
-      </div>
-    </>
+      </Stack>
+    </Stack>
   );
 };
 

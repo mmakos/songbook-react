@@ -1,5 +1,7 @@
 import { UserType } from '../user/user.types.ts';
 import { IEditedPerson } from '../editor/person/person.mapper.ts';
+import { ITransposition } from '../chords/chord-transposition.tsx';
+import { IChordDifficulty } from '../store/songbook.reducer.ts';
 
 export enum Category {
   KACZMARSKI = 'kaczmarski',
@@ -58,16 +60,19 @@ export interface IWaitingEdit {
   waiting?: { username: string; editTime: number }[];
 }
 
-export interface ISongData extends Omit<ISongFullOverview, 'slug'> {
+export interface ISongData extends Omit<ISongFullOverview, 'slug'>, ISongContent {
   video?: string[];
-
   key?: ISongKey;
-  verses: IVerse[];
 }
 
 export interface ISong extends ISongData, IEditInfo, IWaitingEdit, ISlug {
   next?: ISongOverview;
   previous?: ISongOverview;
+}
+
+export interface ISongChordsSettings {
+  transposition: ITransposition;
+  difficulty: IChordDifficulty;
 }
 
 export interface IAuthorEdit<T, Single extends boolean = false> {

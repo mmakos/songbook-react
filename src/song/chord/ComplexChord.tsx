@@ -1,14 +1,16 @@
 import { FC } from 'react';
 import { IComplexChord } from '../../types/song.types.ts';
 import Chord from './Chord.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface IComplexChordProps {
   chord: IComplexChord;
 }
 
 const ComplexChord: FC<IComplexChordProps> = ({ chord }) => {
-  const hideAlternatives = useAppSelector((state) => state.songSettings.chordDifficulty.hideAlternatives);
+  const {
+    chordDifficulty: { hideAlternatives },
+  } = useSongContext();
 
   return (
     <>

@@ -11,6 +11,7 @@ interface IChordTranspositionProps {
   onTransposeDown: () => void;
   onTransposeUp: () => void;
   onReset: () => void;
+  disabled?: boolean;
 }
 
 const ChordTransposition: FC<IChordTranspositionProps> = ({
@@ -19,6 +20,7 @@ const ChordTransposition: FC<IChordTranspositionProps> = ({
   onTransposeDown,
   onTransposeUp,
   onReset,
+  disabled,
 }) => {
   const keyString = useMemo(() => {
     return keyAsString(transposeKey(originalKey, transposition));
@@ -34,19 +36,20 @@ const ChordTransposition: FC<IChordTranspositionProps> = ({
         input: {
           endAdornment: (
             <>
-              <IconButton onClick={onTransposeDown} size="small">
+              <IconButton onClick={onTransposeDown} size="small" disabled={disabled}>
                 <ArrowDownward />
               </IconButton>
-              <IconButton onClick={onTransposeUp} size="small">
+              <IconButton onClick={onTransposeUp} size="small" disabled={disabled}>
                 <ArrowUpward />
               </IconButton>
-              <IconButton onClick={onReset} size="small">
+              <IconButton onClick={onReset} size="small" disabled={disabled}>
                 <Cached />
               </IconButton>
             </>
           ),
         },
       }}
+      disabled={disabled}
     />
   );
 };

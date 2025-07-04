@@ -7,7 +7,7 @@ const SongsGridView: FC<{ songs: TSongFullOverview[] }> = ({ songs }) => {
   return (
     <Grid container spacing={1}>
       {songs.map((song) => (
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={song.slug}>
           <SongCard song={song} />
         </Grid>
       ))}

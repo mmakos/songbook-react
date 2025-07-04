@@ -14,7 +14,17 @@ import {
 } from '@mui/material';
 import { FC, useState } from 'react';
 import { editText, IMeeting, sortText, visibilityText } from './meeting.types.tsx';
-import { Delete, Edit, ExpandMore, Link, Login, Logout, Visibility, VisibilityOff } from '@mui/icons-material';
+import {
+  Delete,
+  Download,
+  Edit,
+  ExpandMore,
+  Link,
+  Login,
+  Logout,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
 import { notifyError, notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
@@ -75,8 +85,8 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
 
   const copyLink = () => {
     navigator.clipboard
-        .writeText(joinLink)
-        .then(() => dispatch(notifySuccess('Skopiowano link do dołączania do schowka')));
+      .writeText(joinLink)
+      .then(() => dispatch(notifySuccess('Skopiowano link do dołączania do schowka')));
   };
 
   return (
@@ -105,6 +115,11 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
             </IconButton>
           </BasicTooltip>
         )}
+        <BasicTooltip title="Wygeneruj śpiewnik DOCX" span>
+          <RouteIconButton to={`/export/meeting/${meeting.id}`}>
+            <Download />
+          </RouteIconButton>
+        </BasicTooltip>
         {meeting.permissions.edit && (
           <>
             <BasicTooltip title="Edytuj śpiewanki" span>
@@ -120,7 +135,11 @@ const MeetingInfo: FC<{ meeting: IMeeting }> = ({ meeting }) => {
           </>
         )}
       </Typography>
-      {currentMeeting !== meeting.id && <Typography variant="caption" color="info">Protip: zaznacz flagę, aby mieć stały dostęp do listy piosenek.</Typography>}
+      {currentMeeting !== meeting.id && (
+        <Typography variant="caption" color="info">
+          Protip: zaznacz flagę, aby mieć stały dostęp do listy piosenek.
+        </Typography>
+      )}
       <Collapse in={expanded}>
         <Stack spacing={2} mt="1em">
           <TextField label="Host" value={meeting.host} variant="standard" slotProps={{ input: { readOnly: true } }} />

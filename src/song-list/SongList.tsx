@@ -127,7 +127,7 @@ const SongList: FC<ISongTableProps> = ({ category, person, band, source, query, 
                 {sortModels.map((s) => {
                   const selected = s[0] === sortField && s[1] === sortDir;
                   return (
-                    <MenuItem onClick={() => sortChanged(s[0], s[1])}>
+                    <MenuItem key={`${s[0]}_${s[1]}`} onClick={() => sortChanged(s[0], s[1])}>
                       {selected && (
                         <ListItemIcon>
                           <Check />

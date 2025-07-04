@@ -85,15 +85,23 @@ export const chordAdditionalsAsString = (chord: IChord, chordDifficulty?: IChord
 export const chordModificationAsString = (
   modification: ChordModification,
   chordDifficulty?: IChordDifficulty
-): ReactNode => {
+): string => {
   switch (modification) {
     case ChordModification.AUG:
       return chordDifficulty?.guitarDiminishedChords ? '+' : '<';
     case ChordModification.DIM:
-      return chordDifficulty?.guitarDiminishedChords ? <sup>0</sup> : '>';
+      return chordDifficulty?.guitarDiminishedChords ? '0' : '>';
     case ChordModification.CLUSTER:
       return '*';
   }
+};
+
+export const chordModificationAsNode = (
+  modification: ChordModification,
+  chordDifficulty?: IChordDifficulty
+): ReactNode => {
+  const str = chordModificationAsString(modification, chordDifficulty);
+  return str === '0' ? <sup>0</sup> : str;
 };
 
 const accidentalAsString = (accidental: Accidental, noteBase: NoteBase, chordDifficulty?: IChordDifficulty): string => {

@@ -1,3 +1,7 @@
+import { ISong } from '../types/song.types.ts';
+import { IChordDifficulty } from '../store/songbook.reducer.ts';
+import { ITransposition } from '../chords/chord-transposition.tsx';
+
 export type TVisibility = 'private' | 'code' | 'public';
 export type TEdit = 'host' | 'participant' | 'user' | 'everyone';
 export type TSort = 'custom' | 'title' | 'time' | 'single' | 'votes';
@@ -46,6 +50,17 @@ export interface IMeetingSong {
   votes?: number;
   voted?: boolean;
   hidden?: boolean;
+}
+
+export interface IMeetingExportSong extends IMeetingSong {
+  fullSong?: ISong;
+  chordDifficulty?: IChordDifficulty;
+  transposition?: ITransposition;
+  showChords?: boolean;
+}
+
+export interface IMeetingExportDownloadedSong extends IMeetingExportSong {
+  fullSong: ISong;
 }
 
 export const visibilityText: Record<TVisibility, { text: string; helper: string }> = {

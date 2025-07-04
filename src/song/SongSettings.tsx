@@ -1,6 +1,6 @@
-import { ClickAwayListener, Collapse, FormControlLabel, IconButton, Paper, Stack, Switch } from '@mui/material';
+import { ClickAwayListener, Collapse, IconButton, Paper } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
-import { Close, ExpandMore, SaveOutlined } from '@mui/icons-material';
+import { Close, SaveOutlined } from '@mui/icons-material';
 import { FC, useState } from 'react';
 import {
   changeSongChordsDifficulty,
@@ -12,10 +12,8 @@ import {
   updateGlobalSettingsWithSongSettings,
 } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
-import ChordTransposition from '../settings/chord/ChordTransposition.tsx';
-import ChordDifficultyPreset from '../settings/chord/ChordDifficultyPreset.tsx';
-import ChordDifficulty from '../settings/chord/ChordDifficulty.tsx';
 import { ISong } from '../types/song.types.ts';
+import SongChordSettings from './SongChordSettings.tsx';
 
 const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
   const open = useAppSelector((state) => state.songDisplayState.settingsOpen);
@@ -39,40 +37,19 @@ const SongSettings: FC<{ song?: ISong }> = ({ song }) => {
               flexDirection: 'column',
             }}
           >
-            <FormControlLabel
-              control={<Switch checked={showChords} onChange={(_, value) => dispatch(setShowChords(value))} />}
-              label="Pokaż akordy"
+            <SongChordSettings
+              song={song}
+              moreSettings={moreSettings}
+              setMoreSettings={setMoreSettings}
+              showChords={showChords}
+              setShowChords={(show) => dispatch(setShowChords(show))}
+              transposition={transposition}
+              transposeDown={() => dispatch(transposeDown())}
+              transposeUp={() => dispatch(transposeUp())}
+              resetTransposition={() => dispatch(resetTransposition())}
+              chordDifficulty={chordDifficulty}
+              changeChordDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}
             />
-            {song.key && (
-              <ChordTransposition
-                originalKey={song.key.songbook}
-                transposition={transposition}
-                onTransposeDown={() => dispatch(transposeDown())}
-                onTransposeUp={() => dispatch(transposeUp())}
-                onReset={() => dispatch(resetTransposition())}
-              />
-            )}
-            <Stack direction="row" my="0.5em" justifyContent="space-between">
-              <ChordDifficultyPreset
-                chordDifficulty={chordDifficulty}
-                changeDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}
-              />
-              <IconButton onClick={() => setMoreSettings(!moreSettings)} size="small">
-                <ExpandMore
-                  sx={{
-                    rotate: moreSettings ? '180deg' : 0,
-                    transitionProperty: 'rotate',
-                    transitionDuration: '1sec',
-                  }}
-                />
-              </IconButton>
-            </Stack>
-            <Collapse in={moreSettings}>
-              <ChordDifficulty
-                chordDifficulty={chordDifficulty}
-                changeDifficulty={(difficulty) => dispatch(changeSongChordsDifficulty(difficulty))}
-              />
-            </Collapse>
             <div style={{ position: 'absolute', top: '0.2em', right: '0.2em' }}>
               <BasicTooltip title="Zapisz ustawienia globalnie">
                 <IconButton onClick={() => dispatch(updateGlobalSettingsWithSongSettings())} size="small">

@@ -47,12 +47,14 @@ interface IChordDifficultyPresetProps {
   chordDifficulty: IChordDifficulty;
   changeDifficulty: (difficulty: IChordDifficulty) => void;
   showDescription?: boolean;
+  disabled?: boolean;
 }
 
 const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
   chordDifficulty,
   changeDifficulty,
   showDescription,
+  disabled,
 }) => {
   const difficultyPreset = useMemo(() => {
     return getDifficultyPreset(chordDifficulty);
@@ -82,9 +84,10 @@ const ChordDifficultyPreset: FC<IChordDifficultyPresetProps> = ({
                 {chordDifficultyIcons[props.value].icon}
               </span>
             )}
+            disabled={disabled}
           />
         </BasicTooltip>
-        <Typography style={{ marginLeft: '0.5em' }}>
+        <Typography style={{ marginLeft: '0.5em' }} color={disabled ? 'text.disabled' : 'text.primary'}>
           {chordDifficultyIcons[hoverPreset]?.label ?? chordDifficultyIcons[difficultyPreset]?.label ?? 'Własna'}
         </Typography>
       </Stack>

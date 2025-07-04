@@ -1,8 +1,8 @@
 import { FC, Fragment, useMemo } from 'react';
 import { IChords, ISongContent } from '../../types/song.types.ts';
 import CollapsibleVerseChords from './CollapsibleVerseChords.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
 import { initialSpacing } from '../../store/songbook.reducer.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface ISongChordsProps {
   song: ISongContent;
@@ -19,9 +19,10 @@ const hasChords = (song: ISongContent, chordsType: keyof IChords) => {
 };
 
 const SongChords: FC<ISongChordsProps> = ({ song, chordsType }) => {
-  const chordStyle = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles.chords);
-  const chordsSpacing = useAppSelector((state) => state.songbookSettings.songTheme.spacing.chordsSpacing);
-  const customSpacing = useAppSelector((state) => state.songbookSettings.songTheme.customSpacing);
+  const {
+    fontStyles: { chords: chordStyle },
+    spacing,
+  } = useSongContext();
 
   const songHasChords = useMemo(() => hasChords(song, chordsType), [song, chordsType]);
 
@@ -30,7 +31,7 @@ const SongChords: FC<ISongChordsProps> = ({ song, chordsType }) => {
   return (
     <div
       style={{
-        marginLeft: `${customSpacing ? chordsSpacing : initialSpacing.chordsSpacing}ch`,
+        marginLeft: `${spacing ? spacing.chordsSpacing : initialSpacing.chordsSpacing}ch`,
         fontWeight: chordStyle.bold ? 'bold' : 'normal',
         fontStyle: chordStyle.italic ? 'italic' : 'normal',
         textDecoration: chordStyle.underline ? 'underline' : 'none',

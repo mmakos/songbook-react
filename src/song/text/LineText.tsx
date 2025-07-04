@@ -1,12 +1,12 @@
 import { CSSProperties, FC } from 'react';
 import { ILine, ITextRun } from '../../types/song.types.ts';
 import EmptyLine from './EmptyLine.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
 import { IFontStyle } from '../../components/font/FontStyle.tsx';
 import { Chat } from '@mui/icons-material';
 import { Stack, styled } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
 import { IFontStyles, ITextSettings } from '../../store/songbook.reducer.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface ILineTextProps {
   line: ILine;
@@ -80,8 +80,7 @@ const getRunStyle = (run: ITextRun, fontStyles: IFontStyles): CSSProperties | un
 };
 
 const LineText: FC<ILineTextProps> = ({ line, reference, verseNumber }) => {
-  const textSettings = useAppSelector((state) => state.songbookSettings.textSettings);
-  const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
+  const { textSettings, fontStyles } = useSongContext();
 
   return (
     <Stack direction="row">

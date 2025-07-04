@@ -28,9 +28,10 @@ interface IFontChooserProps {
   onChange: (value: IFont) => void;
   disabled?: boolean;
   maxWidth?: string;
+  pt?: boolean;
 }
 
-const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, disabled, maxWidth }) => {
+const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, disabled, maxWidth, pt }) => {
   const fontFamilyChanged = (fontFamily: FontFamily) => {
     setFont({ ...font, fontFamily: fontFamily });
   };
@@ -40,7 +41,7 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
   };
 
   return (
-    <Stack direction="row" maxWidth={maxWidth}>
+    <Stack direction="row" maxWidth={maxWidth} sx={{flexGrow: 1}}>
       <FormControl fullWidth>
         <InputLabel id="font-select-label">Czcionka</InputLabel>
         <Select
@@ -65,7 +66,7 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
         sx={{ ml: '0.5em', minWidth: '12ch' }}
         slotProps={{
           htmlInput: { min: 1, max: 100 },
-          input: { endAdornment: <InputAdornment position="end">px</InputAdornment> },
+          input: { endAdornment: <InputAdornment position="end">{pt ? 'pt' : 'px'}</InputAdornment>},
         }}
       />
     </Stack>

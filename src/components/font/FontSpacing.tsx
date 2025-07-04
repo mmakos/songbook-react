@@ -4,10 +4,10 @@ import { InputAdornment, Stack } from '@mui/material';
 
 export interface ISpacing {
   lineHeight: number; // em
-  verseSpacing: number; // em
-  verseIndent: number; // ch
-  repetitionSpacing: number; // ch
-  chordsSpacing: number; // ch
+  verseSpacing: number; // em | px
+  verseIndent: number; // ch | px
+  repetitionSpacing: number; // ch | px
+  chordsSpacing: number; // ch | px
 }
 
 interface IFontSpacingProps {
@@ -39,14 +39,13 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
   };
 
   return (
-    <Stack maxWidth={maxWidth}>
+    <Stack maxWidth={maxWidth} spacing={2}>
       <NumberField
         disabled={disabled}
         value={spacing.lineHeight}
         onChange={(event) => lineHeightChanged(+event.target.value)}
         label="Interlinia"
         type="number"
-        sx={{ mb: '1em' }}
         slotProps={{
           htmlInput: { min: 1, max: 3, step: 0.1 },
           input: { endAdornment: <InputAdornment position="end">em</InputAdornment> },
@@ -58,7 +57,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         onChange={(event) => verseSpacingChanged(+event.target.value)}
         label="Odstęp między zwrotkami"
         type="number"
-        sx={{ mb: '1em' }}
         slotProps={{
           inputLabel: { shrink: true },
           htmlInput: { min: 0, max: 3, step: 0.1 },
@@ -71,7 +69,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         onChange={(event) => verseIndentChanged(+event.target.value)}
         label="Wcięcie refrenów"
         type="number"
-        sx={{ mb: '1em' }}
         slotProps={{
           htmlInput: { min: 0, max: 10, step: 0.5 },
           input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> },
@@ -83,7 +80,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         onChange={(event) => repetitionSpacingChanged(+event.target.value)}
         label="Odległość repetycji"
         type="number"
-        sx={{ mb: '1em' }}
         slotProps={{
           htmlInput: { min: 0, max: 10, step: 0.5 },
           input: { endAdornment: <InputAdornment position="end">ch</InputAdornment> },

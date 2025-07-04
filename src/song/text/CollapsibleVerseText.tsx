@@ -6,6 +6,7 @@ import VerseText from './VerseText.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
 import { initialSpacing, setExpandVerses, setHoverExpandVerses } from '../../store/songbook.reducer.ts';
 import useLineHeight from '../../store/useLineHeight.hook.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface ICollapsibleVerseTextProps {
   verse: IVerse;
@@ -23,14 +24,11 @@ const IconBackground = styled('span')(({ theme }) => ({
 
 const CollapsibleVerseText: FC<ICollapsibleVerseTextProps> = ({ verse, song, verseNumber }) => {
   const { expandVerses, hoverExpandVerses } = useAppSelector((state) => state.songDisplayState);
-  let spacing = useAppSelector((state) => state.songbookSettings.songTheme.spacing);
-  const customSpacing = useAppSelector((state) => state.songbookSettings.songTheme.customSpacing);
+  let {spacing} = useSongContext();
   const [showOriginal, setShowOriginal] = useState(!expandVerses);
   const dispatch = useAppDispatch();
 
-  if (!customSpacing) {
-    spacing = initialSpacing;
-  }
+  spacing ??= initialSpacing;
 
   const lineHeight = useLineHeight();
 
