@@ -8,6 +8,7 @@ import { FC, useRef } from 'react';
 import { changeZoom } from '../store/songbook.reducer.ts';
 import { ISongContent } from '../types/song.types.ts';
 import { useSongContext } from './SongContext.tsx';
+import useLineHeight from '../store/useLineHeight.hook.ts';
 
 export interface ISongContentProps {
   song?: ISongContent;
@@ -21,12 +22,12 @@ const SongContent: FC<ISongContentProps> = ({ song, preview }) => {
     chordDifficulty,
     zoom,
     font,
-    spacing,
     fontStyles: { text },
   } = useSongContext();
   const theme = useTheme();
   const outerBoxRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
+  const lineHeight = useLineHeight();
 
   return (
     <Box
@@ -39,9 +40,9 @@ const SongContent: FC<ISongContentProps> = ({ song, preview }) => {
     >
       <Box
         ref={outerBoxRef}
-        lineHeight={spacing ? `${spacing.lineHeight}em` : (theme.typography.body1.lineHeight as string)}
+        lineHeight={`${lineHeight}em`}
         fontFamily={font ? font.fontFamily : theme.typography.fontFamily}
-        fontSize={font ? `${font.fontSize}px` : (theme.typography.body1.fontSize as string)}
+        fontSize={font ? `${font.fontSize}${font.pt ? 'pt' : 'px'}` : (theme.typography.body1.fontSize as string)} // NOSONAR
         fontWeight={text.bold ? 'bold' : 'normal'}
         fontStyle={text.italic ? 'italic' : 'normal'}
         sx={{

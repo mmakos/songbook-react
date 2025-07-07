@@ -42,7 +42,7 @@ const ExportMeetingSettings = () => {
         </AccordionSummary>
         <AccordionDetails>
           <Stack spacing={2}>
-            <FontChooser value={font} onChange={setFont} maxWidth="40ch" pt />
+            <FontChooser value={font} onChange={setFont} maxWidth="40ch" />
             <FontSpacing spacing={spacing} setSpacing={(spacing) => setSpacing(spacing)} maxWidth="40ch" />
           </Stack>
         </AccordionDetails>

@@ -2,32 +2,35 @@ import { LinearProgress, Stack, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useExportMeetingContext } from './ExportMeetingContext.tsx';
 import { IMeetingExportDownloadedSong, IMeetingExportSong } from '../meeting.types.tsx';
-import { convertSong } from './docx.converter.ts';
 import MeetingDownloader from './MeetingDownloader.tsx';
+import { DocxSongConverter } from './docx.converter.ts';
 
 const MeetingExporter = () => {
   const context = useExportMeetingContext();
+  const { meeting, convertedSongs, fetchSong } = context;
   const [info, setInfo] = useState<string>();
-  const meeting = context.meeting;
   const allDownloaded = useMemo(
-    () => Object.keys(context.convertedSongs).length === meeting.songs.length,
-    [meeting, context.convertedSongs]
+    () => Object.keys(convertedSongs).length === meeting.songs.length,
+    [meeting, convertedSongs]
   );
 
   useEffect(() => {
     meeting.songs.forEach((song: IMeetingExportSong) => {
       if (song.fullSong) {
-        context.convertedSongs[song.slug] = convertSong(song as IMeetingExportDownloadedSong);
+        convertedSongs[song.slug] = new DocxSongConverter(song as IMeetingExportDownloadedSong, context).convertSong();
       } else {
-        context.fetchSong(song).then((fetchedSong) => {
-          context.convertedSongs[song.slug] = convertSong(fetchedSong as IMeetingExportDownloadedSong);
+        fetchSong(song).then((fetchedSong) => {
+          convertedSongs[song.slug] = new DocxSongConverter(
+            fetchedSong as IMeetingExportDownloadedSong,
+            context
+          ).convertSong();
           setInfo(`Pobieram i konwertuję piosenkę „${song.title}”`);
         });
       }
     });
   }, []);
 
-  const progress = (Object.keys(context.convertedSongs).length / meeting.songs.length) * 100;
+  const progress = (Object.keys(convertedSongs).length / meeting.songs.length) * 100;
 
   return (
     <Stack spacing={2}>

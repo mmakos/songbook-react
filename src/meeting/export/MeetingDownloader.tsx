@@ -7,11 +7,17 @@ import { saveAs } from 'file-saver';
 import { Download } from '@mui/icons-material';
 
 const MeetingDownloader = () => {
-  const { convertedSongs, meeting } = useExportMeetingContext();
+  const context = useExportMeetingContext();
+  const { convertedSongs, meeting } = context;
   const blob = useRef<Blob>();
 
   const generateDocx = async (): Promise<Blob> => {
-    blob.current ??= await Packer.toBlob(convertToDocx(Object.values(convertedSongs), meeting));
+    blob.current ??= await Packer.toBlob(
+      convertToDocx(
+        meeting.songs.map((s) => convertedSongs[s.slug]),
+        context
+      )
+    );
     return blob.current;
   };
 

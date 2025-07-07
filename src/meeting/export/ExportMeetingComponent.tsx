@@ -4,11 +4,11 @@ import ExportMeetingEdit from './ExportMeetingEdit.tsx';
 import MeetingExporter from './MeetingExporter.tsx';
 
 const ExportMeetingComponent = () => {
-  const { stage } = useOptionalExportMeetingContext();
+  const { stage, meeting } = useOptionalExportMeetingContext();
 
   return (
     <Stack spacing={2} width="100%">
-      {stage === 'edit' ? <ExportMeetingEdit /> : <MeetingExporter />}
+      {stage === 'download' && meeting ? <MeetingExporter /> : <ExportMeetingEdit />}
     </Stack>
   );
 };

@@ -1,9 +1,10 @@
 import { initialSpacing } from './songbook.reducer.ts';
 import { useSongContext } from '../song/SongContext.tsx';
 
-const useVerseSpacing = (): number => {
+const useVerseSpacing = (): `${number}${'pt' | 'em'}` => {
   const { spacing } = useSongContext();
-  return spacing ? spacing.verseSpacing : initialSpacing.verseSpacing;
+  const verseSpacing = spacing ? spacing.verseSpacing : initialSpacing.verseSpacing;
+  return `${verseSpacing}${spacing?.pt ? 'pt' : 'em'}`;
 };
 
 export default useVerseSpacing;

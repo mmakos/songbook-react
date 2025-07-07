@@ -15,7 +15,7 @@ const ExportMeetingEdit = () => {
   return (
     <Stack spacing={2} width="100%">
       <BasicHelmet title={`Tworzenie śpiewnika „${meeting.name}”`} />
-      <Button onClick={() => setStage('export')}>Eksportuj</Button>
+      <Button onClick={() => setStage('download')}>Eksportuj</Button>
       <Divider>
         <Typography variant="h5">Ustawienia śpiewnika</Typography>
       </Divider>

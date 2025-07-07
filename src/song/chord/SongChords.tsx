@@ -31,7 +31,7 @@ const SongChords: FC<ISongChordsProps> = ({ song, chordsType }) => {
   return (
     <div
       style={{
-        marginLeft: `${spacing ? spacing.chordsSpacing : initialSpacing.chordsSpacing}ch`,
+        marginLeft: `${spacing ? spacing.chordsSpacing : initialSpacing.chordsSpacing}${spacing?.pt ? 'pt' : 'ch'}`,
         fontWeight: chordStyle.bold ? 'bold' : 'normal',
         fontStyle: chordStyle.italic ? 'italic' : 'normal',
         textDecoration: chordStyle.underline ? 'underline' : 'none',

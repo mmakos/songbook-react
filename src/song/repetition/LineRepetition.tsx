@@ -16,23 +16,24 @@ const LineRepetition: FC<ILineRepetitionProps> = ({ line, previousLine, first, l
 
   let marginTop;
   let marginBottom;
-  let height = lineHeight;
+  let heightEm = lineHeight;
 
   if ((first || previousLine?.repetitionEnd) && (!previousLine?.repetition || previousLine?.repetitionEnd)) {
     marginTop = (lineHeight - 1) / 2;
-    height -= marginTop;
+    heightEm -= marginTop;
   }
+  let height = `${heightEm}em`
+
   if (last) {
     if (line.repetition && !line.repetitionEnd) {
-      height += verseSpace;
+      height = `calc(${height} + ${verseSpace})`;
     } else {
-      marginBottom = (lineHeight - 1) / 2;
-      height -= marginBottom;
-      marginBottom += verseSpace;
+      height = `calc(${height} - ${(lineHeight - 1) / 2}em)`;
+      marginBottom =`calc(${verseSpace} + ${(lineHeight - 1) / 2}em)`;
     }
   } else if (line.repetitionEnd) {
-    marginBottom = (lineHeight - 1) / 2;
-    height -= marginBottom;
+    marginBottom =`${(lineHeight - 1) / 2}em`;
+    height = `calc(${height} - ${marginBottom})`;
   }
 
   return (
@@ -42,7 +43,7 @@ const LineRepetition: FC<ILineRepetitionProps> = ({ line, previousLine, first, l
         borderLeft: line.repetition && line.repetitionEnd !== 1 ? 'solid' : undefined,
         paddingLeft: '0.1em',
         marginTop: marginTop && `${marginTop}em`,
-        marginBottom: marginBottom && `${marginBottom}em`,
+        marginBottom: marginBottom,
       }}
     >
       {line.repetition && line.repetitionEnd && line.repetitionEnd !== 1 ? (line.repetitionEnd >= 0 ? 'x' + line.repetitionEnd : 'x∞') : <>&nbsp;</>}

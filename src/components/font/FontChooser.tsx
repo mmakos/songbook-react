@@ -21,6 +21,7 @@ export enum FontFamily {
 export interface IFont {
   fontFamily: FontFamily;
   fontSize: number;
+  pt?: boolean;
 }
 
 interface IFontChooserProps {
@@ -28,10 +29,9 @@ interface IFontChooserProps {
   onChange: (value: IFont) => void;
   disabled?: boolean;
   maxWidth?: string;
-  pt?: boolean;
 }
 
-const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, disabled, maxWidth, pt }) => {
+const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, disabled, maxWidth }) => {
   const fontFamilyChanged = (fontFamily: FontFamily) => {
     setFont({ ...font, fontFamily: fontFamily });
   };
@@ -66,7 +66,7 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
         sx={{ ml: '0.5em', minWidth: '12ch' }}
         slotProps={{
           htmlInput: { min: 1, max: 100 },
-          input: { endAdornment: <InputAdornment position="end">{pt ? 'pt' : 'px'}</InputAdornment>},
+          input: { endAdornment: <InputAdornment position="end">{font.pt ? 'pt' : 'px'}</InputAdornment>},
         }}
       />
     </Stack>

@@ -62,7 +62,7 @@ const CollapsibleVerseRepetition: FC<ICollapsibleVerseRepetitionProps> = ({ vers
   return (
     <Collapse
       in={expandVerses}
-      collapsedSize={`${lineHeight + verseSpacing}em`}
+      collapsedSize={`calc(${lineHeight}em + ${verseSpacing}`}
       onEntered={() => setShowOriginal(false)}
       onExited={() => setShowOriginal(true)}
     >

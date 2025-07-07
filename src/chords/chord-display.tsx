@@ -20,7 +20,7 @@ export const keyAsString = (key: IKey): string => {
 };
 
 export const chordBaseAsString = (chord: IChord, chordDifficulty?: IChordDifficulty): string[] | undefined => {
-  if (chord.base) {
+  if (chord.base && !chordDifficulty?.hideBase) {
     return additionalSeriesAsString(chord.base, chordDifficulty, 'prime');
   }
 };

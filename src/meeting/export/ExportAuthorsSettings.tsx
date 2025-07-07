@@ -12,7 +12,7 @@ export interface IAuthorsSettings {
 export const defaultAuthorsSettings = {
   show: true,
   excluded: [],
-  inline: true,
+  inline: false,
 };
 
 const authorDisplayNames: Record<TAuthorType, string> = {

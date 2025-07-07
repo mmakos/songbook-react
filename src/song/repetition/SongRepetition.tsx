@@ -32,7 +32,7 @@ const SongRepetition: FC<ISongTextProps> = ({ song }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: `${spacing ? spacing.repetitionSpacing : initialSpacing.repetitionSpacing}ch`,
+        marginLeft: `${spacing ? spacing.repetitionSpacing : initialSpacing.repetitionSpacing}${spacing?.pt ? 'pt' : 'ch'}`,
         fontWeight: repetitionStyle.bold ? 'bold' : 'normal',
         fontStyle: repetitionStyle.italic ? 'italic' : 'normal',
         textDecoration: repetitionStyle.underline ? 'underline' : 'none',

@@ -7,6 +7,7 @@ import { Stack, styled } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
 import { IFontStyles, ITextSettings } from '../../store/songbook.reducer.ts';
 import { useSongContext } from '../SongContext.tsx';
+import { capitalizeLine } from '../../string.utils.ts';
 
 interface ILineTextProps {
   line: ILine;
@@ -28,11 +29,7 @@ const StyledTextSpan = styled('span')({
   whiteSpace: 'pre',
 });
 
-const capitalizeLine = (text: string) => {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-};
-
-const processText = (text: string, first: boolean, last: boolean, textSettings: ITextSettings, reference?: boolean) => {
+export const processText = (text: string, first: boolean, last: boolean, textSettings: ITextSettings, reference?: boolean) => {
   let processed = text;
   if (textSettings.hideNonLiteral) {
     processed = processed.replace(/[^\p{L}\p{N}\s']+/gu, '');
@@ -49,8 +46,8 @@ const processText = (text: string, first: boolean, last: boolean, textSettings: 
   if (last && reference && (textSettings.hideNonLiteral || textSettings.hideNonLiteralSuffix)) {
     processed += '…';
   }
-  if (processed.length && capitalizeLine(processed)) {
-    processed = processed.charAt(0).toUpperCase() + processed.slice(1);
+  if (processed.length && textSettings.capitalize) {
+    processed = capitalizeLine(processed);
   }
   return processed;
 };

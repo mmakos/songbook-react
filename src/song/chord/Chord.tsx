@@ -17,15 +17,16 @@ interface IChordProps {
 const Chord: FC<IChordProps> = ({ chord }) => {
   const { chordDifficulty, transposition } = useSongContext();
 
-  const chordBase = useMemo(() => {
-    if (!chordDifficulty.hideBase) return chordBaseAsString(chord, chordDifficulty);
-  }, [
-    chordDifficulty.hideBase,
-    chordDifficulty.guitarIntervalModifications,
-    chordDifficulty.hideUncommonAdditionals,
-    chordDifficulty.splitSuspensions,
-    chord,
-  ]);
+  const chordBase = useMemo(
+    () => chordBaseAsString(chord, chordDifficulty),
+    [
+      chordDifficulty.hideBase,
+      chordDifficulty.guitarIntervalModifications,
+      chordDifficulty.hideUncommonAdditionals,
+      chordDifficulty.splitSuspensions,
+      chord,
+    ]
+  );
 
   const chordNote = useMemo(() => {
     return noteAsString(transposeNote(chord.note, transposition), chord.minor, chordDifficulty);

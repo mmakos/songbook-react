@@ -67,7 +67,7 @@ const router = createBrowserRouter(
       <Route path="/meeting/:meetingId" element={<Meeting />} />
       <Route path="/meeting" element={<CurrentMeeting />} />
       <Route path="/join/meeting/id/:meetingId" element={<JoinMeeting />} />
-      <Route path="/export/meeting/:meetingId" element={<ExportMeeting />} />
+      <Route path="/export/meeting/:meetingId/:stage?" element={<ExportMeeting />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />
