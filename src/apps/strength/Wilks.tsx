@@ -49,7 +49,7 @@ const Wilks = () => {
   const [wilksCoefficient, wilks] = useMemo(() => {
     const coefficient = calculateWilks(toKg(bodyWeight, units), sex, method);
     return [coefficient, toKg(liftedWeight, units) * coefficient];
-  }, [bodyWeight, units, sex, method, units]);
+  }, [bodyWeight, liftedWeight, sex, method, units]);
 
   return (
     <Stack spacing={2}>
