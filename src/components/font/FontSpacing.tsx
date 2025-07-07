@@ -46,7 +46,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         value={spacing.lineHeight}
         onChange={(event) => lineHeightChanged(+event.target.value)}
         label="Interlinia"
-        type="number"
         slotProps={{
           htmlInput: { min: 1, max: 3, step: 0.1 },
           input: { endAdornment: <InputAdornment position="end">em</InputAdornment> },
@@ -57,7 +56,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         value={spacing.verseSpacing}
         onChange={(event) => verseSpacingChanged(+event.target.value)}
         label="Odstęp między zwrotkami"
-        type="number"
         slotProps={{
           inputLabel: { shrink: true },
           htmlInput: { min: 0, max: spacing.pt ? 50 : 3, step: spacing.pt ? 1 : 0.1 },
@@ -69,7 +67,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         value={spacing.verseIndent}
         onChange={(event) => verseIndentChanged(+event.target.value)}
         label="Wcięcie refrenów"
-        type="number"
         slotProps={{
           htmlInput: { min: 0, max: spacing.pt ? 100 : 10, step: spacing.pt ? 1 : 0.5 },
           input: { endAdornment: <InputAdornment position="end">{spacing.pt ? 'pt' : 'ch'}</InputAdornment> },
@@ -80,7 +77,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         value={spacing.repetitionSpacing}
         onChange={(event) => repetitionSpacingChanged(+event.target.value)}
         label="Odległość repetycji"
-        type="number"
         slotProps={{
           htmlInput: { min: 0, max: spacing.pt ? 100 : 10, step: spacing.pt ? 1 : 0.5 },
           input: { endAdornment: <InputAdornment position="end">{spacing.pt ? 'pt' : 'ch'}</InputAdornment> },
@@ -91,7 +87,6 @@ const FontSpacing: FC<IFontSpacingProps> = ({ spacing, setSpacing, disabled, max
         value={spacing.chordsSpacing}
         onChange={(event) => chordsSpacingChanged(+event.target.value)}
         label="Odległość akordów"
-        type="number"
         slotProps={{
           htmlInput: { min: 0, max: spacing.pt ? 100 : 10, step: spacing.pt ? 1 : 0.5 },
           input: { endAdornment: <InputAdornment position="end">{spacing.pt ? 'pt' : 'ch'}</InputAdornment> },

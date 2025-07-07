@@ -42,6 +42,7 @@ import CurrentMeeting from './meeting/CurrentMeeting.tsx';
 import JoinMeeting from './meeting/JoinMeeting.tsx';
 import { HelmetProvider } from 'react-helmet-async';
 import ExportMeeting from './meeting/export/ExportMeeting.tsx';
+import StrengthRoutes from './apps/strength/StrengthRoutes.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -89,7 +90,6 @@ const router = createBrowserRouter(
         <Route path="/verify/song/:songSlug/:username" element={<VerifySong />} />
       </Route>
 
-      <Route path="*" element={<NotFound />} />
       <Route path="/piosenki" element={<Navigate to="/songs" replace />} />
       <Route path="/piosenki/wszystkie" element={<Navigate to="/songs" replace />} />
       <Route path="/piosenki/kaczmarski" element={<Navigate to="/songs/kaczmarski" replace />} />
@@ -98,6 +98,10 @@ const router = createBrowserRouter(
       <Route path="/piosenki/religijne" element={<Navigate to="/songs/religious" replace />} />
       <Route path="/piosenki/koledy" element={<Navigate to="/songs/carols" replace />} />
       <Route path="/piosenki/:category/:title" element={<RedirectSong />} />
+
+      {StrengthRoutes()}
+
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );

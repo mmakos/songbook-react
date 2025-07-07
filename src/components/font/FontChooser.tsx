@@ -60,7 +60,6 @@ const FontChooser: FC<IFontChooserProps> = ({ value: font, onChange: setFont, di
       <NumberField
         disabled={disabled}
         label="Rozmiar"
-        type="number"
         onChange={(event) => fontSizeChanged(+event.target.value)}
         value={font.fontSize}
         sx={{ ml: '0.5em', minWidth: '12ch' }}

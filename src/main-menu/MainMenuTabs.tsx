@@ -1,7 +1,16 @@
 import MainMenuGroup from './group/MainMenuGroup.tsx';
 import { FC, useState } from 'react';
 import MainMenuItem, { TMenuType } from './item/MainMenuItem.tsx';
-import { Add, CasinoOutlined, EmojiEmotions, Groups, Home, HourglassBottom, LibraryMusic } from '@mui/icons-material';
+import {
+  Add,
+  CasinoOutlined,
+  EmojiEmotions,
+  FitnessCenter,
+  Groups,
+  Home,
+  HourglassBottom,
+  LibraryMusic,
+} from '@mui/icons-material';
 import MainMenuSubItem from './item/MainMenuSubItem.tsx';
 import { Divider } from '@mui/material';
 import { Category } from '../types/song.types.ts';
@@ -143,6 +152,14 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
           text="Śpiewnik papierowy"
           href="https://mmakos.pl/spiewnik"
           close={handleExtrasClose}
+        />
+        <Divider variant="middle" />
+        <MainMenuSubItem
+          type={type}
+          text="Kalkulator siły"
+          icon={<FitnessCenter />}
+          routeTo="/strength"
+          close={handleSongsClose}
         />
       </MainMenuGroup>
       <UserMenu type={type} close={close} />

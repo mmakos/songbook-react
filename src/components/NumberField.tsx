@@ -6,6 +6,7 @@ const NumberField: FC<TextFieldProps> = (props) => {
 
   return (
     <TextField
+      type="number"
       {...props}
       sx={{
         ...props.sx,
