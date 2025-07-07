@@ -41,6 +41,7 @@ import MyMeetings from './meeting/MyMeetings.tsx';
 import CurrentMeeting from './meeting/CurrentMeeting.tsx';
 import JoinMeeting from './meeting/JoinMeeting.tsx';
 import { HelmetProvider } from 'react-helmet-async';
+import ExportMeeting from './meeting/export/ExportMeeting.tsx';
 
 // const SongList = lazy(() => import('./song-list/SongList.tsx'));
 // const Song = lazy(() => import('./song/Song.tsx'));
@@ -66,6 +67,7 @@ const router = createBrowserRouter(
       <Route path="/meeting/:meetingId" element={<Meeting />} />
       <Route path="/meeting" element={<CurrentMeeting />} />
       <Route path="/join/meeting/id/:meetingId" element={<JoinMeeting />} />
+      <Route path="/export/meeting/:meetingId/:stage?" element={<ExportMeeting />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/account" element={<AccountInfo />} />

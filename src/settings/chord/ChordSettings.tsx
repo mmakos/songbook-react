@@ -4,11 +4,17 @@ import ChordDifficultyPreset from './ChordDifficultyPreset.tsx';
 import ExpandableSwitch from '../../components/ExpandableSwitch.tsx';
 import ChordStyle from './ChordStyle.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
-import { setGlobalChordsDifficulty, setNoChordInfo, setNoChords } from '../../store/songbook.reducer.ts';
+import {
+  setGlobalChordsDifficulty,
+  setNoChordInfo,
+  setNoChords,
+  setSongThemeFontStyles,
+} from '../../store/songbook.reducer.ts';
 import SettingsSection from '../SettingsSection.tsx';
 
 const ChordSettings = () => {
   const { noChords, noChordInfo, chordDifficulty } = useAppSelector((state) => state.songbookSettings);
+  const fontStyles = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles);
   const dispatch = useAppDispatch();
 
   return (
@@ -33,7 +39,11 @@ const ChordSettings = () => {
         />
       </FormGroup>
       <SettingsSection titleVariant="h5" title="Styl akordów">
-        <ChordStyle />
+        <ChordStyle
+          fontStyles={fontStyles}
+          setFontStyles={(s) => dispatch(setSongThemeFontStyles(s))}
+          maxWidth="40ch"
+        />
       </SettingsSection>
       <SettingsSection titleVariant="h5" title="Trudność akordów">
         <ChordDifficultyPreset
@@ -42,7 +52,7 @@ const ChordSettings = () => {
           showDescription
         />
       </SettingsSection>
-      <Typography variant="h6" sx={{ mt: '1rem'}}>
+      <Typography variant="h6" sx={{ mt: '1rem' }}>
         Szczegółowe ustawienia trudności
       </Typography>
       <ChordDifficulty

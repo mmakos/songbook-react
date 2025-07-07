@@ -7,9 +7,15 @@ interface IChordDifficultyProps {
   chordDifficulty: IChordDifficulty;
   changeDifficulty: (difficulty: IChordDifficulty) => void;
   showDescription?: boolean;
+  disabled?: boolean;
 }
 
-const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDifficulty, showDescription }) => {
+const ChordDifficulty: FC<IChordDifficultyProps> = ({
+  chordDifficulty,
+  changeDifficulty,
+  showDescription,
+  disabled,
+}) => {
   return (
     <Stack spacing={showDescription ? 1 : 0}>
       <ExpandableSwitch
@@ -40,6 +46,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideUncommonAdditionals}
         onChange={(value) => changeDifficulty({ hideUncommonAdditionals: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj trudniejsze składniki'}
@@ -61,6 +68,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideAdditionals269}
         onChange={(value) => changeDifficulty({ hideAdditionals269: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj kwarty'}
@@ -83,6 +91,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideFourths}
         onChange={(value) => changeDifficulty({ hideFourths: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Augmentacje i diminucje w notacji gitarowej'}
@@ -113,6 +122,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.guitarIntervalModifications}
         onChange={(value) => changeDifficulty({ guitarIntervalModifications: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Rozdziel opóźnienia na osobne akordy'}
@@ -141,6 +151,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.splitSuspensions}
         onChange={(value) => changeDifficulty({ splitSuspensions: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj puste kwinty i unison'}
@@ -170,6 +181,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideUnisonAndFifth}
         onChange={(value) => changeDifficulty({ hideUnisonAndFifth: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Wyświetl maksymalnie 1 dodany składnik'}
@@ -201,6 +213,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.singleAdditional}
         onChange={(value) => changeDifficulty({ singleAdditional: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Akordy zmniejszone i zwiększone w notacji gitarowej'}
@@ -227,6 +240,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.guitarDiminishedChords}
         onChange={(value) => changeDifficulty({ guitarDiminishedChords: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj składniki w basie'}
@@ -252,6 +266,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideBase}
         onChange={(value) => changeDifficulty({ hideBase: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj dodany składnik zduplikowany w basie'}
@@ -280,6 +295,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideBaseAdditional}
         onChange={(value) => changeDifficulty({ hideBaseAdditional: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj alternatywne akordy'}
@@ -307,6 +323,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideAlternatives}
         onChange={(value) => changeDifficulty({ hideAlternatives: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Ukryj kolumnę alternatywnych akordów'}
@@ -320,6 +337,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.hideAlternativesColumn}
         onChange={(value) => changeDifficulty({ hideAlternativesColumn: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Bemole i krzyżyki jako znaki'}
@@ -338,6 +356,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.signAccidentals}
         onChange={(value) => changeDifficulty({ signAccidentals: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Zamieniaj enharmonicznie akordy bemolowe'}
@@ -359,6 +378,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.enharmonicFlats}
         onChange={(value) => changeDifficulty({ enharmonicFlats: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Zamieniaj enharmonicznie akordy krzyżykowe'}
@@ -380,6 +400,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.enharmonicSharps}
         onChange={(value) => changeDifficulty({ enharmonicSharps: value })}
+        disabled={disabled}
       />
       <ExpandableSwitch
         label={'Notacja amerykańska'}
@@ -401,6 +422,7 @@ const ChordDifficulty: FC<IChordDifficultyProps> = ({ chordDifficulty, changeDif
         showDescription={showDescription}
         checked={!!chordDifficulty.americanNotation}
         onChange={(value) => changeDifficulty({ americanNotation: value })}
+        disabled={disabled}
       />
     </Stack>
   );

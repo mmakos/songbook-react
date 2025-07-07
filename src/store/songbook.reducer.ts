@@ -307,33 +307,15 @@ const songbookSlice = createSlice({
       state.songbookSettings.songTheme.customFont = action.payload;
       saveSimpleToStorage('song-theme-custom-font', action.payload);
     },
-    setSongThemeTextFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.text = action.payload;
-      saveObjectToStorage('song-theme-text-style', action.payload);
-    },
-    setSongThemeText1FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.text1 = action.payload;
-      saveObjectToStorage('song-theme-text1-style', action.payload);
-    },
-    setSongThemeText2FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.text2 = action.payload;
-      saveObjectToStorage('song-theme-text2-style', action.payload);
-    },
-    setSongThemeText3FontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.text3 = action.payload;
-      saveObjectToStorage('song-theme-text3-style', action.payload);
-    },
-    setSongThemeRepetitionFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.repetition = action.payload;
-      saveObjectToStorage('song-theme-repetition-style', action.payload);
-    },
-    setSongThemeChordsFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.chords = action.payload;
-      saveObjectToStorage('song-theme-chords-style', action.payload);
-    },
-    setSongThemeSilentChordsFontStyle: (state: ISongbookState, action: PayloadAction<IFontStyle>) => {
-      state.songbookSettings.songTheme.fontStyles.silentChords = action.payload;
-      saveObjectToStorage('song-theme-silent-chords-style', action.payload);
+    setSongThemeFontStyles: (state: ISongbookState, action: PayloadAction<IFontStyles>) => {
+      state.songbookSettings.songTheme.fontStyles = action.payload;
+      saveObjectToStorage('song-theme-text-style', action.payload.text);
+      saveObjectToStorage('song-theme-text1-style', action.payload.text1);
+      saveObjectToStorage('song-theme-text2-style', action.payload.text2);
+      saveObjectToStorage('song-theme-text3-style', action.payload.text3);
+      saveObjectToStorage('song-theme-repetition-style', action.payload.repetition);
+      saveObjectToStorage('song-theme-chords-style', action.payload.chords);
+      saveObjectToStorage('song-theme-silent-chords-style', action.payload.silentChords);
     },
     setSongThemeCustomSpacing: (state: ISongbookState, action: PayloadAction<boolean>) => {
       state.songbookSettings.songTheme.customSpacing = action.payload;
@@ -426,13 +408,7 @@ export const {
   setSongThemeCustomFont,
   setSongThemeSpacing,
   setSongThemeCustomSpacing,
-  setSongThemeTextFontStyle,
-  setSongThemeText1FontStyle,
-  setSongThemeText2FontStyle,
-  setSongThemeText3FontStyle,
-  setSongThemeRepetitionFontStyle,
-  setSongThemeChordsFontStyle,
-  setSongThemeSilentChordsFontStyle,
+  setSongThemeFontStyles,
   setTextSettings,
   setNoChordInfo,
   setNoChords,

@@ -5,7 +5,6 @@ import EditorInfo from './EditorInfo.tsx';
 import SongTitle from './SongTitle.tsx';
 import SongSettings from './SongSettings.tsx';
 import SongRoute from './SongRoute.tsx';
-import SongContent from './SongContent.tsx';
 import SongVideo from './SongVideo.tsx';
 import SongControls from './SongControls.tsx';
 import { ISong } from '../types/song.types.ts';
@@ -16,6 +15,7 @@ import useMeeting from '../store/useMeeting.ts';
 import MeetingSongsPaper from '../meeting/MeetingSongsPaper.tsx';
 import { setMeeting } from '../store/songbook.reducer.ts';
 import CollapsibleSongInfo from './CollapsibleSongInfo.tsx';
+import GlobalSongContent from './GlobalSongContent.tsx';
 
 const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
   const meeting = useMeeting();
@@ -48,7 +48,7 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
           {!noChords && <SongSettings song={song} />}
           <Paper>
             <ThemeProvider theme={songTheme}>
-              <SongContent song={song} />
+              <GlobalSongContent song={song} />
             </ThemeProvider>
             <Divider variant="middle" />
             <Stack padding="0.5em 1em">

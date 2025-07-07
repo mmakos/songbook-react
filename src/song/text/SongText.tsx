@@ -1,14 +1,16 @@
 import { FC, Fragment } from 'react';
 import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleVerseText from './CollapsibleVerseText.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface ISongTextProps {
   song: ISongContent;
 }
 
 const SongText: FC<ISongTextProps> = ({ song }) => {
-  const textStyle = useAppSelector((state) => state.songbookSettings.songTheme.fontStyles.text);
+  const {
+    fontStyles: { text: textStyle },
+  } = useSongContext();
 
   let mainVerseNumber = 1;
   return (

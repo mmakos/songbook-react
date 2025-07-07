@@ -26,14 +26,14 @@ const CollapsibleVerseChords: FC<ICollapsibleVerseChordsProps> = ({ verse, song,
 
   if (!verseRefValid) {
     return (
-      <div style={{ marginBottom: `${verseSpacing}em` }}>
+      <div style={{ marginBottom: verseSpacing }}>
         <VerseChords verse={verse} chordsType={chordsType} />
       </div>
     );
   }
 
   return (
-    <div style={{ marginBottom: `${verseSpacing}em` }}>
+    <div style={{ marginBottom: verseSpacing }}>
       <Collapse
         in={expandVerses}
         collapsedSize={`${lineHeight}em`}

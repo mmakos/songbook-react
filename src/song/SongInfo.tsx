@@ -18,7 +18,7 @@ interface ISongInfoProps {
   sx?: SxProps;
 }
 
-const bibleToString = (bible: IBible): string => {
+export const bibleToString = (bible: IBible): string => {
   if (bible.book === 'Ps' && !bible.verses) {
     return `Psalm ${bible.chapter}`;
   }

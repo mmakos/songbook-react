@@ -59,13 +59,13 @@ import BasicTooltip from '../../components/BasicTooltip.tsx';
 import TextButtonIcon from '../../components/icon/TextButtonIcon.tsx';
 import Shortcut from '../../components/Shortcut.tsx';
 import TitledToggleButtonGroup, { TitledToggleButtonGroupDivider } from '../components/TitledToggleButtonGroup.tsx';
-import SongContent from '../../song/SongContent.tsx';
 import StyledSongContent from '../components/StyledSongContent.tsx';
 import StyledEditorContent from '../components/StyledEditorContent.ts';
 import SplitPane from '../../components/SplitPane.tsx';
 import { useSongEditContext } from '../SongEditContext.tsx';
 import SongKeysChooser from './SongKeysChooser.tsx';
 import SongTablePaste from './SongTablePaste.ts';
+import GlobalSongContent from '../../song/GlobalSongContent.tsx';
 
 type TPreviewType = 'editor' | 'split' | 'preview';
 
@@ -573,7 +573,7 @@ const SongEditor = () => {
           right={
             previewType !== 'editor' && (
               <StyledSongContent>
-                <SongContent song={previewSong} />
+                <GlobalSongContent song={previewSong} />
               </StyledSongContent>
             )
           }

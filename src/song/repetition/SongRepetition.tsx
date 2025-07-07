@@ -1,8 +1,8 @@
 import { FC, Fragment, useMemo } from 'react';
 import { ISongContent } from '../../types/song.types.ts';
 import CollapsibleLineRepetition from './CollapsibleVerseRepetition.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
 import { initialSpacing } from '../../store/songbook.reducer.ts';
+import { useSongContext } from '../SongContext.tsx';
 
 interface ISongTextProps {
   song: ISongContent;
@@ -19,10 +19,9 @@ const hasRepetition = (song: ISongContent) => {
 
 const SongRepetition: FC<ISongTextProps> = ({ song }) => {
   const {
-    spacing: { repetitionSpacing },
-    customSpacing,
+    spacing,
     fontStyles: { repetition: repetitionStyle },
-  } = useAppSelector((state) => state.songbookSettings.songTheme);
+  } = useSongContext();
 
   const songHasRepetition = useMemo(() => hasRepetition(song), [song]);
 
@@ -33,7 +32,7 @@ const SongRepetition: FC<ISongTextProps> = ({ song }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: `${customSpacing ? repetitionSpacing : initialSpacing.repetitionSpacing}ch`,
+        marginLeft: `${spacing ? spacing.repetitionSpacing : initialSpacing.repetitionSpacing}${spacing?.pt ? 'pt' : 'ch'}`,
         fontWeight: repetitionStyle.bold ? 'bold' : 'normal',
         fontStyle: repetitionStyle.italic ? 'italic' : 'normal',
         textDecoration: repetitionStyle.underline ? 'underline' : 'none',

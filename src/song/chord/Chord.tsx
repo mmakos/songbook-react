@@ -3,29 +3,30 @@ import { IChord } from '../../types/song.types.ts';
 import {
   chordAdditionalsAsString,
   chordBaseAsString,
-  chordModificationAsString,
+  chordModificationAsNode,
   noteAsString,
 } from '../../chords/chord-display.tsx';
-import { useAppSelector } from '../../store/songbook.store.ts';
 import SingleChord from './SingleChord.tsx';
 import { transposeNote } from '../../chords/chord-transposition.tsx';
+import { useSongContext } from '../SongContext.tsx';
 
 interface IChordProps {
   chord: IChord;
 }
 
 const Chord: FC<IChordProps> = ({ chord }) => {
-  const { chordDifficulty, transposition } = useAppSelector((state) => state.songSettings);
+  const { chordDifficulty, transposition } = useSongContext();
 
-  const chordBase = useMemo(() => {
-    if (!chordDifficulty.hideBase) return chordBaseAsString(chord, chordDifficulty);
-  }, [
-    chordDifficulty.hideBase,
-    chordDifficulty.guitarIntervalModifications,
-    chordDifficulty.hideUncommonAdditionals,
-    chordDifficulty.splitSuspensions,
-    chord,
-  ]);
+  const chordBase = useMemo(
+    () => chordBaseAsString(chord, chordDifficulty),
+    [
+      chordDifficulty.hideBase,
+      chordDifficulty.guitarIntervalModifications,
+      chordDifficulty.hideUncommonAdditionals,
+      chordDifficulty.splitSuspensions,
+      chord,
+    ]
+  );
 
   const chordNote = useMemo(() => {
     return noteAsString(transposeNote(chord.note, transposition), chord.minor, chordDifficulty);
@@ -39,7 +40,7 @@ const Chord: FC<IChordProps> = ({ chord }) => {
   ]);
 
   const chordModification = useMemo(() => {
-    if (chord.modification) return chordModificationAsString(chord.modification, chordDifficulty);
+    if (chord.modification) return chordModificationAsNode(chord.modification, chordDifficulty);
   }, [chordDifficulty.guitarDiminishedChords, chord]);
 
   const chordAdditionals = useMemo(() => {

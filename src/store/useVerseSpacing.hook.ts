@@ -1,10 +1,10 @@
-import { useAppSelector } from './songbook.store.ts';
 import { initialSpacing } from './songbook.reducer.ts';
+import { useSongContext } from '../song/SongContext.tsx';
 
-const useVerseSpacing = (): number => {
-  const verseSpacing = useAppSelector((state) => state.songbookSettings.songTheme.spacing.verseSpacing);
-  const customSpacing = useAppSelector((state) => state.songbookSettings.songTheme.customSpacing);
-  return customSpacing ? verseSpacing : initialSpacing.verseSpacing;
+const useVerseSpacing = (): `${number}${'pt' | 'em'}` => {
+  const { spacing } = useSongContext();
+  const verseSpacing = spacing ? spacing.verseSpacing : initialSpacing.verseSpacing;
+  return `${verseSpacing}${spacing?.pt ? 'pt' : 'em'}`;
 };
 
 export default useVerseSpacing;

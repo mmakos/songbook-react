@@ -22,6 +22,7 @@ interface IExpandableSwitchProps {
   checked?: boolean;
   onChange: (value: boolean) => void;
   showDescription?: boolean;
+  disabled?: boolean;
 }
 
 const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
@@ -31,6 +32,7 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
   checked,
   onChange,
   showDescription,
+  disabled,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [help, setHelp] = useState(false);
@@ -47,11 +49,12 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
               {label}
               {expansion && (
                 <Collapse in={expanded}>
-                  <Typography color="text.secondary">{expansion}</Typography>
+                  <Typography color={disabled ? 'text.disabled' : 'text.secondary'}>{expansion}</Typography>
                 </Collapse>
               )}
             </Stack>
           }
+          disabled={disabled}
         />
         {!showDescription && description && (
           <Box>
@@ -62,7 +65,7 @@ const ExpandableSwitch: FC<IExpandableSwitchProps> = ({
         )}
       </Stack>
       {showDescription && (description || expansion) && (
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" color={disabled ? 'text.disabled' : 'text.secondary'}>
           {description}
         </Typography>
       )}
