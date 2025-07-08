@@ -1,4 +1,4 @@
-import { TSex } from './wilks-calc.ts';
+import { TSex } from './wilks.calc.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { FC } from 'react';
 

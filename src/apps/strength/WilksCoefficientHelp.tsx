@@ -1,4 +1,4 @@
-import { getCoefficientsTable, TMethod, TSex } from './wilks-calc.ts';
+import { getCoefficientsTable, TMethod, TSex } from './wilks.calc.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material';
 import { FC } from 'react';
 
