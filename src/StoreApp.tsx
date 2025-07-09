@@ -4,7 +4,7 @@ import { darkTheme, lightTheme } from './theme.ts';
 import Notification from './notification/Notification.tsx';
 import { Route } from 'react-router';
 import { useAppDispatch, useAppSelector } from './store/songbook.store.ts';
-import { useEffect, useMemo } from 'react';
+import { lazy, useEffect, useMemo } from 'react';
 import NotFound from './subsites/NotFound.tsx';
 import Settings from './settings/Settings.tsx';
 import Person from './author/Person.tsx';
@@ -41,15 +41,10 @@ import MyMeetings from './meeting/MyMeetings.tsx';
 import CurrentMeeting from './meeting/CurrentMeeting.tsx';
 import JoinMeeting from './meeting/JoinMeeting.tsx';
 import { HelmetProvider } from 'react-helmet-async';
-import ExportMeeting from './meeting/export/ExportMeeting.tsx';
 import StrengthRoutes from './apps/strength/StrengthRoutes.tsx';
 
-// const SongList = lazy(() => import('./song-list/SongList.tsx'));
-// const Song = lazy(() => import('./song/Song.tsx'));
-// const Settings = lazy(() => import('./settings/Settings.tsx'));
-// const Person = lazy(() => import('./author/Person.tsx'));
-// const Band = lazy(() => import('./author/Band.tsx'));
-// const Source = lazy(() => import('./author/Source.tsx'));
+// Eksport piosenki zaciąga docx.js
+const ExportMeeting = lazy(() => import('./meeting/export/ExportMeeting.tsx'));
 
 const router = createBrowserRouter(
   createRoutesFromElements(

@@ -1,6 +1,8 @@
 import { SongEditContextProvider } from '../editor/SongEditContext.tsx';
-import SongEditStepper from '../editor/SongEditStepper.tsx';
 import BasicHelmet from '../subsites/BasicHelmet.tsx';
+import { lazy } from 'react';
+
+const SongEditStepper = lazy(() => import('../editor/SongEditStepper.tsx'));
 
 const VerifySong = () => {
   return (

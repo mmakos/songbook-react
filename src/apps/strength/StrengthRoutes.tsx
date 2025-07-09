@@ -1,5 +1,8 @@
 import { Route } from 'react-router';
-import Strength from './Strength.tsx';
+import { lazy } from 'react';
+
+// To nie ma nic wspólnego ze śpiewnikiem (zewnętrzna apka)
+const Strength = lazy(() => import('./Strength.tsx'));
 
 const StrengthRoutes = () => {
   return (
