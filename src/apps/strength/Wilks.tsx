@@ -18,10 +18,10 @@ const createInitialWilks = (
   return {
     name: `Osoba ${i}`,
     sex,
-    liftedWeight,
-    liftedWeightInput: '' + liftedWeight,
+    bench: liftedWeight,
+    benchInput: '' + liftedWeight,
     reps: 1,
-    repMax: liftedWeight,
+    liftedWeight: liftedWeight,
     bodyWeight: '' + bodyWeight,
     wilksCoefficient,
     wilks,
