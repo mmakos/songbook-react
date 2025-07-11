@@ -14,19 +14,22 @@ export interface ILifterResults {
 interface IWilksSingleOutputProps {
   exercise: Exercise;
   lifter: ILifterResults;
-  // method: ScoreMethod;
   units: TUnits;
+  single?: boolean;
 }
 
-const WilksSingleOutput: FC<IWilksSingleOutputProps> = ({ lifter, units, exercise }) => {
+const WilksSingleOutput: FC<IWilksSingleOutputProps> = ({ lifter, units, exercise, single }) => {
   return (
-    <Stack spacing={2}>
+    <Stack direction={{ xs: single ? 'column' : 'row', sm: 'column' }} spacing={{ xs: 1, sm: 2 }} width="100%">
       {exercise === Exercise.POWERLIFT && <ExerciseOutput lifter={lifter} exercise={exercise} units={units} />}
       <TextField
         size="small"
         label={exercise === Exercise.POWERLIFT ? 'Suma trójboju' : '1RM'}
         value={toFixed(lifter.liftedWeight)}
-        slotProps={{ input: { readOnly: true, endAdornment: <InputAdornment position="end">{units}</InputAdornment> } }}
+        slotProps={{
+          input: { readOnly: true, endAdornment: <InputAdornment position="end">{units}</InputAdornment> },
+        }}
+        sx={{ minWidth: '10em' }}
       />
       <TextField
         size="small"
@@ -38,24 +41,28 @@ const WilksSingleOutput: FC<IWilksSingleOutputProps> = ({ lifter, units, exercis
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           },
         }}
+        sx={{ minWidth: '10em' }}
       />
       <TextField
         size="small"
         label="Punkty Wilks'a"
         value={toFixed(lifter.score[ScoreMethod.WILKS], 3)}
         slotProps={{ input: { readOnly: true } }}
+        sx={{ minWidth: '10em' }}
       />
       <TextField
         size="small"
         label="Punkty Wilks'a (2020)"
         value={toFixed(lifter.score[ScoreMethod.WILKS_2020], 3)}
         slotProps={{ input: { readOnly: true } }}
+        sx={{ minWidth: '10em' }}
       />
       <TextField
         size="small"
         label="Punkty DOTS"
         value={toFixed(lifter.score[ScoreMethod.DOTS], 3)}
         slotProps={{ input: { readOnly: true } }}
+        sx={{ minWidth: '10em' }}
       />
     </Stack>
   );

@@ -7,8 +7,10 @@ import {
   Stack,
   ToggleButton,
   ToggleButtonGroup,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { calculateScores } from './wilks.calc.ts';
 import { kgToLbs, lbsToKg, toKg, TUnits } from './units.ts';
 import WilksSingleInput, { ILifter } from './WilksSingleInput.tsx';
@@ -27,7 +29,7 @@ export const toFixed = (n?: number, fractionDigits: number = 1): string => {
 };
 
 const createLifter = (i: number = 1): ILifter => ({
-  name: `Osoba ${i}`,
+  name: `Zawodnik ${i}`,
   sex: 'male',
   bodyWeight: '',
   liftedWeight: [['', '1']],
@@ -47,6 +49,9 @@ const Wilks = () => {
 
   const [lifters, setLifters] = useState<ILifter[]>(() => [createLifter()]);
   const [results, setResults] = useState<ILifterResults[]>(() => [createResults()]);
+
+  const theme = useTheme();
+  const downSm = useMediaQuery(theme.breakpoints.down('sm'));
 
   const calculateResults = (lifter: ILifter): ILifterResults => {
     const liftedWeights = lifter.liftedWeight.map((w) => oneRepMax(+w[1], +w[0], oneRepMaxMethod));
@@ -84,6 +89,16 @@ const Wilks = () => {
     results[i] = calculateResults(lifters[i]);
     setLifters([...lifters]);
     setResults([...results]);
+  };
+
+  const removeLifter = (i: number) => {
+    setLifters(lifters.filter((_, j) => j !== i));
+    setResults(results.filter((_, j) => j !== i));
+  };
+
+  const addLifter = () => {
+    setLifters([...lifters, createLifter(lifters.length + 1)]);
+    setResults([...results, createResults()]);
   };
 
   useEffect(() => {
@@ -147,13 +162,39 @@ const Wilks = () => {
           ))}
         </Select>
       </FormControl>
-      {lifters.map((l, i) => (
-        <Stack key={'l' + i} spacing={2}>
-          <WilksSingleInput lifter={l} patchLifter={(l) => patchLifter(i, l)} exercise={exercise} units={units} />
-          <Divider>Wyniki</Divider>
-          <WilksSingleOutput lifter={results[i]} exercise={exercise} units={units} />
-        </Stack>
-      ))}
+      <Divider>Dane zawodników</Divider>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 1 }}>
+        {lifters.map((l, i) => (
+          <Fragment key={'l' + i}>
+            {i > 0 && downSm && <Divider />}
+            <WilksSingleInput
+              lifter={l}
+              patchLifter={(l) => patchLifter(i, l)}
+              exercise={exercise}
+              units={units}
+              addLifter={i === lifters.length - 1 ? addLifter : undefined}
+              removeLifter={lifters.length > 1 ? () => removeLifter(i) : undefined}
+            />
+          </Fragment>
+        ))}
+      </Stack>
+      <Divider>Rezultaty</Divider>
+      <Stack
+        direction={{ xs: results.length > 1 ? 'column' : 'row', sm: 'row' }}
+        spacing={1}
+        style={{ marginTop: 0 }}
+        sx={{ overflowX: downSm ? 'auto' : undefined, width: '100%', pt: '16px' }}
+      >
+        {results.map((result, i) => (
+          <WilksSingleOutput
+            key={'r' + i}
+            lifter={result}
+            exercise={exercise}
+            units={units}
+            single={results.length <= 1}
+          />
+        ))}
+      </Stack>
     </Stack>
   );
 };

@@ -15,6 +15,8 @@ const SingleExerciseOutput: FC<ISingleExerciseOutputProps> = ({ liftedWeight, un
       value={toFixed(liftedWeight)}
       label={'1RM'}
       slotProps={{ input: { readOnly: true, endAdornment: <InputAdornment position="end">{units}</InputAdornment> } }}
+      sx={{ width: 0, flex: 1 }}
+      fullWidth
     />
   );
 };

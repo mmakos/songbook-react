@@ -4,7 +4,7 @@ import Wilks from './Wilks.tsx';
 
 const Strength = () => {
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} maxWidth='100%'>
       <BasicHelmet title="Kalkulator siły" />
       <Typography variant="h3">Kalkulator siły</Typography>
       <Wilks />

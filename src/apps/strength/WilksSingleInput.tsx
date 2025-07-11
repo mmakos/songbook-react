@@ -1,9 +1,9 @@
 import { TSex } from './wilks.calc.ts';
 import { Exercise } from './Wilks.tsx';
 import { TUnits } from './units.ts';
-import { InputAdornment, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { IconButton, InputAdornment, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
-import { Female, Male } from '@mui/icons-material';
+import { Add, Female, Male, Remove } from '@mui/icons-material';
 import NumberField from '../../components/NumberField.tsx';
 import ExerciseInput from './ExerciseInput.tsx';
 import { FC } from 'react';
@@ -20,17 +20,21 @@ interface IWilksSingleProps {
   patchLifter: (lifter: Partial<ILifter>) => void;
   exercise: Exercise;
   units: TUnits;
+  addLifter?: () => void;
+  removeLifter?: () => void;
 }
 
-const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise, units }) => {
+const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise, units, addLifter, removeLifter }) => {
   return (
-    <Stack spacing={2}>
-      <Stack direction="row" spacing={1}>
+    <Stack spacing={2} width='100%'>
+      <Stack direction="row" spacing={1} alignItems="center">
         <TextField
           size="small"
-          label="Osoba"
+          label="Zawodnik"
           value={lifter.name}
           onChange={(event) => patchLifter({ name: event.target.value })}
+          onFocus={(event) => event.target.select()}
+          sx={{ width: '10ch', flex: 1 }}
           fullWidth
         />
         <ToggleButtonGroup
@@ -50,6 +54,24 @@ const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise
             </ToggleButton>
           </BasicTooltip>
         </ToggleButtonGroup>
+        <div>
+          <Stack direction="row">
+            {addLifter && (
+              <BasicTooltip title="Dodaj osobę do porównania">
+                <IconButton size="small" onClick={addLifter}>
+                  <Add />
+                </IconButton>
+              </BasicTooltip>
+            )}
+            {removeLifter && (
+              <BasicTooltip title="Usuń osobę z porównania">
+                <IconButton size="small" onClick={removeLifter}>
+                  <Remove />
+                </IconButton>
+              </BasicTooltip>
+            )}
+          </Stack>
+        </div>
       </Stack>
       <NumberField
         size="small"
