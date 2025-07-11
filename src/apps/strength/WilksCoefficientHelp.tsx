@@ -1,10 +1,10 @@
-import { getCoefficientsTable, TMethod, TSex } from './wilks.calc.ts';
+import { getCoefficientsTable, TWilksMethod, TSex } from './wilks.calc.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material';
 import { FC } from 'react';
 
 interface IWilksCoefficientHelpProps {
   weight: number;
-  method: TMethod;
+  method: TWilksMethod;
   sex: TSex;
   close: () => void;
 }
