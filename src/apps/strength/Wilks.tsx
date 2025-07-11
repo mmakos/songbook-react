@@ -1,63 +1,136 @@
-import { Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { useState } from 'react';
-import { calculateWilks, TMethod, TSex } from './wilks.calc.ts';
-import WilksSingle, { ILifter } from './WilksSingle.tsx';
+import {
+  Divider,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { calculateScores } from './wilks.calc.ts';
 import { toKg, TUnits } from './units.ts';
+import WilksSingleInput, { ILifter } from './WilksSingleInput.tsx';
+import { MaxRepMethod, oneRepMax } from './reps.calc.ts';
+import WilksSingleOutput, { ILifterResults } from './WilksSingleOutput.tsx';
 
-const createInitialWilks = (
-  i: number = 1,
-  sex: TSex = 'male',
-  liftedWeight: number = 100,
-  bodyWeight: number = 80,
-  method: TMethod = 'original',
-  units: TUnits = 'kg'
-): ILifter => {
-  const wilksCoefficient = calculateWilks(toKg(bodyWeight, units), sex, method);
-  const wilks = wilksCoefficient * toKg(liftedWeight, units);
+export enum Exercise {
+  BENCH_PRESS = 'Wyciskanie na ławce',
+  SQUAT = 'Przysiad',
+  DEADLIFT = 'Martwy ciąg',
+  POWERLIFT = 'Trójbój siłowy',
+}
 
-  return {
-    name: `Osoba ${i}`,
-    sex,
-    bench: liftedWeight,
-    benchInput: '' + liftedWeight,
-    reps: 1,
-    liftedWeight: liftedWeight,
-    bodyWeight: '' + bodyWeight,
-    wilksCoefficient,
-    wilks,
-    wilksInput: wilks.toFixed(3),
-    units,
-  };
+export const toFixed = (n?: number, fractionDigits: number = 1): string => {
+  return !n || isNaN(n) ? '' : n.toFixed(fractionDigits);
 };
+
+const createLifter = (i: number = 1): ILifter => ({
+  name: `Osoba ${i}`,
+  sex: 'male',
+  bodyWeight: '',
+  liftedWeight: [['', '1']],
+});
+
+const createResults = (): ILifterResults => ({
+  liftedWeights: [],
+  liftedWeight: NaN,
+  score: {},
+});
 
 const Wilks = () => {
   const [units, setUnits] = useState<TUnits>('kg');
-  const [method, setMethod] = useState<TMethod>('original');
+  const [exercise, setExercise] = useState<Exercise>(Exercise.BENCH_PRESS);
+  const [oneRepMaxMethod, setOneRepMaxMethod] = useState<MaxRepMethod>(MaxRepMethod.BRZYCKI);
+  // const [scoreMethod, setScoreMethod] = useState<ScoreMethod>(ScoreMethod.WILKS);
 
-  const [lifters, setLifters] = useState<ILifter[]>(() => [createInitialWilks()]);
+  const [lifters, setLifters] = useState<ILifter[]>(() => [createLifter()]);
+  const [results, setResults] = useState<ILifterResults[]>(() => [createResults()]);
 
-  const updateLifter = (i: number, lifter: ILifter) => {
-    setLifters(lifters.map((l, j) => (i !== j ? l : lifter)));
+  const calculateResults = (lifter: ILifter): ILifterResults => {
+    const liftedWeights = lifter.liftedWeight.map((w) => oneRepMax(+w[1], +w[0], oneRepMaxMethod));
+    const liftedWeight =
+      exercise !== Exercise.POWERLIFT
+        ? (liftedWeights[0] ?? 0)
+        : liftedWeights.slice(0, 3).reduce((acc, curr) => acc + (isNaN(curr) ? 0 : curr), 0);
+    const bw = +lifter.bodyWeight;
+    const score = !bw || isNaN(bw) ? {} : calculateScores(toKg(bw, units), toKg(liftedWeight, units), lifter.sex);
+    return { liftedWeight, liftedWeights, score };
   };
+
+  const updateResults = () => {
+    setResults(lifters.map(calculateResults));
+  };
+
+  const patchLifter = (i: number, lifter: Partial<ILifter>) => {
+    lifters[i] = { ...lifters[i], ...lifter };
+    results[i] = calculateResults(lifters[i]);
+    setLifters([...lifters]);
+    setResults([...results]);
+  };
+
+  useEffect(() => {
+    updateResults();
+  }, [units, exercise, oneRepMaxMethod]);
 
   return (
     <Stack spacing={2}>
-      <ToggleButtonGroup value={units} onChange={(_, v) => v && setUnits(v as TUnits)} exclusive fullWidth>
+      <ToggleButtonGroup size="small" value={units} onChange={(_, v) => v && setUnits(v as TUnits)} exclusive fullWidth>
         <ToggleButton value="kg">Kilogramy</ToggleButton>
         <ToggleButton value="lbs">Funty</ToggleButton>
       </ToggleButtonGroup>
-      <ToggleButtonGroup value={method} onChange={(_, v) => v && setMethod(v as TMethod)} exclusive fullWidth>
-        <ToggleButton value="original">Oryginalny</ToggleButton>
-        <ToggleButton value="new">Nowy (2020)</ToggleButton>
-      </ToggleButtonGroup>
+      <FormControl>
+        <InputLabel>Metoda obliczania 1RM</InputLabel>
+        <Select
+          size="small"
+          label="Metoda obliczania 1RM"
+          value={oneRepMaxMethod}
+          onChange={(e) => setOneRepMaxMethod(e.target.value as MaxRepMethod)}
+        >
+          {Object.values(MaxRepMethod).map((e) => (
+            <MenuItem key={e} value={e}>
+              {e}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {/*<FormControl>*/}
+      {/*  <InputLabel>Metoda</InputLabel>*/}
+      {/*  <Select*/}
+      {/*    size="small"*/}
+      {/*    label="Metoda"*/}
+      {/*    value={scoreMethod}*/}
+      {/*    onChange={(e) => setScoreMethod(e.target.value as ScoreMethod)}*/}
+      {/*  >*/}
+      {/*    {Object.values(ScoreMethod).map((e) => (*/}
+      {/*      <MenuItem key={e} value={e}>*/}
+      {/*        {e}*/}
+      {/*      </MenuItem>*/}
+      {/*    ))}*/}
+      {/*  </Select>*/}
+      {/*</FormControl>*/}
+      <FormControl>
+        <InputLabel>Ćwiczenie</InputLabel>
+        <Select
+          size="small"
+          label="Ćwiczenie"
+          value={exercise}
+          onChange={(e) => setExercise(e.target.value as Exercise)}
+        >
+          {Object.values(Exercise).map((e) => (
+            <MenuItem key={e} value={e}>
+              {e}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       {lifters.map((l, i) => (
-        <WilksSingle
-          key={'l' + i}
-          units={units}
-          method={method}
-          lifter={l}
-          updateLifter={(lifter) => updateLifter(i, lifter)}
-        />
+        <Stack key={'l' + i} spacing={2}>
+          <WilksSingleInput lifter={l} patchLifter={(l) => patchLifter(i, l)} exercise={exercise} units={units} />
+          <Divider>Wyniki</Divider>
+          <WilksSingleOutput lifter={results[i]} exercise={exercise} units={units} />
+        </Stack>
       ))}
     </Stack>
   );

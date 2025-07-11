@@ -1,6 +1,6 @@
-import {Stack, Typography} from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import BasicHelmet from '../../subsites/BasicHelmet.tsx';
-import Wilks from "./Wilks.tsx";
+import Wilks from './Wilks.tsx';
 
 const Strength = () => {
   return (
