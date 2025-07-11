@@ -39,7 +39,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
 
   const handleExtrasClose = () => {
     close();
-    setSongsExpanded(false);
+    setExtrasExpanded(false);
   };
 
   const handleMeetingsClose = () => {
@@ -159,7 +159,7 @@ const MainMenuTabs: FC<IMainMenuTabsProps> = ({ type, close }) => {
           text="Kalkulator siły"
           icon={<FitnessCenter />}
           routeTo="/strength"
-          close={handleSongsClose}
+          close={handleExtrasClose}
         />
       </MainMenuGroup>
       <UserMenu type={type} close={close} />
