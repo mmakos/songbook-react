@@ -61,7 +61,6 @@ const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise
           input: { endAdornment: <InputAdornment position="end">{units}</InputAdornment> },
         }}
         onFocus={(event) => event.target.select()}
-        required
       />
       <ExerciseInput exercise={exercise} lifter={lifter} patchLifter={patchLifter} units={units} />
     </Stack>

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { calculateScores } from './wilks.calc.ts';
-import { toKg, TUnits } from './units.ts';
+import { kgToLbs, lbsToKg, toKg, TUnits } from './units.ts';
 import WilksSingleInput, { ILifter } from './WilksSingleInput.tsx';
 import { MaxRepMethod, oneRepMax } from './reps.calc.ts';
 import WilksSingleOutput, { ILifterResults } from './WilksSingleOutput.tsx';
@@ -59,6 +59,22 @@ const Wilks = () => {
     return { liftedWeight, liftedWeights, score };
   };
 
+  const changeWeightUnits = (weight: string, u: TUnits): string => {
+    if (!weight) return '';
+    const w = +weight;
+    if (isNaN(w)) return '';
+    return u === 'kg' ? lbsToKg(w).toFixed(1) : kgToLbs(w).toFixed(1);
+  };
+
+  const handleUnitsChange = (u: TUnits) => {
+    if (units === u) return;
+    lifters.forEach((l) => {
+      l.bodyWeight = changeWeightUnits(l.bodyWeight, u);
+      l.liftedWeight = l.liftedWeight.map((w) => [changeWeightUnits(w[0], u), w[1]]);
+    });
+    setUnits(u);
+  };
+
   const updateResults = () => {
     setResults(lifters.map(calculateResults));
   };
@@ -76,9 +92,15 @@ const Wilks = () => {
 
   return (
     <Stack spacing={2}>
-      <ToggleButtonGroup size="small" value={units} onChange={(_, v) => v && setUnits(v as TUnits)} exclusive fullWidth>
+      <ToggleButtonGroup
+        size="small"
+        value={units}
+        onChange={(_, v) => v && handleUnitsChange(v as TUnits)}
+        exclusive
+        fullWidth
+      >
         <ToggleButton value="kg">Kilogramy</ToggleButton>
-        <ToggleButton value="lbs">Funty</ToggleButton>
+        <ToggleButton value="lbs">Funty 🤡</ToggleButton>
       </ToggleButtonGroup>
       <FormControl>
         <InputLabel>Metoda obliczania 1RM</InputLabel>
