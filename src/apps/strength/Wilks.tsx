@@ -13,9 +13,10 @@ import {
 import { Fragment, useEffect, useState } from 'react';
 import { calculateScores } from './wilks.calc.ts';
 import { kgToLbs, lbsToKg, toKg, TUnits } from './units.ts';
-import WilksSingleInput, { ILifter } from './WilksSingleInput.tsx';
+import WilksSingleInput, { ILifter } from './input/WilksSingleInput.tsx';
 import { MaxRepMethod, oneRepMax } from './reps.calc.ts';
-import WilksSingleOutput, { ILifterResults } from './WilksSingleOutput.tsx';
+import WilksSingleOutput, { ILifterResults } from './output/WilksSingleOutput.tsx';
+import 'katex/dist/katex.min.css';
 
 export enum Exercise {
   BENCH_PRESS = 'Wyciskanie na ławce',
@@ -35,17 +36,19 @@ const createLifter = (i: number = 1): ILifter => ({
   liftedWeight: [['', '1']],
 });
 
-const createResults = (): ILifterResults => ({
+const createResults = (i: number = 1): ILifterResults => ({
+  name: `Zawodnik ${i}`,
+  sex: 'male',
+  bodyWeight: NaN,
   liftedWeights: [],
-  liftedWeight: NaN,
-  score: {},
+  maxWeights: [],
+  maxWeight: NaN
 });
 
 const Wilks = () => {
   const [units, setUnits] = useState<TUnits>('kg');
   const [exercise, setExercise] = useState<Exercise>(Exercise.BENCH_PRESS);
   const [oneRepMaxMethod, setOneRepMaxMethod] = useState<MaxRepMethod>(MaxRepMethod.BRZYCKI);
-  // const [scoreMethod, setScoreMethod] = useState<ScoreMethod>(ScoreMethod.WILKS);
 
   const [lifters, setLifters] = useState<ILifter[]>(() => [createLifter()]);
   const [results, setResults] = useState<ILifterResults[]>(() => [createResults()]);
@@ -54,14 +57,23 @@ const Wilks = () => {
   const downSm = useMediaQuery(theme.breakpoints.down('sm'));
 
   const calculateResults = (lifter: ILifter): ILifterResults => {
-    const liftedWeights = lifter.liftedWeight.map((w) => oneRepMax(+w[1], +w[0], oneRepMaxMethod));
-    const liftedWeight =
-      exercise !== Exercise.POWERLIFT
-        ? (liftedWeights[0] ?? 0)
-        : liftedWeights.slice(0, 3).reduce((acc, curr) => acc + (isNaN(curr) ? 0 : curr), 0);
+    const liftedWeights: [number, number][] = lifter.liftedWeight.map(([w, r]) => [+w, +r]);
+    const n = exercise === Exercise.POWERLIFT ? 3 : 1;
+    liftedWeights.splice(n, liftedWeights.length - n);
+    while (liftedWeights.length < n) liftedWeights.push([NaN, NaN]);
+    const maxWeights = liftedWeights.map(([w, r]) => oneRepMax(r, w, oneRepMaxMethod));
+    const maxWeight = maxWeights.reduce((acc, curr) => acc + (isNaN(curr) ? 0 : curr), 0);
     const bw = +lifter.bodyWeight;
-    const score = !bw || isNaN(bw) ? {} : calculateScores(toKg(bw, units), toKg(liftedWeight, units), lifter.sex);
-    return { liftedWeight, liftedWeights, score };
+    const score = !bw || isNaN(bw) ? undefined : calculateScores(toKg(bw, units), toKg(maxWeight, units), lifter.sex);
+    return {
+      name: lifter.name,
+      sex: lifter.sex,
+      bodyWeight: +lifter.bodyWeight,
+      liftedWeights,
+      maxWeight,
+      maxWeights,
+      score,
+    };
   };
 
   const changeWeightUnits = (weight: string, u: TUnits): string => {
@@ -98,7 +110,7 @@ const Wilks = () => {
 
   const addLifter = () => {
     setLifters([...lifters, createLifter(lifters.length + 1)]);
-    setResults([...results, createResults()]);
+    setResults([...results, createResults(lifters.length + 1)]);
   };
 
   useEffect(() => {
@@ -132,21 +144,6 @@ const Wilks = () => {
           ))}
         </Select>
       </FormControl>
-      {/*<FormControl>*/}
-      {/*  <InputLabel>Metoda</InputLabel>*/}
-      {/*  <Select*/}
-      {/*    size="small"*/}
-      {/*    label="Metoda"*/}
-      {/*    value={scoreMethod}*/}
-      {/*    onChange={(e) => setScoreMethod(e.target.value as ScoreMethod)}*/}
-      {/*  >*/}
-      {/*    {Object.values(ScoreMethod).map((e) => (*/}
-      {/*      <MenuItem key={e} value={e}>*/}
-      {/*        {e}*/}
-      {/*      </MenuItem>*/}
-      {/*    ))}*/}
-      {/*  </Select>*/}
-      {/*</FormControl>*/}
       <FormControl>
         <InputLabel>Ćwiczenie</InputLabel>
         <Select
@@ -188,9 +185,11 @@ const Wilks = () => {
         {results.map((result, i) => (
           <WilksSingleOutput
             key={'r' + i}
-            lifter={result}
+            results={result}
+            others={results.filter((_, j) => j !== i)}
             exercise={exercise}
             units={units}
+            oneRepMaxMethod={oneRepMaxMethod}
             single={results.length <= 1}
           />
         ))}

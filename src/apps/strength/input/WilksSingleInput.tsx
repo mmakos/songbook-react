@@ -1,10 +1,10 @@
-import { TSex } from './wilks.calc.ts';
-import { Exercise } from './Wilks.tsx';
-import { TUnits } from './units.ts';
+import { TSex } from '../wilks.calc.ts';
+import { Exercise } from '../Wilks.tsx';
+import { TUnits } from '../units.ts';
 import { IconButton, InputAdornment, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import BasicTooltip from '../../components/BasicTooltip.tsx';
+import BasicTooltip from '../../../components/BasicTooltip.tsx';
 import { Add, Female, Male, Remove } from '@mui/icons-material';
-import NumberField from '../../components/NumberField.tsx';
+import NumberField from '../../../components/NumberField.tsx';
 import ExerciseInput from './ExerciseInput.tsx';
 import { FC } from 'react';
 

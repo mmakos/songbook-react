@@ -1,7 +1,7 @@
 import { Divider, InputAdornment, Stack, Typography } from '@mui/material';
-import NumberField from '../../components/NumberField.tsx';
+import NumberField from '../../../components/NumberField.tsx';
 import { FC } from 'react';
-import { TUnits } from './units.ts';
+import { TUnits } from '../units.ts';
 
 interface ISingleExerciseInputProps {
   label?: string;
@@ -28,6 +28,7 @@ const SingleExerciseInput: FC<ISingleExerciseInputProps> = ({ label, liftedWeigh
           input: { endAdornment: <InputAdornment position="end">{units}</InputAdornment> },
         }}
         onFocus={(event) => event.target.select()}
+        sx={{ minWidth: '10ch' }}
       />
       <NumberField
         size="small"
@@ -38,6 +39,7 @@ const SingleExerciseInput: FC<ISingleExerciseInputProps> = ({ label, liftedWeigh
           htmlInput: { min: 1, max: 50, step: 1 },
         }}
         onFocus={(event) => event.target.select()}
+        sx={{ minWidth: '10ch' }}
       />
     </Stack>
   );

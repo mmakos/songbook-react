@@ -1,6 +1,6 @@
 import SingleExerciseInput from './SingleExerciseInput.tsx';
-import { TUnits } from './units.ts';
-import { Exercise } from './Wilks.tsx';
+import { TUnits } from '../units.ts';
+import { Exercise } from '../Wilks.tsx';
 import { ILifter } from './WilksSingleInput.tsx';
 import { Stack } from '@mui/material';
 import { FC } from 'react';
