@@ -31,17 +31,17 @@ const repWeightFormulas: Record<MaxRepMethod, (rm: number, reps: number) => numb
 const repsFormulas: Record<MaxRepMethod, (rm: number, weight: number) => number> = {
   [MaxRepMethod.BRZYCKI]: (rm, weight) => 37 - (weight * 36) / rm,
   [MaxRepMethod.EPLEY]: (rm, weight) => 30 * (rm / weight - 1),
-  [MaxRepMethod.LOMBARDI]: (rm, weight) => Math.pow(rm / weight, 1 / 0.1),
+  [MaxRepMethod.LOMBARDI]: (rm, weight) => Math.pow(rm / weight, 10),
   [MaxRepMethod.OCONNER]: (rm, weight) => 40 * (rm / weight - 1),
-  [MaxRepMethod.LANDERS]: (rm, weight) => (101.3 - (rm * 100) / weight) / 2.67123,
-  [MaxRepMethod.WATHAN]: (rm, weight) => -Math.log(((rm * 100) / weight - 48.8) / 53.8) / 0.075,
-  [MaxRepMethod.MAYHEW]: (rm, weight) => -Math.log(((rm * 100) / weight - 52.2) / 41.9) / 0.055,
+  [MaxRepMethod.LANDERS]: (rm, weight) => (101.3 - (weight * 100) / rm) / 2.67123,
+  [MaxRepMethod.WATHAN]: (rm, weight) => -Math.log(((weight * 100) / rm - 48.8) / 53.8) / 0.075,
+  [MaxRepMethod.MAYHEW]: (rm, weight) => -Math.log(((weight * 100) / rm - 52.2) / 41.9) / 0.055,
 };
 
 export const latexFormulas: Record<MaxRepMethod, string> = {
   [MaxRepMethod.BRZYCKI]: '\\text{1RM} = \\frac{36 \\cdot w}{37 - r}',
   [MaxRepMethod.EPLEY]: '\\text{1RM} = w + \\frac{w \\cdot r}{30}',
-  [MaxRepMethod.LOMBARDI]: '\\text{1RM} = w \\cdot r^0.1',
+  [MaxRepMethod.LOMBARDI]: '\\text{1RM} = w \\cdot r^{0.1}',
   [MaxRepMethod.OCONNER]: '\\text{1RM} = w + \\frac{w \\cdot r}{40}',
   [MaxRepMethod.LANDERS]: '\\text{1RM} = 100 \\cdot \\frac{w}{101.3 - 2.67123 \\cdot r}',
   [MaxRepMethod.WATHAN]: '\\text{1RM} = 100 \\cdot \\frac{w}{48.8 + 53.8 \\cdot e^{-0.075 \\cdot r}}',

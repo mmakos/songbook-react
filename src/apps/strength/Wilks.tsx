@@ -1,6 +1,7 @@
 import {
   Divider,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -10,13 +11,25 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { calculateScores } from './wilks.calc.ts';
 import { kgToLbs, lbsToKg, toKg, TUnits } from './units.ts';
 import WilksSingleInput, { ILifter } from './input/WilksSingleInput.tsx';
 import { MaxRepMethod, oneRepMax } from './reps.calc.ts';
 import WilksSingleOutput, { ILifterResults } from './output/WilksSingleOutput.tsx';
 import 'katex/dist/katex.min.css';
+import { Save } from '@mui/icons-material';
+import BasicTooltip from '../../components/BasicTooltip.tsx';
+import { getObjectFromStorage, saveObjectToStorage } from '../../store/local-storage.utils.ts';
+import { useAppDispatch } from '../../store/songbook.store.ts';
+import { notifySuccess } from '../../store/songbook.reducer.ts';
+
+interface IWilksInput {
+  units: TUnits;
+  exercise: Exercise;
+  rmMethod: MaxRepMethod;
+  lifters: ILifter[];
+}
 
 export enum Exercise {
   BENCH_PRESS = 'Wyciskanie na ławce',
@@ -42,26 +55,47 @@ const createResults = (i: number = 1): ILifterResults => ({
   bodyWeight: NaN,
   liftedWeights: [],
   maxWeights: [],
-  maxWeight: NaN
+  maxWeight: NaN,
 });
 
 const Wilks = () => {
+  const lifterNumber = useRef(1);
   const [units, setUnits] = useState<TUnits>('kg');
   const [exercise, setExercise] = useState<Exercise>(Exercise.BENCH_PRESS);
-  const [oneRepMaxMethod, setOneRepMaxMethod] = useState<MaxRepMethod>(MaxRepMethod.BRZYCKI);
+  const [rmMethod, setRmMethod] = useState<MaxRepMethod>(MaxRepMethod.BRZYCKI);
 
   const [lifters, setLifters] = useState<ILifter[]>(() => [createLifter()]);
   const [results, setResults] = useState<ILifterResults[]>(() => [createResults()]);
 
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const downSm = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    updateResults();
+  }, [units, exercise, rmMethod]);
+
+  useEffect(() => {
+    const loaded: Partial<IWilksInput> = getObjectFromStorage('strength');
+    if (!loaded.lifters?.length) return;
+    loaded.exercise && Object.values(Exercise).includes(loaded.exercise) && setExercise(loaded.exercise);
+    loaded.rmMethod && Object.values(MaxRepMethod).includes(loaded.rmMethod) && setRmMethod(loaded.rmMethod);
+    (loaded.units === 'kg' || loaded.units === 'lbs') && setUnits(loaded.units);
+    setLifters(loaded.lifters);
+    setResults(loaded.lifters.map(calculateResults));
+  }, []);
+
+  const save = () => {
+    saveObjectToStorage('strength', { units, exercise, rmMethod, lifters });
+    dispatch(notifySuccess('Zapisano wprowadzone dane w przeglądarce'));
+  };
 
   const calculateResults = (lifter: ILifter): ILifterResults => {
     const liftedWeights: [number, number][] = lifter.liftedWeight.map(([w, r]) => [+w, +r]);
     const n = exercise === Exercise.POWERLIFT ? 3 : 1;
     liftedWeights.splice(n, liftedWeights.length - n);
     while (liftedWeights.length < n) liftedWeights.push([NaN, NaN]);
-    const maxWeights = liftedWeights.map(([w, r]) => oneRepMax(r, w, oneRepMaxMethod));
+    const maxWeights = liftedWeights.map(([w, r]) => oneRepMax(r, w, rmMethod));
     const maxWeight = maxWeights.reduce((acc, curr) => acc + (isNaN(curr) ? 0 : curr), 0);
     const bw = +lifter.bodyWeight;
     const score = !bw || isNaN(bw) ? undefined : calculateScores(toKg(bw, units), toKg(maxWeight, units), lifter.sex);
@@ -108,34 +142,39 @@ const Wilks = () => {
     setResults(results.filter((_, j) => j !== i));
   };
 
-  const addLifter = () => {
-    setLifters([...lifters, createLifter(lifters.length + 1)]);
-    setResults([...results, createResults(lifters.length + 1)]);
+  const addLifter = (i: number) => {
+    lifters.splice(i + 1, 0, createLifter(++lifterNumber.current));
+    results.splice(i + 1, 0, createResults(lifterNumber.current));
+    setLifters([...lifters]);
+    setResults([...results]);
   };
-
-  useEffect(() => {
-    updateResults();
-  }, [units, exercise, oneRepMaxMethod]);
 
   return (
     <Stack spacing={2}>
-      <ToggleButtonGroup
-        size="small"
-        value={units}
-        onChange={(_, v) => v && handleUnitsChange(v as TUnits)}
-        exclusive
-        fullWidth
-      >
-        <ToggleButton value="kg">Kilogramy</ToggleButton>
-        <ToggleButton value="lbs">Funty 🤡</ToggleButton>
-      </ToggleButtonGroup>
+      <Stack spacing={1} direction="row">
+        <ToggleButtonGroup
+          size="small"
+          value={units}
+          onChange={(_, v) => v && handleUnitsChange(v as TUnits)}
+          exclusive
+          fullWidth
+        >
+          <ToggleButton value="kg">Kilogramy</ToggleButton>
+          <ToggleButton value="lbs">Funty 🤡</ToggleButton>
+        </ToggleButtonGroup>
+        <BasicTooltip title="Zapisz wprowadzone dane">
+          <IconButton onClick={save}>
+            <Save />
+          </IconButton>
+        </BasicTooltip>
+      </Stack>
       <FormControl>
         <InputLabel>Metoda obliczania 1RM</InputLabel>
         <Select
           size="small"
           label="Metoda obliczania 1RM"
-          value={oneRepMaxMethod}
-          onChange={(e) => setOneRepMaxMethod(e.target.value as MaxRepMethod)}
+          value={rmMethod}
+          onChange={(e) => setRmMethod(e.target.value as MaxRepMethod)}
         >
           {Object.values(MaxRepMethod).map((e) => (
             <MenuItem key={e} value={e}>
@@ -169,7 +208,7 @@ const Wilks = () => {
               patchLifter={(l) => patchLifter(i, l)}
               exercise={exercise}
               units={units}
-              addLifter={i === lifters.length - 1 ? addLifter : undefined}
+              addLifter={() => addLifter(i)}
               removeLifter={lifters.length > 1 ? () => removeLifter(i) : undefined}
             />
           </Fragment>
@@ -189,7 +228,7 @@ const Wilks = () => {
             others={results.filter((_, j) => j !== i)}
             exercise={exercise}
             units={units}
-            oneRepMaxMethod={oneRepMaxMethod}
+            oneRepMaxMethod={rmMethod}
             single={results.length <= 1}
           />
         ))}

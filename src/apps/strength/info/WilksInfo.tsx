@@ -59,17 +59,20 @@ const WilksInfo: FC<IWilksInfoProps> = ({ title, results, others, inputIdx, rmMe
             </ul>
           </div>
           {!!others.length && <Divider />}
-          {others.map((other, i) => (
-            <ScoreCompare
-              key={'o' + i}
-              results={results}
-              other={other}
-              inputIdx={inputIdx}
-              rmMethod={rmMethod}
-              scoreMethod={ScoreMethod.WILKS}
-              units={units}
-            />
-          ))}
+          {others.map(
+            (other, i) =>
+              other.score && (
+                <ScoreCompare
+                  key={'o' + i}
+                  results={results}
+                  other={other}
+                  inputIdx={inputIdx}
+                  rmMethod={rmMethod}
+                  scoreMethod={ScoreMethod.WILKS}
+                  units={units}
+                />
+              )
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>
