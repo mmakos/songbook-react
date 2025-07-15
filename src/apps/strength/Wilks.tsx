@@ -18,11 +18,12 @@ import WilksSingleInput, { ILifter } from './input/WilksSingleInput.tsx';
 import { MaxRepMethod, oneRepMax } from './reps.calc.ts';
 import WilksSingleOutput, { ILifterResults } from './output/WilksSingleOutput.tsx';
 import 'katex/dist/katex.min.css';
-import { Save } from '@mui/icons-material';
+import { Save, Share } from '@mui/icons-material';
 import BasicTooltip from '../../components/BasicTooltip.tsx';
 import { getObjectFromStorage, saveObjectToStorage } from '../../store/local-storage.utils.ts';
 import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifySuccess } from '../../store/songbook.reducer.ts';
+import { useSearchParams } from 'react-router';
 
 interface IWilksInput {
   units: TUnits;
@@ -32,11 +33,61 @@ interface IWilksInput {
 }
 
 export enum Exercise {
-  BENCH_PRESS = 'Wyciskanie na ławce',
-  SQUAT = 'Przysiad',
-  DEADLIFT = 'Martwy ciąg',
-  POWERLIFT = 'Trójbój siłowy',
+  BENCH_PRESS = 'bench',
+  SQUAT = 'squat',
+  DEADLIFT = 'deaadlift',
+  POWERLIFT = 'powerlift',
 }
+
+export const excerciseDisplay: Record<Exercise, string> = {
+  [Exercise.BENCH_PRESS]: 'Wyciskanie na ławce',
+  [Exercise.SQUAT]: 'Przysiad',
+  [Exercise.DEADLIFT]: 'Martwy ciąg',
+  [Exercise.POWERLIFT]: 'Trójbój siłowy',
+};
+
+const paramToLifter = (key: string, value: string): ILifter => {
+  const v = value.split('-');
+  const liftedWeight: [string, string][] = [];
+  for (let i = 2; i < v.length; i += 2) {
+    liftedWeight.push([v[i], v[i + 1] ?? '']);
+  }
+  return {
+    name: key,
+    sex: v.length && v[0] === 'female' ? 'female' : 'male',
+    bodyWeight: v.length > 1 ? v[1] : '',
+    liftedWeight,
+  };
+};
+
+const paramsToInput = (params: URLSearchParams): Partial<IWilksInput> | undefined => {
+  const input: Partial<IWilksInput> = { lifters: [] };
+  params.forEach((value, key) => {
+    if (key === 'rmMethod') {
+      if (Object.values(MaxRepMethod).includes(value as MaxRepMethod)) input.rmMethod = value as MaxRepMethod;
+    } else if (key === 'exercise') {
+      if (Object.values(Exercise).includes(value as Exercise)) input.exercise = value as Exercise;
+    } else if (key === 'units') {
+      if (value === 'kg' || value === 'lbs') input.units = value;
+    } else {
+      input.lifters?.push(paramToLifter(key, value));
+    }
+  });
+  if (input.lifters?.length) return input;
+};
+
+const inputToParams = (input: IWilksInput): Record<string, string> => {
+  const params: Record<string, string> = {
+    rmMethod: input.rmMethod,
+    exercise: input.exercise,
+    units: input.units,
+  };
+  input.lifters.forEach((lifter) => {
+    params[lifter.name] =
+      `${lifter.sex}-${lifter.bodyWeight}-${lifter.liftedWeight.map(([w, r]) => w + '-' + r).join('-')}`;
+  });
+  return params;
+};
 
 export const toFixed = (n?: number, fractionDigits: number = 1): string => {
   return !n || isNaN(n) ? '' : n.toFixed(fractionDigits);
@@ -70,13 +121,14 @@ const Wilks = () => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const downSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const [params] = useSearchParams();
 
   useEffect(() => {
     updateResults();
   }, [units, exercise, rmMethod]);
 
   useEffect(() => {
-    const loaded: Partial<IWilksInput> = getObjectFromStorage('strength');
+    const loaded: Partial<IWilksInput> = paramsToInput(params) ?? getObjectFromStorage('strength');
     if (!loaded.lifters?.length) return;
     loaded.exercise && Object.values(Exercise).includes(loaded.exercise) && setExercise(loaded.exercise);
     loaded.rmMethod && Object.values(MaxRepMethod).includes(loaded.rmMethod) && setRmMethod(loaded.rmMethod);
@@ -88,6 +140,16 @@ const Wilks = () => {
   const save = () => {
     saveObjectToStorage('strength', { units, exercise, rmMethod, lifters });
     dispatch(notifySuccess('Zapisano wprowadzone dane w przeglądarce'));
+  };
+
+  const share = () => {
+    const url = new URL(import.meta.env.VITE_HREF + '/strength');
+    Object.entries(inputToParams({ rmMethod, exercise, units, lifters })).forEach(([k, v]) =>
+      url.searchParams.set(k, v)
+    );
+    navigator.clipboard
+      .writeText(url.toString())
+      .then(() => dispatch(notifySuccess('Skopiowano link do schowka')));
   };
 
   const calculateResults = (lifter: ILifter): ILifterResults => {
@@ -162,6 +224,11 @@ const Wilks = () => {
           <ToggleButton value="kg">Kilogramy</ToggleButton>
           <ToggleButton value="lbs">Funty 🤡</ToggleButton>
         </ToggleButtonGroup>
+        <BasicTooltip title="Udostępnij link">
+          <IconButton onClick={share}>
+            <Share />
+          </IconButton>
+        </BasicTooltip>
         <BasicTooltip title="Zapisz wprowadzone dane">
           <IconButton onClick={save}>
             <Save />
@@ -193,7 +260,7 @@ const Wilks = () => {
         >
           {Object.values(Exercise).map((e) => (
             <MenuItem key={e} value={e}>
-              {e}
+              {excerciseDisplay[e]}
             </MenuItem>
           ))}
         </Select>
