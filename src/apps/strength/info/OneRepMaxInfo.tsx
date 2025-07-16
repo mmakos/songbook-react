@@ -29,7 +29,7 @@ const OneRepMaxInfo: FC<IOneRepMaxInfoProps> = ({ results, others, inputIdx, met
           </div>
           {!!others.length && <Divider />}
           {others.map((other) => (
-            <OneRepMaxCompare results={results} other={other} inputIdx={inputIdx} method={method} units={units} />
+            <OneRepMaxCompare results={results} other={other} inputIdx={inputIdx} rmMethod={method} units={units} />
           ))}
         </Stack>
       </DialogContent>

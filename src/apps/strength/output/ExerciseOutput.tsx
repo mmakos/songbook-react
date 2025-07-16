@@ -14,7 +14,7 @@ interface IExerciseOutput {
 const ExerciseOutput: FC<IExerciseOutput> = ({ lifter, exercise, units }) => {
   if (exercise === Exercise.POWERLIFT)
     return (
-      <Stack direction='row' spacing={1}>
+      <Stack direction="row" spacing={1}>
         {['bench', 'squat', 'deadlift'].map((e, i) => (
           <SingleExerciseOutput key={e} liftedWeight={lifter.maxWeights[i] ?? NaN} units={units} />
         ))}

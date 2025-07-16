@@ -61,3 +61,7 @@ export const weightForRM = (rm: number, reps: number, method: MaxRepMethod): num
 export const repsForRM = (rm: number, weight: number, method: MaxRepMethod): number => {
   return Math.max(Math.ceil(repsFormulas[method](rm, weight)), 1);
 };
+
+export const getMaxReps = (method: MaxRepMethod): number => {
+  return method === 'Lombardi' ? 15 : 10;
+};

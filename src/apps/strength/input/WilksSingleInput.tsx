@@ -7,6 +7,7 @@ import { Add, Female, Male, Remove } from '@mui/icons-material';
 import NumberField from '../../../components/NumberField.tsx';
 import ExerciseInput from './ExerciseInput.tsx';
 import { FC } from 'react';
+import { MaxRepMethod } from '../reps.calc.ts';
 
 export interface ILifter {
   name: string;
@@ -22,9 +23,18 @@ interface IWilksSingleProps {
   units: TUnits;
   addLifter: () => void;
   removeLifter?: () => void;
+  rmMethod: MaxRepMethod;
 }
 
-const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise, units, addLifter, removeLifter }) => {
+const WilksSingleInput: FC<IWilksSingleProps> = ({
+  lifter,
+  patchLifter,
+  exercise,
+  units,
+  addLifter,
+  removeLifter,
+  rmMethod,
+}) => {
   return (
     <Stack spacing={2} width="100%">
       <TextField
@@ -80,7 +90,7 @@ const WilksSingleInput: FC<IWilksSingleProps> = ({ lifter, patchLifter, exercise
         }}
         onFocus={(event) => event.target.select()}
       />
-      <ExerciseInput exercise={exercise} lifter={lifter} patchLifter={patchLifter} units={units} />
+      <ExerciseInput exercise={exercise} lifter={lifter} patchLifter={patchLifter} units={units} rmMethod={rmMethod} />
     </Stack>
   );
 };

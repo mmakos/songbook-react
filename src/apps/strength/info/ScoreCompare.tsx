@@ -1,8 +1,9 @@
 import { ILifterResults } from '../output/WilksSingleOutput.tsx';
-import { MaxRepMethod, repsForRM, weightForRM } from '../reps.calc.ts';
+import { getMaxReps, MaxRepMethod, repsForRM, weightForRM } from '../reps.calc.ts';
 import { FC } from 'react';
 import { TUnits } from '../units.ts';
 import { calculateScoreCoefficient, ScoreMethod } from '../wilks.calc.ts';
+import { Typography } from '@mui/material';
 
 interface IScoreCompareProps {
   results: ILifterResults;
@@ -28,6 +29,7 @@ const ScoreCompare: FC<IScoreCompareProps> = ({ results, other, inputIdx, rmMeth
   const coefficient = calculateScoreCoefficient(results.bodyWeight, results.sex, scoreMethod);
   const targetWeight = other.score![scoreMethod] / coefficient;
   const rmReps = repsForRM(targetWeight, weight, rmMethod);
+  const maxReps = getMaxReps(rmMethod);
 
   return (
     <div>
@@ -40,12 +42,17 @@ const ScoreCompare: FC<IScoreCompareProps> = ({ results, other, inputIdx, rmMeth
         <>
           , czyli
           <ul>
-            <li>
-              {weight.toFixed(1)} {units} na {rmReps} {repeats(rmReps)}
-            </li>
-            <li>
+            {diff < 1 && (
+              <li>
+                {targetWeight.toFixed(1)} {units} na 1 {repeats(1)}
+              </li>
+            )}
+            <Typography component="li" color={rmReps > maxReps ? 'error' : undefined}>
+              {weight.toFixed(1)} {units} na {rmReps} {repeats(rmReps)}{rmReps > maxReps && ' (to za mały ciężar)'}
+            </Typography>
+            {reps > 1 && <li>
               {weightForRM(targetWeight, reps, rmMethod).toFixed(1)} {units} na {reps.toFixed()} {repeats(reps)}
-            </li>
+            </li>}
           </ul>
         </>
       )}

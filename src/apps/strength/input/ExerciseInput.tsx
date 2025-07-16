@@ -4,12 +4,14 @@ import { Exercise } from '../Wilks.tsx';
 import { ILifter } from './WilksSingleInput.tsx';
 import { Stack } from '@mui/material';
 import { FC } from 'react';
+import { MaxRepMethod } from '../reps.calc.ts';
 
 interface IExerciseInputProps {
   exercise: Exercise;
   lifter: ILifter;
   patchLifter: (lifter: Partial<ILifter>) => void;
   units: TUnits;
+  rmMethod: MaxRepMethod;
 }
 
 const setArrayElement = <T,>(array: T[], element: T, index: number, defaultValue: () => T): T[] => {
@@ -20,7 +22,7 @@ const setArrayElement = <T,>(array: T[], element: T, index: number, defaultValue
   return array;
 };
 
-const ExerciseInput: FC<IExerciseInputProps> = ({ exercise, lifter, patchLifter, units }) => {
+const ExerciseInput: FC<IExerciseInputProps> = ({ exercise, lifter, patchLifter, units, rmMethod }) => {
   if (exercise === Exercise.POWERLIFT)
     return (
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 1 }}>
@@ -35,6 +37,7 @@ const ExerciseInput: FC<IExerciseInputProps> = ({ exercise, lifter, patchLifter,
               })
             }
             units={units}
+            rmMethod={rmMethod}
           />
         ))}
       </Stack>
@@ -49,6 +52,7 @@ const ExerciseInput: FC<IExerciseInputProps> = ({ exercise, lifter, patchLifter,
         })
       }
       units={units}
+      rmMethod={rmMethod}
     />
   );
 };

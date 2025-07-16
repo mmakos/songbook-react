@@ -147,9 +147,7 @@ const Wilks = () => {
     Object.entries(inputToParams({ rmMethod, exercise, units, lifters })).forEach(([k, v]) =>
       url.searchParams.set(k, v)
     );
-    navigator.clipboard
-      .writeText(url.toString())
-      .then(() => dispatch(notifySuccess('Skopiowano link do schowka')));
+    navigator.clipboard.writeText(url.toString()).then(() => dispatch(notifySuccess('Skopiowano link do schowka')));
   };
 
   const calculateResults = (lifter: ILifter): ILifterResults => {
@@ -277,6 +275,7 @@ const Wilks = () => {
               units={units}
               addLifter={() => addLifter(i)}
               removeLifter={lifters.length > 1 ? () => removeLifter(i) : undefined}
+              rmMethod={rmMethod}
             />
           </Fragment>
         ))}
