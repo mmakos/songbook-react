@@ -59,7 +59,7 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
         <FormControlLabel
           control={
             <Switch
-              checked={showHiddenSongs}
+              checked={!!showHiddenSongs}
               onChange={(_, checked) => dispatch(setMeetingSettings({ ...meetingSetting, showHiddenSongs: checked }))}
             />
           }
@@ -68,7 +68,7 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
         <FormControlLabel
           control={
             <Switch
-              checked={showUserInfo}
+              checked={!!showUserInfo}
               onChange={(_, checked) => dispatch(setMeetingSettings({ ...meetingSetting, showUserInfo: checked }))}
             />
           }

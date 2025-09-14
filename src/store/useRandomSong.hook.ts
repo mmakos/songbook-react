@@ -6,7 +6,7 @@ const useRandomSong = (): (() => void) => {
   const navigate = useNavigate();
 
   return () => {
-    api.get(`/random-song/?category=${Category.KACZMARSKI},${Category.OTHER}`).then((result) => {
+    api.get(`/random-song/?category=${Category.KACZMARSKI},${Category.OTHER}&t=${Date.now()}`).then((result) => {
       navigate(`/song/${result.data}`);
     });
   };

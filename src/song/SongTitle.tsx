@@ -1,5 +1,5 @@
 import { Fade, IconButton, Skeleton, Typography } from '@mui/material';
-import { Link } from '@mui/icons-material';
+import { Link, Lock } from '@mui/icons-material';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { FC, useState } from 'react';
 import { notifySuccess } from '../store/songbook.reducer.ts';
@@ -24,12 +24,18 @@ const SongTitle: FC<{ song?: ISong }> = ({ song }) => {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <Typography variant="h4" display='inline'>
+      {song.private && (
+        <BasicTooltip title="Piosenka prywatna widoczna tylko dla Ciebie">
+          <Lock sx={{ mr: '0.2em' }} />
+        </BasicTooltip>
+      )}
+      <Typography variant="h4" display="inline">
         {song.title}
       </Typography>
       {song.altTitle && (
-        <Typography variant="h4" color="text.secondary" display='inline'>
-          {' '}({song.altTitle})
+        <Typography variant="h4" color="text.secondary" display="inline">
+          {' '}
+          ({song.altTitle})
         </Typography>
       )}
       <BasicTooltip title="Skopiuj link do schowka">

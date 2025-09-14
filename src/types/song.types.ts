@@ -39,6 +39,7 @@ export interface ISongFullOverview extends ISongOverview {
   source?: ISourceOverview[];
   band?: IBandOverview;
   bible?: IBible[];
+  private?: boolean;
 }
 
 export type TSongFullOverview = ISongFullOverview & IEditInfo;
