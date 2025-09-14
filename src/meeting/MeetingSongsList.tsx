@@ -1,6 +1,6 @@
 import { TransitionGroup } from 'react-transition-group';
 import { Collapse, IconButton, List, ListItem, ListItemText, Stack, useTheme } from '@mui/material';
-import { Clear, DragIndicator } from '@mui/icons-material';
+import {Clear, DragIndicator, PlayArrow} from '@mui/icons-material';
 import RouteLink from '../components/RouteLink.tsx';
 import VoteButton from './VoteButton.tsx';
 import { FC } from 'react';
@@ -15,6 +15,7 @@ const MeetingSongsList: FC<IMeetingSongsProps & { songs: IMeetingSong[] }> = ({
   songs,
   userInfo,
   songsChanged,
+  currentSong,
 }) => {
   const user = useAppSelector((state) => state.user);
   const theme = useTheme();
@@ -43,8 +44,9 @@ const MeetingSongsList: FC<IMeetingSongsProps & { songs: IMeetingSong[] }> = ({
           <Collapse key={song.slug}>
             <ListItem disableGutters disablePadding>
               {meeting.permissions.reorder && meeting.sort === 'custom' && (
-                <DragIndicator sx={{ cursor: 'move', mr: '0.3em' }} />
+                <DragIndicator sx={{ cursor: 'move', mr: '0.3em'}} />
               )}
+              {currentSong === song.slug && <PlayArrow sx={{ml: '-0.2em', mr: '0.1em'}}/>}
               <ListItemText
                 primary={
                   <RouteLink

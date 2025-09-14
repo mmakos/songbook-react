@@ -12,9 +12,10 @@ interface IMeetingSongsPaperProps {
   meeting: IMeeting;
   songsChanged: (songs: IMeetingSong[]) => void;
   showName?: boolean;
+  currentSong?: string;
 }
 
-const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged, showName }) => {
+const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged, showName, currentSong }) => {
   const meetingSetting = useAppSelector((state) => state.songbookSettings.meetingSettings);
   const [fetchingSongs, setFetchingSongs] = useState(false);
   const authAPI = useAuthAPI();
@@ -51,6 +52,7 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
             userInfo={showUserInfo}
             songsChanged={songsChanged}
             showHidden={showHiddenSongs}
+            currentSong={currentSong}
           />
         ) : (
           <Typography color="text.disabled">Brak piosenek</Typography>
