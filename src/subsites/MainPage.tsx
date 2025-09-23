@@ -194,7 +194,39 @@ const MainPage = () => {
                   <Settings />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary="Dostosowanie piosenki" secondary="Ciemny/jasny, czcionka, styl" />
+              <ListItemText primary="Dostosowanie piosenki" secondary="Motyw, czcionka, styl" />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                  <MenuBook />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Generowanie śpiewnika" secondary="Eksport piosenek do docx" />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                  <FormatListNumbered />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Śpiewanki" secondary="Kolejka piosenek" />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                  <EditNote />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Dodawanie piosenek" secondary="Dodawanie, edycja i weryfikacja" />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                  <AccountCircle />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Obsługa użytkowników" secondary="Śpiewanki, edycja piosenek" />
             </ListItem>
             <ListItem>
               <ListItemAvatar>
@@ -233,38 +265,6 @@ const MainPage = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <Typography variant="h5">Plany na przyszłość</Typography>
           <List>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <AccountCircle />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Obsługa użytkowników" secondary="Ustawienia, dodatkowe opcje" />
-            </ListItem>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <EditNote />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Dodawanie piosenek" secondary="Dodawanie, edycja i weryfikacja" />
-            </ListItem>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <FormatListNumbered />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Śpiewanki" secondary="Kolejka piosenek" />
-            </ListItem>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <MenuBook />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Generowanie śpiewnika" secondary="Eksport piosenek do docx" />
-            </ListItem>
             <ListItem>
               <ListItemAvatar>
                 <Avatar>
