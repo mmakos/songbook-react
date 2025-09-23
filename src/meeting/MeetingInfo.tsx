@@ -28,7 +28,7 @@ import {
 import { notifyError, notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import RouteIconButton from '../components/RouteIconButton.tsx';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import useCanEdit from '../store/useCanEdit.hook.ts';
 import CurrentMeetingCheckbox from './CurrentMeetingCheckbox.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';

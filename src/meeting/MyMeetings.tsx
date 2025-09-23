@@ -16,7 +16,7 @@ import { IMeetingOverview } from './meeting.types.tsx';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch } from '../store/songbook.store.ts';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import Progress from '../components/Progress.tsx';
 import RouteButton from '../components/RouteButton.tsx';
 import SyncButton from '../components/SyncButton.tsx';

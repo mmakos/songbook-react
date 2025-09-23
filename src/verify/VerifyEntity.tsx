@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router';
 import { ComponentType, useEffect, useState } from 'react';
 import { IBand, IPerson, ISource } from '../types/song.types.ts';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { AxiosResponse } from 'axios';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';

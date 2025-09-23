@@ -6,6 +6,7 @@ import { clearSong } from '../store/songbook.reducer.ts';
 import NotFound from '../subsites/NotFound.tsx';
 import Song from './Song.tsx';
 import BasicHelmet from '../subsites/BasicHelmet.tsx';
+import { CurrentMeetingContextProvider } from '../meeting/CurrentMeetingContext.tsx';
 
 const GlobalSong: FC = () => {
   const song = useAppSelector((state) => state.song);
@@ -35,7 +36,9 @@ const GlobalSong: FC = () => {
         href={`/song/${songSlug}`}
         description={song && `${song.title} - tekst piosenki, akordy, chwyty`}
       />
-      <Song song={song} />
+      <CurrentMeetingContextProvider>
+        <Song song={song} />
+      </CurrentMeetingContextProvider>
     </>
   );
 };

@@ -2,7 +2,7 @@ import { ThumbUp, ThumbUpOutlined } from '@mui/icons-material';
 import { FC, useState } from 'react';
 import { IMeetingSong } from './meeting.types.tsx';
 import { Badge, BadgeProps, Checkbox, styled } from '@mui/material';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 
 const StyledBadge = styled(Badge)<BadgeProps>({
   '& .MuiBadge-badge': {

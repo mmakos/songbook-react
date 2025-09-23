@@ -24,7 +24,6 @@ import SourceEdit from './editor/source/SourceEdit.tsx';
 import LoginResult from './user/LoginResult.tsx';
 import AccountInfo from './user/AccountInfo.tsx';
 import ProtectedRoute from './ProtectedRoute.tsx';
-import useAuthAPI from './http/useAuthAPI.ts';
 import { AxiosResponse } from 'axios';
 import { IUser, UserType } from './user/user.types.ts';
 import { setUser } from './store/songbook.reducer.ts';
@@ -42,6 +41,7 @@ import CurrentMeeting from './meeting/CurrentMeeting.tsx';
 import JoinMeeting from './meeting/JoinMeeting.tsx';
 import { HelmetProvider } from 'react-helmet-async';
 import StrengthRoutes from './apps/strength/StrengthRoutes.tsx';
+import { useAuthAPI } from './http/AuthApiContext.tsx';
 
 // Eksport piosenki zaciąga docx.js
 const ExportMeeting = lazy(() => import('./meeting/export/ExportMeeting.tsx'));

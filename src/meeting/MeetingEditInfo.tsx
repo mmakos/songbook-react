@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import {notifyError, notifySuccess, setCurrentMeeting} from '../store/songbook.reducer.ts';
 import { editText, IMeetingInfo, sortText, TEdit, TSort, TVisibility, visibilityText } from './meeting.types.tsx';

@@ -8,7 +8,7 @@ import { CancelOutlined, SaveOutlined } from '@mui/icons-material';
 import Progress from '../../components/Progress.tsx';
 import RouteButton from '../../components/RouteButton.tsx';
 import { bandToBandData } from './band.mapper.ts';
-import useAuthAPI from '../../http/useAuthAPI.ts';
+import { useAuthAPI } from '../../http/AuthApiContext.tsx';
 import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';

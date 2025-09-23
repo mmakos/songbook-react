@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { createContext, PropsWithChildren, useContext, useMemo, useRef } from 'react';
+import { AxiosInstance } from 'axios';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { api } from './api.ts';
 import { setAccessToken } from '../store/songbook.reducer.ts';
 
-const useAuthAPI = () => {
+const AuthApiContextComponent = (): AxiosInstance => {
   const accessToken = useAppSelector((state) => state.accessToken);
   const dispatch = useAppDispatch();
+  const interceptors = useRef<[number, number]>();
 
   const refreshToken = async () => {
     const response = await api.post('auth/refresh/', undefined, { withCredentials: true });
@@ -13,7 +15,12 @@ const useAuthAPI = () => {
     return response.data.access;
   };
 
-  useEffect(() => {
+  useMemo(() => {
+    if (interceptors.current) {
+      api.interceptors.request.eject(interceptors.current[0]);
+      api.interceptors.response.eject(interceptors.current[1]);
+    }
+
     const requestIntercept = api.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization'] && accessToken) {
@@ -39,13 +46,16 @@ const useAuthAPI = () => {
       }
     );
 
-    return () => {
-      api.interceptors.request.eject(requestIntercept);
-      api.interceptors.response.eject(responseIntercept);
-    };
+    interceptors.current = [requestIntercept, responseIntercept];
   }, [accessToken]);
 
   return api;
 };
 
-export default useAuthAPI;
+export const AuthApiContext = createContext(undefined as unknown as AxiosInstance);
+
+export const AuthApiContextProvider = ({ children }: PropsWithChildren) => {
+  return <AuthApiContext.Provider value={AuthApiContextComponent()}>{children}</AuthApiContext.Provider>;
+};
+
+export const useAuthAPI = () => useContext(AuthApiContext);

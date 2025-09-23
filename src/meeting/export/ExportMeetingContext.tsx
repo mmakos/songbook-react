@@ -5,7 +5,7 @@ import { ISpacing } from '../../components/font/FontSpacing.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
 import { IMeeting, IMeetingExportSong } from '../meeting.types.tsx';
 import { useParams } from 'react-router';
-import useAuthAPI from '../../http/useAuthAPI.ts';
+import { useAuthAPI } from '../../http/AuthApiContext.tsx';
 import { getSong } from '../../store/songbook.actions.ts';
 import { defaultAuthorsSettings, IAuthorsSettings } from './ExportAuthorsSettings.tsx';
 import { ISectionOptions } from 'docx';

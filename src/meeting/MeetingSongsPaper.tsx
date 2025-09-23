@@ -3,10 +3,11 @@ import SyncButton from '../components/SyncButton.tsx';
 import MeetingSongs from './MeetingSongs.tsx';
 import { FC, useState } from 'react';
 import { IMeeting, IMeetingSong } from './meeting.types.tsx';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { setMeetingSettings } from '../store/songbook.reducer.ts';
 import RouteLink from '../components/RouteLink.tsx';
+import { sortSongs } from './meeting.sort.ts';
 
 interface IMeetingSongsPaperProps {
   meeting: IMeeting;
@@ -26,7 +27,7 @@ const MeetingSongsPaper: FC<IMeetingSongsPaperProps> = ({ meeting, songsChanged,
     setFetchingSongs(true);
     authAPI
       .get(`meeting/${meeting.id}/songs/`)
-      .then(({ data }) => songsChanged(data.songs))
+      .then(({ data }) => songsChanged(sortSongs(data.songs, meeting.sort)))
       .finally(() => setFetchingSongs(false));
   };
 

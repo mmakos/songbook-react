@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { notifySuccess, setCurrentMeeting } from '../store/songbook.reducer.ts';
 import { AxiosResponse } from 'axios';

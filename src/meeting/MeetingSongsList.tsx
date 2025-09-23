@@ -7,7 +7,7 @@ import { FC } from 'react';
 import { IMeetingSong } from './meeting.types.tsx';
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { notifyError } from '../store/songbook.reducer.ts';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { IMeetingSongsProps } from './MeetingSongs.tsx';
 
 const MeetingSongsList: FC<IMeetingSongsProps & { songs: IMeetingSong[] }> = ({

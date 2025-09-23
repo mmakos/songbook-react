@@ -2,7 +2,7 @@ import { IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { FC } from 'react';
 import { Clear } from '@mui/icons-material';
 import { IMeeting } from './meeting.types.tsx';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';

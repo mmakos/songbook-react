@@ -24,16 +24,16 @@ import {
 import SongControl, { TSongControlType } from './SongControl.tsx';
 import { useNavigate, useParams } from 'react-router';
 import useCanEdit from '../store/useCanEdit.hook.ts';
-import useAuthAPI from '../http/useAuthAPI.ts';
-import useMeeting from '../store/useMeeting.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { AxiosResponse } from 'axios';
 import { IMeetingSong } from '../meeting/meeting.types.tsx';
+import { useCurrentMeeting } from '../meeting/CurrentMeetingContext.tsx';
 
 const SongControls: FC<{ type: TSongControlType; preview?: boolean }> = ({ type, preview }) => {
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const song = useAppSelector((state) => state.song);
   const { videoOpen, settingsOpen, infoOpen, zoom } = useAppSelector((state) => state.songDisplayState);
-  const meeting = useMeeting();
+  const { meeting } = useCurrentMeeting();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { songSlug, username } = useParams();

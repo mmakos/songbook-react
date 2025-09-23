@@ -31,11 +31,7 @@ const Band = () => {
   useEffect(() => {
     setBand(undefined);
     fetchBand();
-  }, [bandSlug]);
-
-  useEffect(() => {
-    fetchBand();
-  }, [username]);
+  }, [bandSlug, username]);
 
   if (!band) return <Progress />;
 

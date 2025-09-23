@@ -13,7 +13,7 @@ import {
 } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
 import { IAuthorEdit, IEditResult, ISlug, ISong, ISongEdit } from '../../types/song.types.ts';
-import useAuthAPI from '../../http/useAuthAPI.ts';
+import { useAuthAPI } from '../../http/AuthApiContext.tsx';
 import { useAppDispatch, useAppSelector } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import { useNavigate, useParams } from 'react-router';

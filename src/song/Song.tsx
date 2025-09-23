@@ -11,27 +11,27 @@ import { ISong } from '../types/song.types.ts';
 import WaitingEditsInfo from './WaitingEditsInfo.tsx';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import useSongTheme from '../store/useSongTheme.ts';
-import useMeeting from '../store/useMeeting.ts';
 import MeetingSongsPaper from '../meeting/MeetingSongsPaper.tsx';
 import { setMeeting } from '../store/songbook.reducer.ts';
 import CollapsibleSongInfo from './CollapsibleSongInfo.tsx';
 import GlobalSongContent from './GlobalSongContent.tsx';
-import { SkipNext } from '@mui/icons-material';
+import { SkipNext, SkipPrevious } from '@mui/icons-material';
 import RouteIconButton from '../components/RouteIconButton.tsx';
 import BasicTooltip from '../components/BasicTooltip.tsx';
+import { useCurrentMeeting } from '../meeting/CurrentMeetingContext.tsx';
 
 const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
-  const meeting = useMeeting();
+  const { meeting } = useCurrentMeeting();
   const dispatch = useAppDispatch();
   const noChords = useAppSelector((state) => state.songbookSettings.noChordInfo);
   const theme = useTheme();
   const downMd = useMediaQuery(theme.breakpoints.down('md'));
   const songTheme = useSongTheme();
 
-  const nextSong = useMemo(() => {
-    if (preview || !meeting || !song) return;
+  const [nextSong, previousSong] = useMemo(() => {
+    if (preview || !meeting || !song) return [undefined, undefined];
     const currentIdx = meeting.songs.findIndex((s) => s.slug === song.slug);
-    if (currentIdx >= 0) return meeting.songs[(currentIdx + 1) % meeting.songs.length].slug;
+    return [meeting.songs[currentIdx + 1]?.slug, meeting.songs[currentIdx - 1]?.slug];
   }, [song, preview, meeting]);
 
   return (
@@ -66,15 +66,26 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
                 {song?.edited && <EditorInfo prefix="Edytowano" editorInfo={song.edited} />}
                 {song && <WaitingEditsInfo waiting={song} routeTo={`/song/${song.slug}`} />}
               </Stack>
-              {nextSong && (
-                <BasicTooltip title={'Następna piosenka ze śpiewanek'}>
-                  <RouteIconButton
-                    sx={{ position: 'absolute', right: '0.5em', top: '50%', transform: 'translateY(-50%)' }}
-                    to={`/song/${nextSong}`}
-                  >
-                    <SkipNext />
-                  </RouteIconButton>
-                </BasicTooltip>
+              {(previousSong || nextSong) && (
+                <Stack
+                  direction="row"
+                  sx={{ position: 'absolute', right: '0.5em', top: '50%', transform: 'translateY(-50%)' }}
+                >
+                  {previousSong && (
+                    <BasicTooltip title={'Poprzednia piosenka ze śpiewanek'}>
+                      <RouteIconButton to={`/song/${nextSong}`} size="small">
+                        <SkipPrevious />
+                      </RouteIconButton>
+                    </BasicTooltip>
+                  )}
+                  {nextSong && (
+                    <BasicTooltip title={'Następna piosenka ze śpiewanek'}>
+                      <RouteIconButton to={`/song/${nextSong}`} size="small">
+                        <SkipNext />
+                      </RouteIconButton>
+                    </BasicTooltip>
+                  )}
+                </Stack>
               )}
             </div>
           </Paper>

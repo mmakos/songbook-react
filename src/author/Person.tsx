@@ -29,11 +29,7 @@ const Person = () => {
   useEffect(() => {
     setPerson(undefined);
     fetchPerson();
-  }, [personSlug]);
-
-  useEffect(() => {
-    fetchPerson();
-  }, [username]);
+  }, [personSlug, username]);
 
   if (!person || !personSlug) return <Progress />;
 

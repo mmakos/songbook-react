@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { IMeetingInfo } from './meeting.types.tsx';
 import Progress from '../components/Progress.tsx';
 import MeetingEditInfo from './MeetingEditInfo.tsx';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { AxiosResponse } from 'axios';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError } from '../store/songbook.reducer.ts';

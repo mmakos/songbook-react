@@ -2,7 +2,7 @@ import { Button, IconButton, InputAdornment, Stack, TextField, Typography } from
 import { useAppDispatch, useAppSelector } from '../store/songbook.store.ts';
 import { Close, Edit, SaveOutlined } from '@mui/icons-material';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { notifyError, notifySuccess, setAccessToken, setUser } from '../store/songbook.reducer.ts';
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router';

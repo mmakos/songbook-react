@@ -8,7 +8,7 @@ import { Button, Stack } from '@mui/material';
 import { CancelOutlined, SaveOutlined } from '@mui/icons-material';
 import RouteButton from '../../components/RouteButton.tsx';
 import { personToPersonData } from './person.mapper.ts';
-import useAuthAPI from '../../http/useAuthAPI.ts';
+import { useAuthAPI } from '../../http/AuthApiContext.tsx';
 import { useAppDispatch } from '../../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../../store/songbook.reducer.ts';
 import WaitingEditsInfo from '../../song/WaitingEditsInfo.tsx';

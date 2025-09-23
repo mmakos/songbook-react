@@ -32,11 +32,7 @@ const Source = () => {
   useEffect(() => {
     setSource(undefined);
     fetchSource();
-  }, [sourceSlug]);
-
-  useEffect(() => {
-    fetchSource();
-  }, [username]);
+  }, [sourceSlug, username]);
 
   if (!source) return <Progress />;
 

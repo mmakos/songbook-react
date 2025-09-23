@@ -3,7 +3,7 @@ import { Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { IMeeting } from './meeting.types.tsx';
 import { useEffect, useState } from 'react';
 import MeetingInfo from './MeetingInfo.tsx';
-import useAuthAPI from '../http/useAuthAPI.ts';
+import { useAuthAPI } from '../http/AuthApiContext.tsx';
 import { useAppDispatch } from '../store/songbook.store.ts';
 import { notifyError, notifySuccess } from '../store/songbook.reducer.ts';
 import Progress from '../components/Progress.tsx';
@@ -12,6 +12,7 @@ import NotFound from '../subsites/NotFound.tsx';
 import SyncButton from '../components/SyncButton.tsx';
 import MeetingSongsPaper from './MeetingSongsPaper.tsx';
 import BasicHelmet from '../subsites/BasicHelmet.tsx';
+import { sortSongs } from './meeting.sort.ts';
 
 const Meeting = () => {
   const [meeting, setMeeting] = useState<IMeeting | null>();
@@ -26,7 +27,7 @@ const Meeting = () => {
     setMeeting(undefined);
     authAPI
       .get(`meeting/${meetingId}/`)
-      .then(({ data }) => setMeeting(data))
+      .then(({ data }) => setMeeting({ ...data, songs: sortSongs(data.songs, data.sort) }))
       .catch(() => setMeeting(null));
   }, [meetingId]);
 
@@ -58,15 +59,12 @@ const Meeting = () => {
 
   return (
     <Stack spacing={2} width="50em">
-      <BasicHelmet title={`Śpiewaniki „${meeting.name}”`}/>
+      <BasicHelmet title={`Śpiewaniki „${meeting.name}”`} />
       <Paper sx={{ p: '1em' }}>
         <MeetingInfo meeting={meeting} />
       </Paper>
       <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} flexGrow={1}>
-        <MeetingSongsPaper
-            meeting={meeting}
-            songsChanged={(songs) => setMeeting({ ...meeting, songs })}
-        />
+        <MeetingSongsPaper meeting={meeting} songsChanged={(songs) => setMeeting({ ...meeting, songs })} />
         <Paper sx={{ p: '1em', flexGrow: 1 }}>
           <Stack spacing={1} useFlexGap height="100%">
             <Typography variant="h6" display="flex" alignItems="center">
