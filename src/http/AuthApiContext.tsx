@@ -8,11 +8,24 @@ const AuthApiContextComponent = (): AxiosInstance => {
   const accessToken = useAppSelector((state) => state.accessToken);
   const dispatch = useAppDispatch();
   const interceptors = useRef<[number, number]>();
+  const refreshing = useRef(false);
+  const failedQueue = useRef<{ resolve: (token: string) => void; reject: (error: unknown) => void }[]>([]);
 
   const refreshToken = async () => {
     const response = await api.post('auth/refresh/', undefined, { withCredentials: true });
     dispatch(setAccessToken(response.data.access));
     return response.data.access;
+  };
+
+  const processQueue = (error: unknown, token: string | null = null) => {
+    failedQueue.current.forEach((promise) => {
+      if (error) {
+        promise.reject(error);
+      } else if (token) {
+        promise.resolve(token);
+      }
+    });
+    failedQueue.current = [];
   };
 
   useMemo(() => {
@@ -34,13 +47,36 @@ const AuthApiContextComponent = (): AxiosInstance => {
     const responseIntercept = api.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const prevRequest = error?.config;
+        const originalRequest = error?.config;
         const url = error?.config.url;
-        if (error?.response?.status === 401 && !prevRequest?.sent && url !== 'auth/refresh/') {
-          prevRequest.sent = true;
-          const newAccessToken = await refreshToken();
-          prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          return api(prevRequest);
+
+        if (error?.response?.status === 401 && !originalRequest?._retry && url !== 'auth/refresh/') {
+          if (refreshing.current) {
+            return new Promise((resolve, reject) => {
+              failedQueue.current.push({
+                resolve: (token: string) => {
+                  originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                  resolve(api(originalRequest));
+                },
+                reject,
+              });
+            });
+          }
+
+          originalRequest._retry = true;
+          refreshing.current = true;
+
+          try {
+            const newToken = await refreshToken();
+            processQueue(null, newToken);
+            originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
+            return api(originalRequest);
+          } catch (err) {
+            processQueue(err, null);
+            return Promise.reject(err);
+          } finally {
+            refreshing.current = false;
+          }
         }
         return Promise.reject(error);
       }
