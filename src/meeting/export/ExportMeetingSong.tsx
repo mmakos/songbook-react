@@ -19,6 +19,7 @@ import { useExportMeetingContext } from './ExportMeetingContext.tsx';
 import { IChordDifficulty } from '../../store/songbook.reducer.ts';
 import useRerender from '../../components/useRerender.ts';
 import { ExportMeetingSongContextProvider } from './ExportMeetingSongContext.tsx';
+import { Accidental } from '../../types/song.types.ts';
 
 interface IExportMeetingSongProps {
   song: IMeetingExportSong;
@@ -52,6 +53,27 @@ const ExportMeetingSong: FC<IExportMeetingSongProps> = ({ song, expanded, setExp
     }
     rerender();
   };
+
+  const transposeUp = () => {
+    song.transposition = {
+      amount: (song.transposition?.amount ?? 0) + 1,
+      type: Accidental.SHARP,
+    }
+    rerender();
+  }
+
+  const transposeDown = () => {
+    song.transposition = {
+      amount: (song.transposition?.amount ?? 0) - 1,
+      type: Accidental.FLAT,
+    }
+    rerender();
+  }
+
+  const resetTransposition = () => {
+    delete song.transposition;
+    rerender();
+  }
 
   const changeShowChords = (showChords?: boolean) => {
     song.showChords = showChords;
@@ -90,9 +112,9 @@ const ExportMeetingSong: FC<IExportMeetingSongProps> = ({ song, expanded, setExp
                 showChords={song.showChords ?? meetingShowChords}
                 setShowChords={changeShowChords}
                 transposition={song.transposition ?? { amount: 0 }}
-                transposeDown={() => {}}
-                transposeUp={() => {}}
-                resetTransposition={() => {}}
+                transposeDown={transposeDown}
+                transposeUp={transposeUp}
+                resetTransposition={resetTransposition}
                 chordDifficulty={song.chordDifficulty ?? meetingChordDifficulty}
                 changeChordDifficulty={(difficulty) => changeChordDifficulty(difficulty)}
                 disabled={!song.chordDifficulty}

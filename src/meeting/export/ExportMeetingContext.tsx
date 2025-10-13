@@ -11,6 +11,7 @@ import { defaultAuthorsSettings, IAuthorsSettings } from './ExportAuthorsSetting
 import { ISectionOptions } from 'docx';
 import { chToPt, emToPt, pxToPt } from '../../components/font/font.utils.ts';
 import { useNavigate } from 'react-router-dom';
+import { sortSongs } from '../meeting.sort.ts';
 
 type TExportStage = 'edit' | 'download';
 
@@ -82,7 +83,7 @@ const ExportMeetingContextComponent = (): IExportMeetingContextProps<true> => {
     setMeeting(undefined);
     authAPI
       .get(`meeting/${meetingId}/`)
-      .then(({ data }) => setMeeting(data))
+      .then(({ data }) => setMeeting({ ...data, songs: sortSongs(data.songs, data.sort) }))
       .catch(() => setMeeting(null));
   }, [meetingId, authAPI]);
 
