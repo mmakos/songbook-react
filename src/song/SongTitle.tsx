@@ -6,13 +6,15 @@ import { notifySuccess } from '../store/songbook.reducer.ts';
 import BasicTooltip from '../components/BasicTooltip.tsx';
 import { ISong } from '../types/song.types.ts';
 
+const APP_HREF = import.meta.env.VITE_HREF;
+
 const SongTitle: FC<{ song?: ISong }> = ({ song }) => {
   const [hover, setHover] = useState(false);
   const dispatch = useAppDispatch();
 
   const copyUrlToString = () => {
     if (!song) return;
-    navigator.clipboard.writeText(window.location.protocol + '//' + window.location.host + '/song/' + song.slug);
+    navigator.clipboard.writeText(`${APP_HREF}/song/${song.slug}`);
     dispatch(notifySuccess('Skopiowano link do piosenki do schowka'));
   };
 
