@@ -9,6 +9,7 @@ const AuthApiContextComponent = (): AxiosInstance => {
   const dispatch = useAppDispatch();
   const interceptors = useRef<[number, number]>();
   const refreshing = useRef(false);
+  const refreshPromise = useRef<Promise<string> | null>(null);
   const failedQueue = useRef<{ resolve: (token: string) => void; reject: (error: unknown) => void }[]>([]);
 
   const refreshToken = async () => {
@@ -35,10 +36,23 @@ const AuthApiContextComponent = (): AxiosInstance => {
     }
 
     const requestIntercept = api.interceptors.request.use(
-      (config) => {
+      async (config) => {
         if (!config.headers['Authorization'] && accessToken) {
           config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
+        if (config.url === 'auth/refresh/') return config;
+
+        if (!refreshPromise.current) {
+          refreshPromise.current = refreshToken().finally(() => (refreshPromise.current = null));
+        }
+
+        try {
+          const token = await refreshPromise.current;
+          config.headers['Authorization'] = `Bearer ${token}`;
+        } catch {
+          // refresh się nie udał → lecimy jako anon
+        }
+
         return config;
       },
       (error: unknown) => Promise.reject(error)
