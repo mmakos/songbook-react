@@ -31,6 +31,7 @@ const Song: FC<{ song?: ISong; preview?: boolean }> = ({ song, preview }) => {
   const [nextSong, previousSong] = useMemo(() => {
     if (preview || !meeting || !song) return [undefined, undefined];
     const currentIdx = meeting.songs.findIndex((s) => s.slug === song.slug);
+    if (currentIdx === -1) return [undefined, undefined];
     return [meeting.songs[currentIdx + 1]?.slug, meeting.songs[currentIdx - 1]?.slug];
   }, [song, preview, meeting]);
 

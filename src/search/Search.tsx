@@ -51,7 +51,6 @@ const Search = () => {
       freeSolo
       clearOnBlur
       blurOnSelect
-      autoHighlight
       clearOnEscape
       sx={{ width: { xs: '100%', md: 'auto' }, mr: { xs: '2em', sm: '0' } }}
       value={''}

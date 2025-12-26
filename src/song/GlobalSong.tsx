@@ -16,6 +16,7 @@ const GlobalSong: FC = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    dispatch(clearSong());
     songSlug && dispatch(getAndSaveSong({ slug: songSlug, username }));
   }, [songSlug, username]);
 
